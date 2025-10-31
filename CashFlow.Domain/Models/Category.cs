@@ -1,0 +1,10 @@
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace CashFlow.Domain.Models
+{
+    [Table("categories")]
+    public class Category
+    {
+    }
+}
