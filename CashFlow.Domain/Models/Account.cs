@@ -32,7 +32,7 @@ namespace CashFlow.Domain.Models
         public required bool IsActive { get; set; } = true;
 
         [Column("photo_url")]
-        public string PhotoUrl { get; set; }
+        public string PhotoUrl { get; set; } = "default_account_url";
 
         [Column("created_at")]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

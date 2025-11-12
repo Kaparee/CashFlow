@@ -53,6 +53,12 @@ namespace CashFlow.Domain.Models
         public required ICollection<Account> Accounts { get; set; }
 
         public required ICollection<KeyWord> KeyWords { get; set; }
+
+        public required ICollection<Category> Categories { get; set; }
+
+        public required ICollection<Notification> Notifications { get; set; }
+
+        public required ICollection<RecTransaction> RecTransactions { get; set; }
     }
 }
 

@@ -49,7 +49,51 @@ namespace CashFlow.Infrastructure.Data
 
             modelBuilder.Entity<Notification>().ToTable("notifications");
 
+            modelBuilder.Entity<Category>()
+                .HasOne(c => c.User)
+                .WithMany(u => u.Categories)
+                .HasForeignKey(c => c.UserId)
+                .IsRequired(false);
+
+
+            modelBuilder.Entity<KeyWord>()
+                .HasOne(k => k.Category)
+                .WithMany(c => c.KeyWords)
+                .HasForeignKey(k => k.CategoryId)
+                .IsRequired();
+
+            modelBuilder.Entity<Account>()
+                .HasOne(a => a.User)
+                .WithMany(u => u.Accounts)
+                .HasForeignKey(a => a.UserId)
+                .IsRequired();
+
+            modelBuilder.Entity<Account>()
+                .HasOne(a => a.Currency)
+                .WithMany(c => c.Accounts)
+                .HasForeignKey(a => a.CurrencyCode)
+                .IsRequired();
+
+            modelBuilder.Entity<Transaction>()
+                .HasOne(t => t.Category)
+                .WithMany(c => c.Transactions)
+                .HasForeignKey(t => t.CategoryId)
+                .IsRequired(false);
+
+            modelBuilder.Entity<RecTransaction>()
+                .HasOne(rt => rt.Category)
+                .WithMany(c => c.RecTransactions)
+                .HasForeignKey(rt => rt.CategoryId)
+                .IsRequired();
+            modelBuilder.Entity<Notification>()
+                .HasOne(n => n.User)
+                .WithMany(u => u.Notifications)
+                .HasForeignKey(n => n.UserId)
+                .IsRequired(false);
+
             base.OnModelCreating(modelBuilder);
+
+           
         }
     }
 }

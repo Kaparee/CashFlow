@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.CodeDom.Compiler;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CashFlow.Domain.Models
@@ -6,5 +7,60 @@ namespace CashFlow.Domain.Models
     [Table("categories")]
     public class Category
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Column("category_id")]
+        public int CategoryId { get; set; }
+
+        [Column("user_id")]
+        public int UserId { get; set; }
+
+        [Required]
+        [Column("name")]
+        public required string Name { get; set; }
+
+        [Column("color")]
+        public string? Color { get; set; } = "#808080";
+
+        [Column("icon")]
+        public string? Icon { get; set; }
+
+        [Required]
+        [Column("type")]
+        public required string Type { get; set; }
+
+        [Column("limit_amount")]
+        public decimal? LimitAmount { get; set; }
+
+        [Column("created_at")]
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        [Column("updated_at")]
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+
+        [Column("deleted_at")]
+        public DateTime? DeletedAt { get; set; }
+
+        public required User User { get; set; }
+
+        public required ICollection<KeyWord> KeyWords { get; set; }
+
+        public required ICollection<Transaction> Transactions { get; set; }
+
+        public required ICollection<RecTransaction> RecTransactions { get; set; }
     }
 }
+
+
+//CREATE TABLE Categories (
+//    category_id SERIAL PRIMARY KEY,
+//    user_id INTEGER REFERENCES Users(user_id),
+//    name VARCHAR(50) NOT NULL,
+//    color VARCHAR(20) DEFAULT '#808080',
+//    icon VARCHAR(50),
+//    type VARCHAR(10) NOT NULL CHECK (type IN ('income', 'expense')),
+//    limit_amount NUMERIC(10, 2),
+//    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+//    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+//    deleted_at TIMESTAMP
+//);
