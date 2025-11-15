@@ -1,68 +1,32 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+.bg-secondary {
+    background-color: rgba(222,222, 222, .4) !important;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+#navbar-main .btn-outline-primary {
+    background-color: transparent !important;
+    color: #606060;
+    border: none;
+    transition: color 0.2s ease-in-out;
 }
 
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+    #navbar-main .btn-outline-primary:hover {
+        color: #00A676 !important;
+    }
+
+#navbar-main .btn-check:checked + .btn, #navbar-main .btn.active, #navbar-main .btn.show, #navbar-main .btn:first-child:active, #navbar-main :not(.btn-check) + .btn:active {
+    background: linear-gradient(90deg,rgba(120, 211, 107, 1) 0%, rgba(0, 166, 118, 1) 100%) !important;
+    color: #fff;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+.btn-primary {
+    background: linear-gradient(90deg, rgba(120, 211, 107, 1) 0%, rgba(0, 166, 118, 1) 100%);
+    background-size: 200% 100%;
+    background-position: 0%;
+    transition: background-position 0.2s ease-in-out;
+    color: #fff;
+    border: none;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-}
+    .btn-primary:hover {
+        background-position: 40%;
+    }

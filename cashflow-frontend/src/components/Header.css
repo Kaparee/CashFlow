@@ -1,0 +1,27 @@
+.nav-group {
+
+}
+
+.nav-group-element {
+    text-decoration: none;
+    width: 33%;
+    color: #606060;
+    z-index: 1;
+    transition: color 0.2s ease-in-out;
+}
+
+.nav-group-element.active{
+    color: #fff;
+}
+
+
+.nav-slider {
+    transition: left 0.3s ease-in-out, width 0.3s ease-in-out;
+    display: block;
+/*    width: 35%;*/
+    height: 100%;
+    z-index: 0;
+/*    left: 1%;*/
+    top: 0%;
+    background: linear-gradient(90deg,rgba(120, 211, 107, 1) 0%, rgba(0, 166, 118, 1) 100%) !important;
+}
