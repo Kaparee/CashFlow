@@ -1,39 +1,39 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using CashFlow.Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using CashFlow.Infrastructure.Data;
-using CashFlow.Domain.Models;
+using CashFlow.Application.DTO;
+using System.Linq;
+using System.Threading.Tasks;
 
-[Route("api/[controller]")]
-[ApiController]
-public class UsersController : ControllerBase
+namespace CashFlow.Api.Controllers
 {
-    private readonly CashFlowDbContext _context;
-
-    public UsersController(CashFlowDbContext context)
+    [Route("api/[controller]")]
+    [ApiController]
+    public class UsersController : ControllerBase
     {
-        _context = context;
-    }
+        private readonly IUserService _userService;
 
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<User>>> GetUsers()
-    {
-        // Używamy .Include() i .ThenInclude() do pobrania wszystkich powiązanych danych
-        var users = await _context.Users
-            // Wczytaj kolekcje bezpośrednio powiązane z User
-            .Include(u => u.Accounts)
-                // W ramach Accounts wczytaj walutę każdego konta
-                .ThenInclude(a => a.Currency)
-            .Include(u => u.Categories)
-                // W ramach Categories wczytaj słowa kluczowe (KeyWords)
-                .ThenInclude(c => c.KeyWords)
-            .Include(u => u.KeyWords) // Słowa kluczowe bezpośrednio przypisane do Użytkownika
-            .Include(u => u.Notifications)
-            .Include(u => u.RecTransactions) // Cykliczne transakcje
-                                             // Możesz dodać dalsze .Include() dla innych kolekcji, np. Limits
-            .ToListAsync();
+        public UsersController(IUserService userService)
+        {
+            _userService = userService;
+        }
 
-        return users;
+        [HttpGet("{id}")]
+        public async Task<ActionResult<UserResponse>> GetUser(int id)
+        { 
+            try
+            {
+                var userDto = await _userService.GetUserByIdAsync(id);
+                return Ok(userDto);
+            } catch (Exception ex)
+            {
+                if (ex.Message.Contains("not found"))
+                {
+                    return NotFound();
+                }
+                throw;
+            }
+        }
     }
 }
-

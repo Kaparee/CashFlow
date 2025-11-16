@@ -19,8 +19,8 @@ namespace CashFlow.Infrastructure.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<Limit> Limits { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
-        public DbSet<RecTransaction> Rec_Transactions { get; set; }
-        public DbSet<KeyWord> Key_Words { get; set; }
+        public DbSet<RecTransaction> RecTransactions { get; set; }
+        public DbSet<KeyWord> KeyWords { get; set; }
         public DbSet<Notification> Notifications { get; set; }
 
 
@@ -53,7 +53,7 @@ namespace CashFlow.Infrastructure.Data
                 .HasOne(c => c.User)
                 .WithMany(u => u.Categories)
                 .HasForeignKey(c => c.UserId)
-                .IsRequired(false);
+                .IsRequired();
 
 
             modelBuilder.Entity<KeyWord>()
@@ -78,7 +78,7 @@ namespace CashFlow.Infrastructure.Data
                 .HasOne(t => t.Category)
                 .WithMany(c => c.Transactions)
                 .HasForeignKey(t => t.CategoryId)
-                .IsRequired(false);
+                .IsRequired();
 
             modelBuilder.Entity<RecTransaction>()
                 .HasOne(rt => rt.Category)
@@ -89,8 +89,32 @@ namespace CashFlow.Infrastructure.Data
                 .HasOne(n => n.User)
                 .WithMany(u => u.Notifications)
                 .HasForeignKey(n => n.UserId)
-                .IsRequired(false);
-
+                .IsRequired();
+            modelBuilder.Entity<Transaction>()
+                .HasOne(t => t.User)
+                .WithMany(u => u.Transactions)
+                .HasForeignKey(t => t.UserId)
+                .IsRequired();
+            modelBuilder.Entity<Transaction>()
+                .HasOne(t => t.Account)
+                .WithMany(a => a.Transactions)
+                .HasForeignKey(t => t.AccountId)
+                .IsRequired();
+            modelBuilder.Entity<RecTransaction>()
+                .HasOne(rt => rt.User)
+                .WithMany(u => u.RecTransactions)
+                .HasForeignKey(rt => rt.UserId)
+                .IsRequired();
+            modelBuilder.Entity<RecTransaction>()
+                .HasOne(rt => rt.Account)
+                .WithMany(a => a.RecTransactions)
+                .HasForeignKey(rt => rt.AccountId)
+                .IsRequired();
+            modelBuilder.Entity<Limit>()
+                .HasOne(l => l.Category)
+                .WithMany(c => c.Limits)
+                .HasForeignKey(l => l.CategoryId)
+                .IsRequired();
             base.OnModelCreating(modelBuilder);
 
            

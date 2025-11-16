@@ -27,7 +27,7 @@ namespace CashFlow.Domain.Models
         public DateTime? LastUpdated { get; set; } = DateTime.UtcNow;
 
 
-        public required ICollection<Account> Accounts { get; set; }
+        public ICollection<Account> Accounts { get; set; } = new List<Account>();
     }
 }
 

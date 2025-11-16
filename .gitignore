@@ -79,3 +79,19 @@ cashflow-frontend/*.test.*
 npm-debug.log*
 yarn-debug.log*
 pnpm-debug.log*
+
+
+# Pliki generowane przez Visual Studio i .NET
+#############################################
+# Binaries
+[Dd]ebug/
+[Rr]elease/
+**/bin/
+**/obj/
+
+# Visual Studio files
+.vs/
+*.user
+*.suo
+*.sln.docstates
+*.wsuo

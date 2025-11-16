@@ -37,7 +37,7 @@ namespace CashFlow.Domain.Models
         [Column("deleted_at")]
         public DateTime? DeletedAt { get; set; }
 
-        public required Category Category { get; set; }
+        public Category Category { get; set; } = null!;
 
     }
 }
