@@ -35,8 +35,5 @@ namespace CashFlow.Api.Controllers
                 throw;
             }
         }
-
-        [HttpPost]
-
     }
 }
