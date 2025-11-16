@@ -12,8 +12,9 @@ namespace CashFlow.Domain.Models
         [Column("category_id")]
         public int CategoryId { get; set; }
 
+        [Required]
         [Column("user_id")]
-        public int UserId { get; set; }
+        public required int UserId { get; set; }
 
         [Required]
         [Column("name")]
@@ -41,13 +42,15 @@ namespace CashFlow.Domain.Models
         [Column("deleted_at")]
         public DateTime? DeletedAt { get; set; }
 
-        public required User User { get; set; }
+        public User User { get; set; } = null!;
 
-        public required ICollection<KeyWord> KeyWords { get; set; }
+        public ICollection<KeyWord> KeyWords { get; set; } = new List<KeyWord>();
 
-        public required ICollection<Transaction> Transactions { get; set; }
+        public ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
 
-        public required ICollection<RecTransaction> RecTransactions { get; set; }
+        public ICollection<RecTransaction> RecTransactions { get; set; } = new List<RecTransaction>();
+
+        public ICollection<Limit> Limits { get; set; } = new List<Limit>();
     }
 }
 

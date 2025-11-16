@@ -1,0 +1,16 @@
+D:\VisualStudio\repos\CashFlow\cashflow-backend\CashFlow.Application\bin\Debug\net8.0\CashFlow.Application.deps.json
+D:\VisualStudio\repos\CashFlow\cashflow-backend\CashFlow.Application\bin\Debug\net8.0\CashFlow.Application.dll
+D:\VisualStudio\repos\CashFlow\cashflow-backend\CashFlow.Application\bin\Debug\net8.0\CashFlow.Application.pdb
+D:\VisualStudio\repos\CashFlow\cashflow-backend\CashFlow.Application\obj\Debug\net8.0\CashFlow.Application.GeneratedMSBuildEditorConfig.editorconfig
+D:\VisualStudio\repos\CashFlow\cashflow-backend\CashFlow.Application\obj\Debug\net8.0\CashFlow.Application.AssemblyInfoInputs.cache
+D:\VisualStudio\repos\CashFlow\cashflow-backend\CashFlow.Application\obj\Debug\net8.0\CashFlow.Application.AssemblyInfo.cs
+D:\VisualStudio\repos\CashFlow\cashflow-backend\CashFlow.Application\obj\Debug\net8.0\CashFlow.Application.csproj.CoreCompileInputs.cache
+D:\VisualStudio\repos\CashFlow\cashflow-backend\CashFlow.Application\obj\Debug\net8.0\CashFlow.Application.sourcelink.json
+D:\VisualStudio\repos\CashFlow\cashflow-backend\CashFlow.Application\obj\Debug\net8.0\CashFlow.Application.dll
+D:\VisualStudio\repos\CashFlow\cashflow-backend\CashFlow.Application\obj\Debug\net8.0\refint\CashFlow.Application.dll
+D:\VisualStudio\repos\CashFlow\cashflow-backend\CashFlow.Application\obj\Debug\net8.0\CashFlow.Application.pdb
+D:\VisualStudio\repos\CashFlow\cashflow-backend\CashFlow.Application\obj\Debug\net8.0\ref\CashFlow.Application.dll
+D:\VisualStudio\repos\CashFlow\cashflow-backend\CashFlow.Application\bin\Debug\net8.0\CashFlow.Domain.dll
+D:\VisualStudio\repos\CashFlow\cashflow-backend\CashFlow.Application\bin\Debug\net8.0\CashFlow.Domain.pdb
+D:\VisualStudio\repos\CashFlow\cashflow-backend\CashFlow.Application\obj\Debug\net8.0\CashFlow.Application.csproj.AssemblyReference.cache
+D:\VisualStudio\repos\CashFlow\cashflow-backend\CashFlow.Application\obj\Debug\net8.0\CashFlow.7372E909.Up2Date

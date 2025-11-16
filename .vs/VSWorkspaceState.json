@@ -1,0 +1,17 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\cashflow-backend",
+    "\\cashflow-backend\\CashFlow.Api",
+    "\\cashflow-backend\\CashFlow.Api\\Controllers",
+    "\\cashflow-backend\\CashFlow.Api\\DTO",
+    "\\cashflow-backend\\CashFlow.Domain",
+    "\\cashflow-backend\\CashFlow.Domain\\Models",
+    "\\cashflow-backend\\CashFlow.Infrastructure",
+    "\\cashflow-backend\\CashFlow.Infrastructure\\Data",
+    "\\cashflow-frontend\\src",
+    "\\cashflow-frontend\\src\\pages"
+  ],
+  "SelectedNode": "\\cashflow-backend\\CashFlow.Infrastructure\\Data\\CashFlowDbContext.cs",
+  "PreviewInSolutionExplorer": false
+}

@@ -44,14 +44,13 @@ namespace CashFlow.Domain.Models
         public DateTime? DeletedAt { get; set; }
 
 
+        public User User { get; set; } = null!;
 
-        public required User User { get; set; }
+        public Currency Currency { get; set; } = null!;
 
-        public required Currency Currency { get; set; } 
-        
-        public required ICollection<Transaction> Transactions { get; set; }
+        public ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
 
-        public required ICollection<RecTransaction> RecTransactions { get; set; }
+        public ICollection<RecTransaction> RecTransactions { get; set; } = new List<RecTransaction>();
     }
 }
 

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Collections.Generic;
 
 namespace CashFlow.Domain.Models
 {
@@ -50,15 +51,17 @@ namespace CashFlow.Domain.Models
         [Column("deleted_at")]
         public DateTime? DeletedAt { get; set; }
 
-        public required ICollection<Account> Accounts { get; set; }
+        public ICollection<Account> Accounts { get; set; } = new List<Account>();
 
-        public required ICollection<KeyWord> KeyWords { get; set; }
+        public ICollection<KeyWord> KeyWords { get; set; } = new List<KeyWord>();
 
-        public required ICollection<Category> Categories { get; set; }
+        public ICollection<Category> Categories { get; set; } = new List<Category>();
 
-        public required ICollection<Notification> Notifications { get; set; }
+        public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
 
-        public required ICollection<RecTransaction> RecTransactions { get; set; }
+        public ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
+
+        public ICollection<RecTransaction> RecTransactions { get; set; } = new List<RecTransaction>();
     }
 }
 
