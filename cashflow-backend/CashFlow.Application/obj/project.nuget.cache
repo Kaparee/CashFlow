@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "fpgQ2IzFANk=",
+  "dgSpecHash": "Psg6G2FutjM=",
   "success": true,
-  "projectFilePath": "D:\\VisualStudio\\repos\\CashFlow\\CashFlow-backend\\CashFlow.Application\\CashFlow.Application.csproj",
+  "projectFilePath": "D:\\VisualStudio\\repos\\CashFlow\\cashflow-backend\\CashFlow.Application\\CashFlow.Application.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\kubap\\.nuget\\packages\\microsoft.entityframeworkcore\\8.0.0\\microsoft.entityframeworkcore.8.0.0.nupkg.sha512",
     "C:\\Users\\kubap\\.nuget\\packages\\microsoft.entityframeworkcore.abstractions\\8.0.0\\microsoft.entityframeworkcore.abstractions.8.0.0.nupkg.sha512",

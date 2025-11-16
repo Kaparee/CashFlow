@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\VisualStudio\\repos\\CashFlow\\CashFlow-backend\\CashFlow.Application\\CashFlow.Application.csproj": {}
+    "D:\\VisualStudio\\repos\\CashFlow\\cashflow-backend\\CashFlow.Application\\CashFlow.Application.csproj": {}
   },
   "projects": {
-    "D:\\VisualStudio\\repos\\CashFlow\\CashFlow-backend\\CashFlow.Application\\CashFlow.Application.csproj": {
+    "D:\\VisualStudio\\repos\\CashFlow\\cashflow-backend\\CashFlow.Application\\CashFlow.Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\VisualStudio\\repos\\CashFlow\\CashFlow-backend\\CashFlow.Application\\CashFlow.Application.csproj",
+        "projectUniqueName": "D:\\VisualStudio\\repos\\CashFlow\\cashflow-backend\\CashFlow.Application\\CashFlow.Application.csproj",
         "projectName": "CashFlow.Application",
-        "projectPath": "D:\\VisualStudio\\repos\\CashFlow\\CashFlow-backend\\CashFlow.Application\\CashFlow.Application.csproj",
+        "projectPath": "D:\\VisualStudio\\repos\\CashFlow\\cashflow-backend\\CashFlow.Application\\CashFlow.Application.csproj",
         "packagesPath": "C:\\Users\\kubap\\.nuget\\packages\\",
-        "outputPath": "D:\\VisualStudio\\repos\\CashFlow\\CashFlow-backend\\CashFlow.Application\\obj\\",
+        "outputPath": "D:\\VisualStudio\\repos\\CashFlow\\cashflow-backend\\CashFlow.Application\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -32,8 +32,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "D:\\VisualStudio\\repos\\CashFlow\\CashFlow-backend\\CashFlow.Domain\\CashFlow.Domain.csproj": {
-                "projectPath": "D:\\VisualStudio\\repos\\CashFlow\\CashFlow-backend\\CashFlow.Domain\\CashFlow.Domain.csproj"
+              "D:\\VisualStudio\\repos\\CashFlow\\cashflow-backend\\CashFlow.Domain\\CashFlow.Domain.csproj": {
+                "projectPath": "D:\\VisualStudio\\repos\\CashFlow\\cashflow-backend\\CashFlow.Domain\\CashFlow.Domain.csproj"
               }
             }
           }
@@ -73,14 +73,14 @@
         }
       }
     },
-    "D:\\VisualStudio\\repos\\CashFlow\\CashFlow-backend\\CashFlow.Domain\\CashFlow.Domain.csproj": {
+    "D:\\VisualStudio\\repos\\CashFlow\\cashflow-backend\\CashFlow.Domain\\CashFlow.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\VisualStudio\\repos\\CashFlow\\CashFlow-backend\\CashFlow.Domain\\CashFlow.Domain.csproj",
+        "projectUniqueName": "D:\\VisualStudio\\repos\\CashFlow\\cashflow-backend\\CashFlow.Domain\\CashFlow.Domain.csproj",
         "projectName": "CashFlow.Domain",
-        "projectPath": "D:\\VisualStudio\\repos\\CashFlow\\CashFlow-backend\\CashFlow.Domain\\CashFlow.Domain.csproj",
+        "projectPath": "D:\\VisualStudio\\repos\\CashFlow\\cashflow-backend\\CashFlow.Domain\\CashFlow.Domain.csproj",
         "packagesPath": "C:\\Users\\kubap\\.nuget\\packages\\",
-        "outputPath": "D:\\VisualStudio\\repos\\CashFlow\\CashFlow-backend\\CashFlow.Domain\\obj\\",
+        "outputPath": "D:\\VisualStudio\\repos\\CashFlow\\cashflow-backend\\CashFlow.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
