@@ -11,8 +11,9 @@ namespace CashFlow.Domain.Models
         [Column("notification_id")]
         public int NotificationId { get; set; }
 
+        [Required]
         [Column("user_id")]
-        public int UserId { get; set; }
+        public required int UserId { get; set; }
 
         [Required]
         [Column("email")]
@@ -38,7 +39,7 @@ namespace CashFlow.Domain.Models
         [Column("deleted_at")]
         public DateTime? DeletedAt { get; set; }
 
-        public required User User { get; set; }
+        public User User { get; set; } = null!;
     }
 }
 
