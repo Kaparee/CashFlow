@@ -1,15 +1,19 @@
-import React from 'react';
+ï»¿import React from 'react';
+import Header from '../components/Header.tsx'
 
 const HomePage: React.FC = () => {
     return (
-        <div className="homepage-container">
-            <h1>?? Witaj w CashFlow - Zarz¹dzaj Swoim Bud¿etem!</h1>
-            <p>
-                Osi¹gnij swoje cele finansowe dziêki naszej intuicyjnej aplikacji. Strona g³ówna ma za zadanie
-                opisaæ, co u¿ytkownik mo¿e osi¹gn¹æ, oraz zachêcaæ do rejestracji.
-            </p>
-
-        </div>
+        <>
+            <div id='navbar-main' className='container-fluid'>
+                <Header />
+            </div>
+            <div className='container'>
+                <p>cwel</p>
+            </div>
+            <div className='container-fluid'>
+                <p>cwel</p>
+            </div>
+        </>
     );
 };
 
