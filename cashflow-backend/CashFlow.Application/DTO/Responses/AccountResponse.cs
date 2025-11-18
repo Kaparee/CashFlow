@@ -1,4 +1,4 @@
-namespace CashFlow.Application.DTO
+namespace CashFlow.Application.DTO.Responses
 {
     public class AccountResponse
     {

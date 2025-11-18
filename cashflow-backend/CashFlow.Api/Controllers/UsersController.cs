@@ -2,7 +2,8 @@
 using CashFlow.Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using CashFlow.Infrastructure.Data;
-using CashFlow.Application.DTO;
+using CashFlow.Application.DTO.Requests;
+using CashFlow.Application.DTO.Responses;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -33,6 +34,20 @@ namespace CashFlow.Api.Controllers
                     return NotFound();
                 }
                 throw;
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RegisterUser([FromBody]RegisterRequest request)
+        {
+            try
+            {
+                var token = await _userService.RegisterAsync(request);
+                return Created(string.Empty, token);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(409, ex.Message);
             }
         }
     }

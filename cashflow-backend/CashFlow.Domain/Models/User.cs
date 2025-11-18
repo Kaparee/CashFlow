@@ -40,7 +40,7 @@ namespace CashFlow.Domain.Models
         public required bool IsAdmin { get; set; } = false;
 
         [Column("photo_url")]
-        public string? PhotoUrl { get; set; }
+        public string? PhotoUrl { get; set; } = "default_user_url";
 
         [Column("created_at")]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

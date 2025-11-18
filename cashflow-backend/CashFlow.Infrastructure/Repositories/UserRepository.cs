@@ -32,5 +32,17 @@ namespace CashFlow.Infrastructure.Repositories
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<bool> IsEmailTakenAsync(string email)
+        {
+            return await _context.Users
+            .AnyAsync(u => u.Email == email);
+        }
+
+        public async Task<bool> IsNicknameTakenAsync(string nickname)
+        {
+            return await _context.Users
+            .AnyAsync(u => u.Nickname == nickname);
+        }
     }
 }

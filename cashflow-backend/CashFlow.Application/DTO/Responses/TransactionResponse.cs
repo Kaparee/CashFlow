@@ -1,6 +1,6 @@
 using System;
 
-namespace CashFlow.Application.DTO
+namespace CashFlow.Application.DTO.Responses
 {
     public class TransactionResponse
     {
