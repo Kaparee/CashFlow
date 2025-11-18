@@ -50,5 +50,19 @@ namespace CashFlow.Api.Controllers
                 return StatusCode(409, ex.Message);
             }
         }
+
+        [HttpPost("login")]
+        public async Task<ActionResult<LoginResponse>> LoginUser([FromBody]LoginRequest request)
+        {
+            try
+            {
+                var token = await _userService.LoginAsync(request);
+                return Ok(token);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(409, ex.Message);
+            }
+        }
     }
 }

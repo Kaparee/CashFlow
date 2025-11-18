@@ -3,16 +3,19 @@ using CashFlow.Application.Repositories;
 using CashFlow.Domain.Models;
 using CashFlow.Application.DTO.Requests;
 using CashFlow.Application.DTO.Responses;
+using BCrypt.Net;
 
 namespace CashFlow.Application.Services
 {
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly IJWTService _jwtService;
 
-        public UserService(IUserRepository userRepository)
+        public UserService(IUserRepository userRepository, IJWTService jwtService)
         {
             _userRepository = userRepository;
+            _jwtService = jwtService;
         }
 
         public async Task<UserResponse> GetUserByIdAsync(int userId)
@@ -111,19 +114,38 @@ namespace CashFlow.Application.Services
                 throw new Exception($"Given email or nickname is taken!");
             }
 
+            string passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
+
             var newUser = new User
             {
                 FirstName = request.FirstName!,
                 LastName = request.LastName!,
                 Email = request.Email!,
                 Nickname = request.Nickname!,
-                PasswordHash = request.Password!,
+                PasswordHash = passwordHash,
                 IsAdmin = false,
                 IsActive = true
             };
 
             await _userRepository.AddAsync(newUser);
-            return "2137" + newUser.Nickname;
+
+            return "2137" + request.Nickname;
+        }
+
+        public async Task<LoginResponse> LoginAsync(LoginRequest request)
+        {
+            var user = await _userRepository.Exists(request.EmailOrNickname!);
+            
+            if (user is null) { throw new Exception("User does not exist!"); }
+
+            if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash)) { throw new Exception("Password is invalid!"); }
+
+            var token =  _jwtService.GenerateToken(user);
+
+            LoginResponse response = new LoginResponse();
+            response.Token = token;
+
+            return response;
         }
     }
 }

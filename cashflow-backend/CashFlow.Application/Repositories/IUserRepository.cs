@@ -8,5 +8,6 @@ namespace CashFlow.Application.Repositories
         Task<bool> IsEmailTakenAsync(string email);
         Task<bool> IsNicknameTakenAsync(string nickname);
         Task AddAsync(User user);
+        Task<User?> Exists(string emailOrNickname);
     }
 }

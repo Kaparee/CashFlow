@@ -2,6 +2,7 @@ using CashFlow.Application.Repositories;
 using CashFlow.Domain.Models;
 using CashFlow.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Query.ExpressionTranslators.Internal;
 
 namespace CashFlow.Infrastructure.Repositories
 {
@@ -17,14 +18,14 @@ namespace CashFlow.Infrastructure.Repositories
         public async Task<User?> GetUserByIdWithDetailsAsync(int userId)
         {
             return await _context.Users
-        .Include(u => u.Accounts)
+            .Include(u => u.Accounts)
             .ThenInclude(a => a.Currency)
-        .Include(u => u.Categories)
+            .Include(u => u.Categories)
             .ThenInclude(c => c.KeyWords)
-        .Include(u => u.Transactions)
-        .Include(u => u.RecTransactions)
-        .Include(u => u.Notifications)
-        .FirstOrDefaultAsync(u => u.UserId == userId);
+            .Include(u => u.Transactions)
+            .Include(u => u.RecTransactions)
+            .Include(u => u.Notifications)
+            .FirstOrDefaultAsync(u => u.UserId == userId);
         }
 
         public async Task AddAsync(User user)
@@ -43,6 +44,17 @@ namespace CashFlow.Infrastructure.Repositories
         {
             return await _context.Users
             .AnyAsync(u => u.Nickname == nickname);
+        }
+
+        public async Task<User?> Exists(string emailOrNickname)
+        {
+            var identifier = emailOrNickname.ToLower();
+            var user = await _context.Users
+            .FirstOrDefaultAsync(u =>
+                (u.Email != null && u.Email.ToLower() == identifier) ||
+                (u.Nickname != null && u.Nickname.ToLower() == identifier)
+            );
+            return user;
         }
     }
 }
