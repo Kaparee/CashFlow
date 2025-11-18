@@ -103,8 +103,8 @@ namespace CashFlow.Application.Services
 
         public async Task<string> RegisterAsync(RegisterRequest request)
         {
-            var isEmailTaken = await _userRepository.IsEmailTakenAsync(request.Email);
-            var isNicknameTaken = await _userRepository.IsNicknameTakenAsync(request.Nickname);
+            var isEmailTaken = await _userRepository.IsEmailTakenAsync(request.Email!);
+            var isNicknameTaken = await _userRepository.IsNicknameTakenAsync(request.Nickname!);
 
             if (isEmailTaken == true || isNicknameTaken == true)
             {
@@ -113,11 +113,11 @@ namespace CashFlow.Application.Services
 
             var newUser = new User
             {
-                FirstName = request.FirstName,
-                LastName = request.LastName,
-                Email = request.Email,
-                Nickname = request.Nickname,
-                PasswordHash = request.Password,
+                FirstName = request.FirstName!,
+                LastName = request.LastName!,
+                Email = request.Email!,
+                Nickname = request.Nickname!,
+                PasswordHash = request.Password!,
                 IsAdmin = false,
                 IsActive = true
             };

@@ -3,10 +3,10 @@ namespace CashFlow.Application.DTO.Responses
     public class UserResponse
     {
         public int UserId { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Nickname { get; set; }
-        public string Email { get; set; }
+        public required string FirstName { get; set; }
+        public required string LastName { get; set; }
+        public required string Nickname { get; set; }
+        public required string Email { get; set; }
         public string? PhotoUrl { get; set; }
 
         public bool IsActive { get; set; }
