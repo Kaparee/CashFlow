@@ -7,5 +7,6 @@ namespace CashFlow.Application.Interfaces
 	{
 		Task<UserResponse> GetUserByIdAsync(int userId);
         Task<string> RegisterAsync(RegisterRequest request);
+		Task<LoginResponse> LoginAsync(LoginRequest request);
     }
 }
