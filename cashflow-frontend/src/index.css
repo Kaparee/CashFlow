@@ -1,7 +1,28 @@
-.bg-secondary {
-    background-color: rgba(222,222, 222, .4) !important;
+/* OTHER */
+body {
+    scrollbar-width: none !important;
+    font-family: 'Jost', sans-serif;
+}
+    body::-webkit-scrollbar, html::-webkit-scrollbar {
+        width: 0;
+        height: 0;
+        display: none;
+    }
+.transition {
+    transition: all 0.2s ease-in-out;
+}
+.w-70 {
+    width: 70%;
+}
+.w-80 {
+    width: 80;
+}
+.temp {
+    height: 300px
 }
 
+
+/* NAVBAR */
 #navbar-main .btn-outline-primary {
     background-color: transparent !important;
     color: #606060;
@@ -18,6 +39,7 @@
     color: #fff;
 }
 
+/* BUTTONS */
 .btn-primary {
     background: linear-gradient(90deg, rgba(120, 211, 107, 1) 0%, rgba(0, 166, 118, 1) 100%);
     background-size: 200% 100%;
@@ -31,11 +53,24 @@
         background-position: 40%;
     }
 
+/* BORDERS */
 .border-gradient {
     border-image-source: linear-gradient(90deg,rgba(120, 211, 107, 1) 0%, rgba(0, 166, 118, 1) 100%);
     border-image-slice: 30;
 }
 
-.transition {
-    transition: all 0.2s ease-in-out;
+/* BACKGROUNDS */
+.bg-secondary {
+    background-color: rgba(222,222, 222, .4) !important;
+}
+
+/* TEXT */
+.text-gradient {
+    color: transparent;
+    background: linear-gradient(90deg,rgba(0, 166, 118, 1) 0%, rgba(120, 211, 107, 1) 70%);
+    -webkit-background-clip: text;
+}
+
+.text-secondary {
+    color: #454545 !important;
 }

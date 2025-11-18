@@ -1,7 +1,6 @@
 ﻿import React, { useState, useRef, useEffect, useCallback } from 'react'
-import logo from '../assets/logo.svg'
+import logo from '../../assets/logo.svg'
 import './Header.css'
-import { Link } from 'react-router-dom';
 
 const Header: React.FC = () => {
 
@@ -51,7 +50,7 @@ const Header: React.FC = () => {
 
     return (
         <div className={`row align-items-center text-center p-3 fixed-top transition ${isScrolled ? 'scrolled-header mx-3 mt-2 shadow rounded-4' : 'bg-white'}`}>
-            <div className='offset-1 col-2 d-flex justify-content-center align-items-center'>
+            <div className='col-3 d-flex justify-content-center align-items-center'>
                 <a href='/'><img src={logo} className='img-fluid' alt='Logo CashFlow' /></a>
             </div>
             <div className='col-6 d-flex align-items-end justify-content-center'>
