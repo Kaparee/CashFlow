@@ -1,6 +1,8 @@
 using CashFlow.Application.Interfaces;
 using CashFlow.Application.Repositories;
-using CashFlow.Application.DTO;
+using CashFlow.Domain.Models;
+using CashFlow.Application.DTO.Requests;
+using CashFlow.Application.DTO.Responses;
 
 namespace CashFlow.Application.Services
 {
@@ -97,6 +99,31 @@ namespace CashFlow.Application.Services
                     Status = n.Status
                 }).ToList(),
             };
+        }
+
+        public async Task<string> RegisterAsync(RegisterRequest request)
+        {
+            var isEmailTaken = await _userRepository.IsEmailTakenAsync(request.Email);
+            var isNicknameTaken = await _userRepository.IsNicknameTakenAsync(request.Nickname);
+
+            if (isEmailTaken == true || isNicknameTaken == true)
+            {
+                throw new Exception($"Given email or nickname is taken!");
+            }
+
+            var newUser = new User
+            {
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                Email = request.Email,
+                Nickname = request.Nickname,
+                PasswordHash = request.Password,
+                IsAdmin = false,
+                IsActive = true
+            };
+
+            await _userRepository.AddAsync(newUser);
+            return "2137" + newUser.Nickname;
         }
     }
 }
