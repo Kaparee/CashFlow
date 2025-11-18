@@ -30,3 +30,12 @@
     .btn-primary:hover {
         background-position: 40%;
     }
+
+.border-gradient {
+    border-image-source: linear-gradient(90deg,rgba(120, 211, 107, 1) 0%, rgba(0, 166, 118, 1) 100%);
+    border-image-slice: 30;
+}
+
+.transition {
+    transition: all 0.2s ease-in-out;
+}
