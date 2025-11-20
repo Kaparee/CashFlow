@@ -104,7 +104,7 @@ namespace CashFlow.Application.Services
             };
         }
 
-        public async Task<string> RegisterAsync(RegisterRequest request)
+        public async Task RegisterAsync(RegisterRequest request)
         {
             var isEmailTaken = await _userRepository.IsEmailTakenAsync(request.Email!);
             var isNicknameTaken = await _userRepository.IsNicknameTakenAsync(request.Nickname!);
@@ -128,8 +128,6 @@ namespace CashFlow.Application.Services
             };
 
             await _userRepository.AddAsync(newUser);
-
-            return "2137" + request.Nickname;
         }
 
         public async Task<LoginResponse> LoginAsync(LoginRequest request)
