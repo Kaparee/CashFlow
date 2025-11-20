@@ -1,23 +1,28 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using CashFlow.Application.DTO.Responses;
+using CashFlow.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using CashFlow.Infrastructure.Data;
-using CashFlow.Domain.Models;
 
 [Route("api/[controller]")]
 [ApiController]
-
 public class CurrencyController : ControllerBase
 {
-    private readonly CashFlowDbContext _context;
-    public CurrencyController(CashFlowDbContext context)
+    private readonly ICurrencyFetcher _currencyFetcher;
+
+    public CurrencyController(ICurrencyFetcher currencyFetcher)
     {
-        _context = context;
+        _currencyFetcher = currencyFetcher;
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Currency>>> GetCurrencies()
+    public async Task<ActionResult<IEnumerable<CurrencyResponse>>> GetCurrencies()
     {
-        return await _context.Currencies.ToListAsync();
+        return null!;
+    }
+
+    [HttpPost("NBP")]
+    public async Task<IActionResult> TestNbp()
+    {
+        var rates = await _currencyFetcher.FetchRatesAsync();
+        return Ok(rates);
     }
 }

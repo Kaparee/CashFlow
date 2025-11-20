@@ -3,6 +3,7 @@ using CashFlow.Application.Repositories;
 using CashFlow.Application.Services;
 using CashFlow.Infrastructure.Data;
 using CashFlow.Infrastructure.Repositories;
+using CashFlow.Infrastructure.ExternalServices;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
@@ -62,6 +63,8 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IJWTService, JWTService>();
+
+builder.Services.AddHttpClient<ICurrencyFetcher, CurrencyFetcher>();
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secret = jwtSettings["Secret"];
