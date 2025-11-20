@@ -6,26 +6,31 @@ using CashFlow.Application.DTO.Requests;
 using CashFlow.Application.DTO.Responses;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace CashFlow.Api.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
 
+        private int CurrentUserId => int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+
         public UsersController(IUserService userService)
         {
             _userService = userService;
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<UserResponse>> GetUser(int id)
+        [HttpGet]
+        public async Task<ActionResult<UserResponse>> GetUser()
         { 
             try
             {
-                var userDto = await _userService.GetUserByIdAsync(id);
+                var userDto = await _userService.GetUserByIdAsync(CurrentUserId);
                 return Ok(userDto);
             } catch (Exception ex)
             {
@@ -38,20 +43,28 @@ namespace CashFlow.Api.Controllers
         }
 
         [HttpPost]
+        [Route("register")]
+        [AllowAnonymous]
         public async Task<IActionResult> RegisterUser([FromBody]RegisterRequest request)
         {
             try
             {
-                var token = await _userService.RegisterAsync(request);
-                return Created(string.Empty, token);
+                await _userService.RegisterAsync(request);
+                return Created();
             }
             catch (Exception ex)
             {
-                return StatusCode(409, ex.Message);
+                if (ex.Message.Contains("email or nickname is taken"))
+                {
+                    return Conflict(new { message = ex.Message });
+                }
+                return StatusCode(500, new { message = "An internal server error occured" });
             }
         }
 
-        [HttpPost("login")]
+        [HttpPost]
+        [Route("login")]
+        [AllowAnonymous]
         public async Task<ActionResult<LoginResponse>> LoginUser([FromBody]LoginRequest request)
         {
             try
@@ -59,9 +72,9 @@ namespace CashFlow.Api.Controllers
                 var token = await _userService.LoginAsync(request);
                 return Ok(token);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return StatusCode(409, ex.Message);
+                return Unauthorized(new { message = "Invalid credentials." });
             }
         }
     }
