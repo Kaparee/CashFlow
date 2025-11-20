@@ -20,7 +20,7 @@ namespace CashFlow.Domain.Models
         [Column("name")]
         public required string Name { get; set; }
 
-        [Column("balance", TypeName = "decimal(10,2)")]
+        [Column("balance", TypeName = "decimal(22,2)")]
         public decimal Balance { get; set; } = 0.00m;
 
         [Required]
