@@ -12,7 +12,7 @@ using System.Security.Claims;
 namespace CashFlow.Api.Controllers
 {
     [Authorize]
-    [Route("api/[controller]")]
+    [Route("api/")]
     [ApiController]
     public class UsersController : ControllerBase
     {

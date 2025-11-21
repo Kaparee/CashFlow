@@ -19,7 +19,7 @@ namespace CashFlow.Application.Validators
                 .Matches("(?=.*[A-Z])")
                 .WithMessage("Has³o musi zawieraæ przynajmniej jedn¹ du¿¹ literê.");
             RuleFor(request => request.Password)
-                .Matches("(?=.*[!@#$%^&*-_])")
+                .Matches(@"(?=.*[!@#$%^&*_\-])")
                 .WithMessage("Has³o musi zawieraæ przynajmniej jeden znak specjalny.");
 
             RuleFor(request => request.Email).NotEmpty().EmailAddress();
