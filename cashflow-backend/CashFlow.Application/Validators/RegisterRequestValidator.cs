@@ -11,16 +11,16 @@ namespace CashFlow.Application.Validators
             RuleFor(request => request.Password).MinimumLength(8);
             RuleFor(request => request.Password)
                 .Matches("(?=.*\\d)")
-                .WithMessage("Has³o musi zawieraæ przynajmniej jedn¹ cyfrê.");
+                .WithMessage("Password must contain at least one number.");
             RuleFor(request => request.Password)
                 .Matches("(?=.*[a-z])")
-                .WithMessage("Has³o musi zawieraæ przynajmniej jedn¹ ma³¹ literê.");
+                .WithMessage("Password must contain at least one small letter.");
             RuleFor(request => request.Password)
                 .Matches("(?=.*[A-Z])")
-                .WithMessage("Has³o musi zawieraæ przynajmniej jedn¹ du¿¹ literê.");
+                .WithMessage("Password must contain at least one big letter.");
             RuleFor(request => request.Password)
                 .Matches(@"(?=.*[!@#$%^&*_\-])")
-                .WithMessage("Has³o musi zawieraæ przynajmniej jeden znak specjalny.");
+                .WithMessage("Password must contain at least one special character.");
 
             RuleFor(request => request.Email).NotEmpty().EmailAddress();
 

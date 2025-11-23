@@ -61,8 +61,10 @@ builder.Services.AddValidatorsFromAssemblyContaining<IUserService>();
 builder.Services.AddControllers();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IJWTService, JWTService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
 
 builder.Services.AddHttpClient<ICurrencyFetcher, CurrencyFetcher>();
 

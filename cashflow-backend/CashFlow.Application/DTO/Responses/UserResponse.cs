@@ -15,17 +15,5 @@ namespace CashFlow.Application.DTO.Responses
 
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
-
-        public ICollection<AccountResponse> Accounts { get; set; } = new List<AccountResponse>();
-
-        public ICollection<CategoryResponse> Categories { get; set; } = new List<CategoryResponse>();
-
-        public ICollection<TransactionResponse> Transactions { get; set; } = new List<TransactionResponse>();
-
-        public ICollection<RecTransactionResponse> RecTransactions { get; set; } = new List<RecTransactionResponse>();
-
-        public ICollection<NotificationResponse> Notifications { get; set; } = new List<NotificationResponse>();
-
-        public ICollection<KeyWordResponse> KeyWords { get; set; } = new List<KeyWordResponse>();
     }
 }

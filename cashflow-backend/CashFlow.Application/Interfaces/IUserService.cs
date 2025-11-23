@@ -5,8 +5,9 @@ namespace CashFlow.Application.Interfaces
 {
 	public interface IUserService
 	{
-		Task<UserResponse> GetUserByIdAsync(int userId);
-        Task RegisterAsync(RegisterRequest request);
+		Task RegisterAsync(RegisterRequest request);
 		Task<LoginResponse> LoginAsync(LoginRequest request);
+		Task<UserResponse> GetUserByIdAsync(int userId);
+		Task<List<AccountResponse>> GetUserAccounts(int userId);
     }
 }
