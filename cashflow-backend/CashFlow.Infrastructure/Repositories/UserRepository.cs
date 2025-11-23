@@ -18,14 +18,14 @@ namespace CashFlow.Infrastructure.Repositories
         public async Task<User?> GetUserByIdWithDetailsAsync(int userId)
         {
             return await _context.Users
-            .Include(u => u.Accounts)
-            .ThenInclude(a => a.Currency)
-            .Include(u => u.Categories)
-            .ThenInclude(c => c.KeyWords)
-            .Include(u => u.Transactions)
-            .Include(u => u.RecTransactions)
-            .Include(u => u.Notifications)
             .FirstOrDefaultAsync(u => u.UserId == userId);
+        }
+
+        public async Task<List<Account>> GetUserAccountsWithDetailsAsync(int userId)
+        {
+            return await _context.Accounts
+                .Where(u => u.UserId == userId && u.IsActive == true)
+                .ToListAsync();
         }
 
         public async Task AddAsync(User user)
