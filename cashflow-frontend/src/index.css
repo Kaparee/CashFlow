@@ -17,6 +17,9 @@ body {
 .w-80 {
     width: 80;
 }
+.scroll-mt {
+    scroll-margin-top: 9rem;
+}
 .temp {
     height: 300px
 }
@@ -63,12 +66,15 @@ body {
 .bg-secondary {
     background-color: rgba(222,222, 222, .4) !important;
 }
+.bg-black {
+    background-color: #171717 !important;
+}
 
 /* TEXT */
 .text-gradient {
     color: transparent;
-    background: linear-gradient(90deg,rgba(0, 166, 118, 1) 0%, rgba(120, 211, 107, 1) 70%);
-    -webkit-background-clip: text;
+    background: linear-gradient(90deg,rgba(0, 166, 118, 1) 0%, rgba(120, 211, 107, 1) 50%);
+    -webkit-background-clip: text
 }
 
 .text-secondary {

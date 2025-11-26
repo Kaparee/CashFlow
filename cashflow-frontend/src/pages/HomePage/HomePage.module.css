@@ -1,13 +1,8 @@
-.bgHero {
-    background: radial-gradient(circle at 90% 100%,rgba(0, 205, 146, 1) -40%, rgba(120, 211, 107, 1) 15%, transparent 40%);
+.bgFeatures {
+    background: radial-gradient(circle at 90% 0%,rgba(0, 205, 146, 1) -40%, rgba(120, 211, 107, 1) 15%, transparent 40%);
     min-height: 100vh;
 }
 
-.heroHeading {
-    font-size: 5rem;
-}
-
-.staszekTemp {
-    width: 130px;
-    height: 130px;
+.smoothScroll {
+    scroll-behavior: smooth;
 }
