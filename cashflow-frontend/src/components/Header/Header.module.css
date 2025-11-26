@@ -1,4 +1,4 @@
-.nav-group-element {
+.navGroupElement {
     text-decoration: none;
     width: 33%;
     color: #606060;
@@ -6,12 +6,7 @@
     transition: color 0.2s ease-in-out;
 }
 
-.nav-group-element.active{
-    color: #fff;
-}
-
-
-.nav-slider {
+.navSlider {
     transition: left 0.3s ease-in-out, width 0.3s ease-in-out;
     display: block;
     height: 100%;
@@ -20,7 +15,7 @@
     background: linear-gradient(65deg,rgba(120, 211, 107, 1) 0%, rgba(0, 166, 118, 1) 100%) !important;
 }
 
-.scrolled-header {
+.scrolledHeader {
     background-color: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(0.5px);
 }

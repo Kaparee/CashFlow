@@ -1,6 +1,6 @@
 ﻿import React, { useState, useRef, useEffect, useCallback } from 'react'
 import logo from '../../assets/logo.svg'
-import './Header.css'
+import s from './Header.module.css'
 import { useNavigate } from "react-router-dom";
 
 const Header: React.FC = () => {
@@ -20,13 +20,11 @@ const Header: React.FC = () => {
     }
 
     useEffect(() => {
-        const activeElement = document.querySelector(`.nav-group-element.active`);
+        const activeElement = document.querySelector(`.${s.navGroupElement}.active`);
 
         if (activeElement && sliderRef.current) {
             const rect = activeElement.getBoundingClientRect();
             const containerRect = activeElement.parentElement?.getBoundingClientRect();
-
-            const style = window.getComputedStyle(activeElement);
 
 
             if (containerRect) {
@@ -55,17 +53,17 @@ const Header: React.FC = () => {
     },[])
 
     return (
-        <div className={`row align-items-center text-center p-3 fixed-top transition ${isScrolled ? 'scrolled-header mx-3 mt-2 shadow rounded-4' : 'bg-white'}`}>
+        <div className={`row align-items-center text-center p-3 fixed-top transition ${isScrolled ? `${s.scrolledHeader} mx-3 mt-2 shadow rounded-4` : 'bg-white'}`}>
             <div className='col-3 d-flex justify-content-center align-items-center'>
                 <a href='/'><img src={logo} className='img-fluid' alt='Logo CashFlow' /></a>
             </div>
             <div className='col-6 d-flex align-items-end justify-content-center'>
 
                 <div className='nav-group bg-secondary rounded-5 px-2 py-1 position-relative d-flex'>
-                    <a className={`nav-group-element mx-1 px-3 py-1 rounded-5 ${activeLink === 'Home' ? 'active' : ''}`} onClick={() => handleClick('Home')} href='#home-page-home'>Home</a>
-                    <a className={`nav-group-element mx-1 px-3 py-1 rounded-5 ${activeLink === 'Features' ? 'active' : ''}`} onClick={() => handleClick('Features')} href='#home-page-features'>Features</a>
-                    <a className={`nav-group-element mx-1 px-3 py-1 rounded-5 ${activeLink === 'Help' ? 'active' : ''}`} onClick={() => handleClick('Help')} href='#home-page-help'>Help</a>
-                    <span ref={sliderRef} className='nav-slider position-absolute rounded-5 shadow'></span>
+                    <a className={`${s.navGroupElement} mx-1 px-3 py-1 rounded-5 ${activeLink === 'Home' ? 'active text-white' : ''}`} onClick={() => handleClick('Home')} href='#home-page-home'>Home</a>
+                    <a className={`${s.navGroupElement} mx-1 px-3 py-1 rounded-5 ${activeLink === 'Features' ? 'active text-white' : ''}`} onClick={() => handleClick('Features')} href='#home-page-features'>Features</a>
+                    <a className={`${s.navGroupElement} mx-1 px-3 py-1 rounded-5 ${activeLink === 'Testimonial' ? 'active text-white' : ''}`} onClick={() => handleClick('Testimonial')} href='#home-page-testimonial'>Testimonial</a>
+                    <span ref={sliderRef} className={`${s.navSlider} position-absolute rounded-5 shadow`}></span>
                 </div>
 
             </div>
