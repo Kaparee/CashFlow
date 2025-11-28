@@ -1,5 +1,5 @@
 ﻿import React from 'react'
-import staszek from '../../assets/staszek.jpg'
+import staszek from '../../assets/staszek.avif'
 import money from '../../assets/money.gif'
 import s from './Hero.module.css'
 import AnimatedContent from '../../components/ReactBits/AnimatedContent/AnimatedContent.tsx'
@@ -81,7 +81,7 @@ const Hero: React.FC = () => {
                     threshold={0.2}
                     delay={0}
                 >
-                    <img src={money} alt='money' className='img-fluid' style={{ height: '200px', width: '200px' }} />
+                    <img src={money} alt='money' className='img-fluid' style={{ height: '250px', width: '250px' }} />
                 </AnimatedContent>
             </div>
 

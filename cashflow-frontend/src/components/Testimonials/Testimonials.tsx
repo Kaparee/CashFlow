@@ -1,6 +1,6 @@
 ﻿import React, { useState, useEffect } from 'react'
 import s from './Testimonials.module.css'
-import ph from '../../assets/placeholder.png'
+import ph from '../../assets/placeholder.avif'
 
 const avatars = import.meta.glob('../../assets/Testimonial/*', { eager: true, import: 'default', query: '?url' });
 interface Testimonial {
@@ -17,84 +17,84 @@ const testimonialsList: Testimonial[] = [
         lastname: 'Kowalska',
         description: 'Wreszcie ogarniam miesięczne wydatki. CashFlow robi robotę.',
         rating: 5,
-        fileName: 'w1.jpg'
+        fileName: 'w1.avif'
     },
     {
         firstname: 'Marek',
         lastname: 'Zieliński',
         description: 'Dobre wykresy i podsumowania. Brakuje tylko kilku filtrów.',
         rating: 4,
-        fileName: 'm1.jpg'
+        fileName: 'm1.avif'
     },
     {
         firstname: 'Katarzyna',
         lastname: 'Nowak',
         description: 'Fajna aplikacja, ale czasem gubi synchronizację z kontem.',
         rating: 3,
-        fileName: 'w2.jpg'
+        fileName: 'w2.avif'
     },
     {
         firstname: 'Paweł',
         lastname: 'Jabłoński',
         description: 'Błyskawiczne dodawanie transakcji. Idealna na co dzień.',
         rating: 5,
-        fileName: 'm2.jpg'
+        fileName: 'm2.avif'
     },
     {
         firstname: 'Julia',
         lastname: 'Wiśniewska',
         description: 'Powiadomienia o rachunkach nie zawsze działają. Szkoda.',
         rating: 2,
-        fileName: 'w3.jpg'
+        fileName: 'w3.avif'
     },
     {
         firstname: 'Tomasz',
         lastname: 'Wójcik',
         description: 'Pomaga trzymać budżet w ryzach. Raporty na duży plus.',
         rating: 4,
-        fileName: 'm3.jpg'
+        fileName: 'm3.avif'
     },
     {
         firstname: 'Magdalena',
         lastname: 'Kamińska',
         description: 'Dla freelancera jak znalazł. Eksport danych super wygodny.',
         rating: 5,
-        fileName: 'w4.jpg'
+        fileName: 'w4.avif'
     },
     {
         firstname: 'Kamil',
         lastname: 'Lewandowski',
         description: 'Ładny interfejs, ale cykliczne wydatki mogłyby być lepsze.',
         rating: 3,
-        fileName: 'm4.jpg'
+        fileName: 'm4.avif'
     },
     {
         firstname: 'Alicja',
         lastname: 'Sokołowska',
         description: 'Dużo funkcji w darmowej wersji. Sensowna aplikacja.',
         rating: 4,
-        fileName: 'w5.jpg'
+        fileName: 'w5.avif'
     },
     {
         firstname: 'Jakub',
         lastname: 'Mazur',
         description: 'Trochę zawiłe ustawienia na start. Przydałby się prostszy onboarding.',
         rating: 2,
-        fileName: 'm5.jpg'
+        fileName: 'm5.avif'
     },
     {
         firstname: 'Ewa',
         lastname: 'Kaczmarek',
         description: 'Świetna dla domowego budżetu. Wszystko czytelne i szybkie.',
         rating: 5,
-        fileName: 'w6.jpg'
+        fileName: 'w6.avif'
     },
     {
         firstname: 'Mateusz',
         lastname: 'Czerwiński',
         description: 'Stabilna, przejrzysta i naprawdę pomaga oszczędzać.',
         rating: 5,
-        fileName: 'm6.jpg'
+        fileName: 'm6.avif'
     },
 ];
 
@@ -145,7 +145,7 @@ const Testimonials: React.FC = () => {
 
     return (
         <>
-            <div className='row flex-column px-5'>
+            <div className='row flex-column px-5 user-select-none'>
                 <div className='col-12'>
                     <div id='home-page-testimonial' className='text-gradient display-1 fw-bold' style={{scrollMarginTop: '7rem'}}>
                         Testimonials
@@ -157,7 +157,7 @@ const Testimonials: React.FC = () => {
                     </div>
                 </div>
             </div>
-            <div className='overflow-hidden p-5'>
+            <div className='overflow-hidden p-5 user-select-none'>
                 <div className={`row position-relative row-gap-3 flex-nowrap`} style={{ transform: `translateX(-${activeIndex * (100 / visibleItems)}%)`, transition: isAnimated ? 'transform 0.5s ease-out' : 'none' }} onTransitionEnd={handleTranistionEnd}>
                     {extendedList.map((item, index) => (
                         <div key={index} className='col-12 col-md-3' style={{ height: '100%' }}>
