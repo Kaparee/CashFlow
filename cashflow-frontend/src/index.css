@@ -61,6 +61,9 @@ body {
     border-image-source: linear-gradient(90deg,rgba(120, 211, 107, 1) 0%, rgba(0, 166, 118, 1) 100%) !important;
     border-image-slice: 30 !important;
 }
+.border-primary {
+    border-color: #00A676 !important;
+}
 
 /* BACKGROUNDS */
 .bg-secondary {
@@ -74,7 +77,7 @@ body {
 .text-gradient {
     color: transparent;
     background: linear-gradient(90deg,rgba(0, 166, 118, 1) 0%, rgba(120, 211, 107, 1) 50%);
-    -webkit-background-clip: text
+    -webkit-background-clip: text;
 }
 
 .text-secondary {
