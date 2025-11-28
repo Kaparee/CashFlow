@@ -5,6 +5,7 @@ import Features from '../../components/Features/Features.tsx'
 import Testimonials from '../../components/Testimonials/Testimonials.tsx'
 import s from './HomePage.module.css'
 
+
 const HomePage: React.FC = () => {
     return (
         <div className={`${s.smoothScroll}`}>
@@ -19,12 +20,14 @@ const HomePage: React.FC = () => {
                 <Features />
             </div>
 
-            <div className={`container-fluid`}>
-                <Testimonials/>
+            <div className={`container-fluid ${s.bgTestimonials} px-0`}>
+                <div className={`${s.bgTestimonials2} w-100 h-100`}>
+                    <Testimonials />
+                </div>
             </div>
 
             <div className='container-fluid'>
-                <p>Footer</p>
+                footer
             </div>
 
         </div>

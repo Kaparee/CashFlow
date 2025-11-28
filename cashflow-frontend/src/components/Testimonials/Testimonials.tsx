@@ -2,12 +2,13 @@
 import s from './Testimonials.module.css'
 import ph from '../../assets/placeholder.png'
 
+const avatars = import.meta.glob('../../assets/Testimonial/*', { eager: true, import: 'default', query: '?url' });
 interface Testimonial {
     firstname: string;
     lastname: string;
     description: string;
     rating: number;
-    avatarUrl: string;
+    fileName: string;
 }
 
 const testimonialsList: Testimonial[] = [
@@ -16,84 +17,84 @@ const testimonialsList: Testimonial[] = [
         lastname: 'Kowalska',
         description: 'Wreszcie ogarniam miesięczne wydatki. CashFlow robi robotę.',
         rating: 5,
-        avatarUrl: '../../assets/placeholder.png'
+        fileName: 'w1.jpg'
     },
     {
         firstname: 'Marek',
         lastname: 'Zieliński',
         description: 'Dobre wykresy i podsumowania. Brakuje tylko kilku filtrów.',
         rating: 4,
-        avatarUrl: '../../assets/placeholder.png'
+        fileName: 'm1.jpg'
     },
     {
         firstname: 'Katarzyna',
         lastname: 'Nowak',
         description: 'Fajna aplikacja, ale czasem gubi synchronizację z kontem.',
         rating: 3,
-        avatarUrl: '../../assets/placeholder.png'
+        fileName: 'w2.jpg'
     },
     {
         firstname: 'Paweł',
         lastname: 'Jabłoński',
         description: 'Błyskawiczne dodawanie transakcji. Idealna na co dzień.',
         rating: 5,
-        avatarUrl: '../../assets/placeholder.png'
+        fileName: 'm2.jpg'
     },
     {
         firstname: 'Julia',
         lastname: 'Wiśniewska',
         description: 'Powiadomienia o rachunkach nie zawsze działają. Szkoda.',
         rating: 2,
-        avatarUrl: '../../assets/placeholder.png'
+        fileName: 'w3.jpg'
     },
     {
         firstname: 'Tomasz',
         lastname: 'Wójcik',
         description: 'Pomaga trzymać budżet w ryzach. Raporty na duży plus.',
         rating: 4,
-        avatarUrl: '../../assets/placeholder.png'
+        fileName: 'm3.jpg'
     },
     {
         firstname: 'Magdalena',
         lastname: 'Kamińska',
         description: 'Dla freelancera jak znalazł. Eksport danych super wygodny.',
         rating: 5,
-        avatarUrl: '../../assets/placeholder.png'
+        fileName: 'w4.jpg'
     },
     {
         firstname: 'Kamil',
         lastname: 'Lewandowski',
         description: 'Ładny interfejs, ale cykliczne wydatki mogłyby być lepsze.',
         rating: 3,
-        avatarUrl: '../../assets/placeholder.png'
+        fileName: 'm4.jpg'
     },
     {
         firstname: 'Alicja',
         lastname: 'Sokołowska',
         description: 'Dużo funkcji w darmowej wersji. Sensowna aplikacja.',
         rating: 4,
-        avatarUrl: '../../assets/placeholder.png'
+        fileName: 'w5.jpg'
     },
     {
         firstname: 'Jakub',
         lastname: 'Mazur',
         description: 'Trochę zawiłe ustawienia na start. Przydałby się prostszy onboarding.',
         rating: 2,
-        avatarUrl: '../../assets/placeholder.png'
+        fileName: 'm5.jpg'
     },
     {
         firstname: 'Ewa',
         lastname: 'Kaczmarek',
         description: 'Świetna dla domowego budżetu. Wszystko czytelne i szybkie.',
         rating: 5,
-        avatarUrl: '../../assets/placeholder.png'
+        fileName: 'w6.jpg'
     },
     {
         firstname: 'Mateusz',
         lastname: 'Czerwiński',
         description: 'Stabilna, przejrzysta i naprawdę pomaga oszczędzać.',
         rating: 5,
-        avatarUrl: '../../assets/placeholder.png'
+        fileName: 'm6.jpg'
     },
 ];
 
@@ -143,30 +144,51 @@ const Testimonials: React.FC = () => {
 
 
     return (
-        <div className='overflow-hidden'>
-            <div className={`row position-relative row-gap-3 flex-nowrap`} style={{ transform: `translateX(-${activeIndex * (100 / visibleItems)}%)`, transition: isAnimated ? 'transform 0.5s ease-out' : 'none' }} onTransitionEnd={handleTranistionEnd}>
-                {extendedList.map((item, index) => (
-                    <div key={index} className='col-12 col-md-3'>
-                        <div className='card d-flex flex-column align-items-stretch border-0 shadow rounded-5 py-4'>
-                            <div>
-                                <img className={`img-fluid rounded-circle d-block mx-auto ${s.avatar}`} src={ph} />
-                            </div>
-                            <div className='card-body'>
-                                <div className='h4 text-center'>{item.firstname} {item.lastname}</div>
-                                <hr />
-                                <p>
+        <>
+            <div className='row flex-column px-5'>
+                <div className='col-12'>
+                    <div id='home-page-testimonial' className='text-gradient display-1 fw-bold' style={{scrollMarginTop: '7rem'}}>
+                        Testimonials
+                    </div>
+                </div>
+                <div className='col-12'>
+                    <div className='fs-5 text-secondary'>
+                        What customers think about us? Let's find out!
+                    </div>
+                </div>
+            </div>
+            <div className='overflow-hidden p-5'>
+                <div className={`row position-relative row-gap-3 flex-nowrap`} style={{ transform: `translateX(-${activeIndex * (100 / visibleItems)}%)`, transition: isAnimated ? 'transform 0.5s ease-out' : 'none' }} onTransitionEnd={handleTranistionEnd}>
+                    {extendedList.map((item, index) => (
+                        <div key={index} className='col-12 col-md-3' style={{ height: '100%' }}>
+                            <div className={`d-flex flex-column align-items-stretch shadow rounded-5 p-4 bg-white ${s.bgRadial}`}>
+                                <div className='mb-3'>
+                                    <img className={`img-fluid rounded-circle p-1 d-block mx-auto ${s.avatar}`} src={avatars[`../../assets/Testimonial/${item.fileName}`] as string || ph} />
+                                </div>
+                                <div className='h4 text-center'>
+                                    <div className='h4 text-center'>{item.firstname} {item.lastname}</div>
+                                </div>
+                                <div className='d-flex justify-content-center w-100 mb-2'>
+                                    {[...Array(5)].map((_, index) => (
+                                        <i
+                                            key={index}
+                                            className={`bi ${index < item.rating ? 'bi-star-fill' : 'bi-star'} me-1 fs-5 text-gradient`}
+                                        ></i>
+                                    ))}
+                                </div>
+                                <div className='text-center'>
                                     <i className='bi bi-quote'></i>
-                                    <br />
+                                    <div className='w-100'></div>
                                     {item.description}
-                                    <br />
+                                    <div className='w-100'></div>
                                     <i className='bi bi-quote'></i>
-                                </p>
+                                </div>
                             </div>
                         </div>
-                    </div>
                 ))}
             </div>
-        </div>
+            </div>
+        </>
     );
 };
 

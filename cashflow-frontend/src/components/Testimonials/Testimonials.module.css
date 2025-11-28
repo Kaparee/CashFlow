@@ -1,4 +1,7 @@
 .avatar {
+    position: relative;
     height: 100px;
     width: 100px;
+    background: linear-gradient(90deg,rgba(120, 211, 107, 1) 0%, rgba(0, 166, 118, 1) 100%) !important;
 }
+
