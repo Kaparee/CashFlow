@@ -10,27 +10,24 @@ import s from './HomePage.module.css'
 const HomePage: React.FC = () => {
     return (
         <div className={`${s.smoothScroll}`}>
-            <div id='navbar-main' className='container-fluid pb-3'>
+            <div id='navbar-main' className='container-fluid pb-4'>
                 <Header />
-                <div className='invisible'>.</div>
             </div>
 
             <Hero />
 
-            <div className={`container-fluid ${s.bgFeatures} d-flex flex-column justify-content-center`}>
+            <div className={`container-fluid ${s.bgFeatures} d-flex flex-column justify-content-center pt-5 mt-md-0`}>
                 <Features />
             </div>
 
-            <div className={`container-fluid ${s.bgTestimonials} px-0`}>
-                <div className={`${s.bgTestimonials2} w-100 h-100`}>
-                    <Testimonials />
+            <div className={`container-fluid ${s.bgTestimonials} p-0`}>
+                <Testimonials />
 
-                    <div className='w-100 my-5'></div>
+                <div className='w-100 my-5'></div>
 
-                    <Footer />
-                </div>
+                <Footer />
             </div>
-
+            
         </div>
     );
 };

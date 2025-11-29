@@ -4,12 +4,7 @@
 }
 
 .bgTestimonials {
-    background: radial-gradient(circle at 0% 100%,rgba(0, 205, 146, 1) -40%, rgba(120, 211, 107, 1) 10%, transparent 30%);
-    min-height: 100vh;
-}
-
-.bgTestimonials2 {
-    background: radial-gradient(circle at 100% 100%,rgba(0, 205, 146, 1) -40%, rgba(120, 211, 107, 1) 10%, transparent 30%);
+    background: radial-gradient(circle at 0% 100%,rgba(0, 205, 146, 1) -40%, rgba(120, 211, 107, 1) 10%, transparent 30%), radial-gradient(circle at 100% 100%,rgba(0, 205, 146, 1) -40%, rgba(120, 211, 107, 1) 10%, transparent 30%);
     min-height: 100vh;
 }
 

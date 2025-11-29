@@ -34,15 +34,15 @@ const featuresList: Feature[] = [
 const Features: React.FC = () => {
     return (
         <>
-            <div className='row mb-4'>
+            <div className='row mb-4 px-md-4'>
                 <div className='col-12 d-flex flex-column'>
-                    <div id='home-page-features' className='h1 text-gradient fw-bold scroll-mt user-select-none'>Powerful tools to take control of your money</div>
+                    <div id='home-page-features' className={`${s.featuresTitle} display-2 text-gradient fw-bold scroll-mt user-select-none mb-2 mb-sm-0`}>Powerful tools to take control of your money</div>
                     <div className='fs-5 text-secondary user-select-none'>CashFlow helps you track, planm and understand your finances - all in one simple dashboard.</div>
                 </div>
             </div>
-            <div className={`${s.bgFeatures} row justify-content-center row-gap-3`}>
+            <div className={`${s.bgFeatures} row justify-content-center row-gap-3 px-md-4`}>
                 {featuresList.map((item, index) => (
-                    <div key={index} className='col-4'>
+                    <div key={index} className='col-12 col-sm-6 col-md-4'>
                         <div className='p-3 shadow rounded-4 d-flex align-items-center flex-column text-center bg-white'>
                             <div>
                                 <div>
