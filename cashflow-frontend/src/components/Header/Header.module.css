@@ -1,6 +1,6 @@
 .navGroupElement {
     text-decoration: none;
-    width: 33%;
+    width: 33% !important;
     color: #606060;
     z-index: 1;
     transition: color 0.2s ease-in-out;

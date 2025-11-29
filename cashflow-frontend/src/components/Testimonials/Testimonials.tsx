@@ -116,8 +116,12 @@ const Testimonials: React.FC = () => {
     useEffect(() => {
         const handleResize = () => {
             const ww = window.innerWidth;
-            if (ww < 768) {
+            if (ww < 576) {
                 setVisibleItems(1);
+            } else if (ww >= 576 && ww < 768) {
+                setVisibleItems(2);
+            } else if (ww >= 768 && ww < 992) {
+                setVisibleItems(3);
             } else {
                 setVisibleItems(4);
             };
@@ -131,7 +135,7 @@ const Testimonials: React.FC = () => {
 
     const [isAnimated, setIsAnimated] = useState<boolean>(true);
 
-    const handleTranistionEnd = () => {
+    const handleTranstionEnd = () => {
         if (activeIndex == 12) {
             setIsAnimated(false);
             setActiveIndex(0);
@@ -145,11 +149,9 @@ const Testimonials: React.FC = () => {
 
     return (
         <>
-            <div className='row flex-column px-5 user-select-none'>
-                <div className='col-12'>
-                    <div id='home-page-testimonial' className='text-gradient display-1 fw-bold' style={{scrollMarginTop: '7rem'}}>
-                        Testimonials
-                    </div>
+            <div className='d-flex flex-column px-5 user-select-none mt-5'>
+                <div id='home-page-testimonial' className='text-gradient display-1 fw-bold' style={{scrollMarginTop: '7rem'}}>
+                    Testimonials
                 </div>
                 <div className='col-12'>
                     <div className='fs-5 text-secondary'>
@@ -158,10 +160,15 @@ const Testimonials: React.FC = () => {
                 </div>
             </div>
             <div className='overflow-hidden p-5 user-select-none'>
-                <div className={`row position-relative row-gap-3 flex-nowrap`} style={{ transform: `translateX(-${activeIndex * (100 / visibleItems)}%)`, transition: isAnimated ? 'transform 0.5s ease-out' : 'none' }} onTransitionEnd={handleTranistionEnd}>
+                <div className={`row position-relative row-gap-3 flex-nowrap`} style={{ transform: `translateX(-${activeIndex * (100 / visibleItems)}%)`, transition: isAnimated ? 'transform 0.5s ease-out' : 'none' }} onTransitionEnd={handleTranstionEnd}>
                     {extendedList.map((item, index) => (
-                        <div key={index} className='col-12 col-md-3' style={{ height: '100%' }}>
-                            <div className={`d-flex flex-column align-items-stretch shadow rounded-5 p-4 bg-white ${s.bgRadial}`}>
+                        <div key={index}
+                            className='px-3'
+                            style={{
+                                flex: '0 0 auto',
+                                width: `${100 / visibleItems}%`
+                            }}>
+                            <div className={`h-100 w-100 d-flex flex-column align-items-stretch shadow rounded-5 p-4 bg-white ${s.bgRadial}`}>
                                 <div className='mb-3'>
                                     <img className={`img-fluid rounded-circle p-1 d-block mx-auto ${s.avatar}`} src={avatars[`../../assets/Testimonial/${item.fileName}`] as string || ph} />
                                 </div>
@@ -176,7 +183,7 @@ const Testimonials: React.FC = () => {
                                         ></i>
                                     ))}
                                 </div>
-                                <div className='text-center'>
+                                <div className='text-center my-auto'>
                                     <i className='bi bi-quote'></i>
                                     <div className='w-100'></div>
                                     {item.description}
