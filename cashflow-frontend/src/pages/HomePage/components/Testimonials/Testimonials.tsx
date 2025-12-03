@@ -1,8 +1,8 @@
 ﻿import React, { useState, useEffect } from 'react'
 import s from './Testimonials.module.css'
-import ph from '../../assets/placeholder.avif'
+import ph from '../../../../assets/placeholder.avif'
 
-const avatars = import.meta.glob('../../assets/Testimonial/*', { eager: true, import: 'default', query: '?url' });
+const avatars = import.meta.glob('../../../../assets/testimonial/*', { eager: true, import: 'default', query: '?url' });
 interface Testimonial {
     firstname: string;
     lastname: string;
@@ -170,7 +170,7 @@ const Testimonials: React.FC = () => {
                             }}>
                             <div className={`h-100 w-100 d-flex flex-column align-items-stretch shadow rounded-5 p-4 bg-white ${s.bgRadial}`}>
                                 <div className='mb-3'>
-                                    <img className={`img-fluid rounded-circle p-1 d-block mx-auto ${s.avatar}`} src={avatars[`../../assets/Testimonial/${item.fileName}`] as string || ph} />
+                                    <img className={`img-fluid rounded-circle p-1 d-block mx-auto ${s.avatar}`} src={avatars[`../../../../assets/testimonial/${item.fileName}`] as string || ph} />
                                 </div>
                                 <div className='h4 text-center'>
                                     <div className='h4 text-center'>{item.firstname} {item.lastname}</div>

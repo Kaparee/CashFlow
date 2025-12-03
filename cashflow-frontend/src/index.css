@@ -20,8 +20,8 @@ body {
 .scroll-mt {
     scroll-margin-top: 9rem;
 }
-.temp {
-    background-color: #00A676;
+.vh100 {
+    height: 100vh;
 }
 
 
@@ -82,4 +82,16 @@ body {
 
 .text-secondary {
     color: #454545 !important;
+}
+
+@media (max-width: 1199px) {
+}
+
+@media (max-width: 991px) {
+}
+
+@media (max-width: 767px) {
+}
+@media (max-width: 575px) {
+
 }
