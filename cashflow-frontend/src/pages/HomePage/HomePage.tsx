@@ -1,9 +1,9 @@
 ﻿import React from 'react';
-import Header from '../../components/Header/Header.tsx'
-import Hero from '../../components/Hero/Hero.tsx'
-import Features from '../../components/Features/Features.tsx'
-import Testimonials from '../../components/Testimonials/Testimonials.tsx'
-import Footer from '../../components/Footer/Footer.tsx'
+import Header from '../../components/Layout/Header/Header.tsx'
+import Hero from './components/Hero/Hero.tsx'
+import Features from './components/Features/Features.tsx'
+import Testimonials from './components/Testimonials/Testimonials.tsx'
+import Footer from '../../components/Layout/Footer/Footer.tsx'
 import s from './HomePage.module.css'
 
 

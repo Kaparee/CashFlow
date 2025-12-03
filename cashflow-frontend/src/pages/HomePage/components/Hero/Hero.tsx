@@ -1,8 +1,8 @@
 ﻿import React from 'react'
-import staszek from '../../assets/staszek.avif'
-import money from '../../assets/money.gif'
+import staszek from '../../../../assets/staszek.avif'
+import money from '../../../../assets/money.gif'
 import s from './Hero.module.css'
-import AnimatedContent from '../../components/ReactBits/AnimatedContent/AnimatedContent.tsx'
+import AnimatedContent from '../../../../components/UI/ReactBits/AnimatedContent/AnimatedContent.tsx'
 
 const Hero: React.FC = () => {
     return (

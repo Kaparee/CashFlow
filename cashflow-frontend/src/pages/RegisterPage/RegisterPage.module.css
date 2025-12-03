@@ -1,0 +1,17 @@
+.bgRegister {
+    background: 
+        radial-gradient(
+            circle at 90% 100%,
+            rgba(0, 166, 118, 1) 10%, 
+            transparent 35%
+        ), 
+        radial-gradient(
+            circle at 0% 0%,
+            rgba(120, 211, 107, 1) 10%, 
+            transparent 30%
+        );
+}
+
+.footerMargin {
+    margin-top: 25vh;
+}
