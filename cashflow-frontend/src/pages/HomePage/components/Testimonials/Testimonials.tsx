@@ -2,7 +2,7 @@
 import s from './Testimonials.module.css'
 import ph from '../../../../assets/placeholder.avif'
 
-const avatars = import.meta.glob('../../../../assets/testimonial/*', { eager: true, import: 'default', query: '?url' });
+const avatars = import.meta.glob('../../../../assets/Testimonial/*', { eager: true, import: 'default', query: '?url' });
 interface Testimonial {
     firstname: string;
     lastname: string;
@@ -99,6 +99,8 @@ const testimonialsList: Testimonial[] = [
 ];
 
 const Testimonials: React.FC = () => {
+    console.log('Dostępne klucze:', Object.keys(avatars));
+    console.log('Szukany klucz:', `../../../../assets/testimonial/${testimonialsList[0].fileName}`);
     const [activeIndex, setActiveIndex] = useState(0);
 
     useEffect(() => {
@@ -170,7 +172,7 @@ const Testimonials: React.FC = () => {
                             }}>
                             <div className={`h-100 w-100 d-flex flex-column align-items-stretch shadow rounded-5 p-4 bg-white ${s.bgRadial}`}>
                                 <div className='mb-3'>
-                                    <img className={`img-fluid rounded-circle p-1 d-block mx-auto ${s.avatar}`} src={avatars[`../../../../assets/testimonial/${item.fileName}`] as string || ph} />
+                                    <img className={`img-fluid rounded-circle p-1 d-block mx-auto ${s.avatar}`} src={avatars[`../../../../assets/Testimonial/${item.fileName}`] as string || ph} />
                                 </div>
                                 <div className='h4 text-center'>
                                     <div className='h4 text-center'>{item.firstname} {item.lastname}</div>
