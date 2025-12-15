@@ -1,6 +1,6 @@
 import React from 'react'
-
 interface InputProps {
+    name: string;
     label: string;
     type?: string;
     value: string;
@@ -13,7 +13,9 @@ interface InputProps {
     error?: string;
 }
 
+
 const Input: React.FC<InputProps> = ({
+    name,
     label,
     type = 'text',
     value,
@@ -29,7 +31,7 @@ const Input: React.FC<InputProps> = ({
         <div className={`mb-3 text-start  ${divClass}`}>
             <label htmlFor={id} className={`fw-bold form-label small ${labelClass}`}>{label}</label>
 
-            <input id={id} className={`form-control py-2 px-3 rounded-5 shadow-sm ${error ? 'is-invalid' : ''} ${inputClass}`} type={type} value={value} placeholder={placeholder} onChange={onChange} />
+            <input id={id} name={name} className={`form-control py-2 px-3 rounded-5 shadow-sm ${error ? 'is-invalid' : ''} ${inputClass}`} type={type} value={value} placeholder={placeholder} onChange={onChange} />
 
             {error && <div className="invalid-feedback ps-2">{error}</div>}
         </div>
