@@ -1,18 +1,86 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from "react-router-dom";
 import s from './RegisterPage.module.css';
 import Header from '../../components/Layout/Header/Header.tsx'
 import Footer from '../../components/Layout/Footer/Footer.tsx'
 import Input from '../../components/UI/Input/Input.tsx';
 import axios from 'axios';
-
+import { useLoading } from '../../hooks/useLoading.ts'
+ 
 const RegisterPage: React.FC = () => {
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
-    const [email, setEmail] = useState("");
-    const [nickname, setNickname] = useState("");
-    const [password, setPassword] = useState("");
-    const [rePassword, setRePassword] = useState("");
+    const { isLoading, setIsLoading } = useLoading();
+
+    useEffect(() => {
+        const htmlTag = document.body;
+        if (isLoading) {
+            htmlTag.style.overflow = 'hidden';
+        } else {
+            htmlTag.style.overflow = '';
+        }
+    },[isLoading]);
+
+
+    const [formData, setFormData] = useState<{ [key: string]: string }>({ firstName: "", lastName: "", email: "", nickname: "", password: "", rePassword : "" });
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormData({ ...formData, [e.target.name] : e.target.value}); 
+    }
+
+    const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+    const validateForm = () => {
+        const err: { [key: string]: string } = {};
+
+        if (formData.firstName.trim().length == 0) {
+            err.firstName = 'Wpisz swoje imię'
+        } else if (/[^a-zA-Z\sąęźćżśółńĄĘŹĆŻŚÓŁŃ]/.test(formData.firstName)) {
+            err.firstName = 'Popraw swoje imię'
+        }
+
+        if (formData.lastName.trim().length == 0) {
+            err.lastName = 'Wpisz swoje nazwisko'
+        } else if (/[^a-zA-Z\sąęźćżśółńĄĘŹĆŻŚÓŁŃ]/.test(formData.lastName)) {
+            err.lastName = 'Popraw swoje nazwisko'
+        }
+
+        if (formData.email.trim().length == 0) {
+            err.email = 'Wpisz swój email'
+        } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+            err.email = 'Popraw swój email'
+        }
+
+        if (formData.nickname.trim().length == 0) {
+            err.nickname = 'Wpisz swój nickname'
+        }
+
+        if (formData.password.trim().length < 8) {
+            err.password = 'Hasło powinno mieć więcej niż 8 znaków'
+        }
+
+        if (formData.rePassword.trim().length == 0) {
+            err.rePassword = 'Powtórz swoje hasło'
+        }
+
+        if (formData.password.trim() != formData.rePassword.trim()) {
+            err.rePassword = 'Hasła nie są identyczne'
+        }
+
+        setErrors(err);
+
+        if (Object.keys(err).length === 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    const handleValidateForm = (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (validateForm()) {
+            handleRegister();
+        }
+    }
 
     let navigate = useNavigate()
     const routeChange = (path:string) => {
@@ -21,33 +89,24 @@ const RegisterPage: React.FC = () => {
 
     const handleRegister = async () => {
         try {
+            setIsLoading(true);
             const res = await axios.post('http://localhost:5205/api/register', {
-                firstName,
-                lastName,
-                nickname,
-                email,
-                password
+                firstName: formData['firstName'],
+                lastName: formData['lastName'],
+                nickname: formData['nickname'],
+                email: formData['email'],
+                password: formData['password'] 
             });
 
-            alert("Zarejestrowano!")
+            alert("Zarejestrowano!");
+
+            routeChange('/login');
 
         } catch (error: any) {
             console.log(error.response?.data);
             alert("Błąd: " + JSON.stringify(error.response?.data));
         }
-    }
-
-    const registerSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-
-        try {
-            if(password != rePassword) { throw new Error("Podane hasła nie są jednakowe.") }
-
-            handleRegister()
-
-        } catch (error) {
-            alert("Błąd: " + error)
-        }
+        setIsLoading(false)
     }
 
     return (
@@ -58,27 +117,30 @@ const RegisterPage: React.FC = () => {
             <div className={`container-fluid pt-5 ${s.bgRegister}`} style={{ minHeight : '75vh' }}>
                 <div className='row align-items-center justify-content-center pt-5 h-100'>
                     <div className='col-11 col-sm-10 col-md-7 col-lg-5 col-xl-4 p-4 rounded-5 shadow bg-white'>
-                        <form className="login-form row">
+                        <form className="login-form row" onSubmit={handleValidateForm}>
 
                             <div className='col-12 col-sm-6'>
-                                <Input id='fistNameInput' label='Imie' onChange={e => setFirstName(e.target.value)} type='text' value={firstName} />
-
-                                <Input id='lastNameInput' label='Nazwisko' onChange={e => setLastName(e.target.value)} type='text' value={lastName} />
-
-                                <Input id='emailInput' label='Email' onChange={e => setEmail(e.target.value)} type='text' value={email} />
+                                <Input id='firstName' name='firstName' label='Imie' onChange={handleChange} type='text' value={formData.firstName} error={errors.firstName} />
                             </div>
-
                             <div className='col-12 col-sm-6'>
-                                <Input id='nicknameInput' label='Login' onChange={e => setNickname(e.target.value)} type='text' value={nickname} />
-
-                                <Input id='passwordInput' label='Hasło' onChange={e => setPassword(e.target.value)} type='password' value={password} />
-
-                                <Input id='rePassowrdInput' label='Powtórz Hasło' onChange={e => setRePassword(e.target.value)} type='password' value={rePassword} />
+                                <Input id='lastName' name='lastName' label='Nazwisko' onChange={handleChange} type='text' value={formData.lastName} error={errors.lastName} />
+                            </div>
+                            <div className='col-12 col-sm-6'>
+                                <Input id='email' name='email' label='Email' onChange={handleChange} type='text' value={formData.email} error={errors.email} />
+                            </div>
+                            <div className='col-12 col-sm-6'>
+                                <Input id='nickname' name='nickname' label='Login' onChange={handleChange} type='text' value={formData.nickname} error={errors.nickname} />
+                            </div>
+                            <div className='col-12 col-sm-6'>
+                                <Input id='password' name='password' label='Hasło' onChange={handleChange} type='password' value={formData.password} error={errors.password} />
+                            </div>
+                            <div className='col-12 col-sm-6'>
+                                <Input id='rePassword' name='rePassword' label='Powtórz Hasło' onChange={handleChange} type='password' value={formData.rePassword} error={errors.rePassword} />
                             </div>
 
                             <div className='col-12 mt-3'>
                                 <div className="text-center">
-                                    <button onClick={registerSubmit} type="submit" className="btn btn-primary rounded-5 fw-bold px-4 py-2">
+                                    <button type="submit" className="btn btn-primary rounded-5 fw-bold px-4 py-2">
                                         Zarejestruj
                                     </button>
                                 </div>
@@ -93,6 +155,11 @@ const RegisterPage: React.FC = () => {
                     <Footer />
                 </div>
             </div>
+            {isLoading && <div className='position-fixed top-0 start-0 w-100 vh-100 z-3 bg-dark bg-opacity-25 d-flex justify-content-center align-items-center overflow-hidden'>
+                <div className="spinner-border text-dark fs-3" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                </div>
+            </div>}
 
         </>
     );

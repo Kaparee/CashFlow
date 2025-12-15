@@ -1,16 +1,110 @@
-﻿import React from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import s from './LoginPage.module.css';
 import Header from '../../components/Layout/Header/Header.tsx'
 import Footer from '../../components/Layout/Footer/Footer.tsx'
 import Input from '../../components/UI/Input/Input.tsx';
+import { useLoading } from '../../hooks/useLoading.ts';
+import axios from 'axios';
 
 const LoginPage: React.FC = () => {
+    const { isLoading, setIsLoading } = useLoading();
+
+    useEffect(() => {
+        const htmlTag = document.body;
+
+        if (isLoading) {
+            htmlTag.style.overflow = 'hidden';
+        } else {
+            htmlTag.style.overflow = '';
+        }
+
+    }, [isLoading]);
+
+    const [formData, setFormData] = useState<{ [key: string]: string }>({ nicknameOrEmail: "", password: ""});
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    }
+
+
+    const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+    const validateForm = () => {
+        const err: {[key: string] : string} = {}
+        if (formData.nicknameOrEmail.trim().length == 0) {
+            err.nicknameOrEmail = 'Proszę wpisać login/email'
+        }
+
+        if (formData.password.trim().length == 0) {
+            err.password  = 'Prosze wpisać hasło'
+        }
+
+        setErrors(err);
+
+        if (Object.keys(err).length === 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    const handleValidateForm = (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (validateForm()) {
+            handleLogin();
+        }
+    }
+
+    const isEmail = (e: string) => {
+        if (/\S+@\S+\.\S+/.test(e)) {
+            return true;
+        } else {
+            return false;
+        }
+
+    } 
+
+    const handleLogin = async () => {
+        try {
+            setIsLoading(true);
+            let res;
+
+            if (isEmail(formData['nicknameOrEmail'])) {
+                res = await axios.post('http://localhost:5205/api/login', {
+                    email: formData['nicknameOrEmail'],
+                    password: formData['password'],
+                },
+                {
+                        withCredentials: true
+                 });
+            } else {
+                res = await axios.post('http://localhost:5205/api/login', {
+                    nickname: formData['nicknameOrEmail'],
+                    password: formData['password'],
+                },
+                {
+                        withCredentials: true
+                });
+            }
+
+            alert("Zalogowano!");
+
+            routeChange('/dashboard');
+
+        } catch (error: any) {
+            console.log(error.response?.data);
+            alert("Błąd: " + JSON.stringify(error.response?.data));
+        }
+        setIsLoading(false);
+    }
 
     let navigate = useNavigate()
     const routeChange = (path: string) => {
         navigate(path);
     }
+
 
     return (
         <>
@@ -20,18 +114,13 @@ const LoginPage: React.FC = () => {
             <div className={`container-fluid pt-5 ${s.bgLogin}`} style={{ minHeight: '75vh' }}>
                 <div className='row align-items-center justify-content-center pt-5 h-100'>
                     <div className='col-11 col-sm-10 col-md-7 col-lg-5 col-xl-4 p-4 rounded-5 shadow bg-white'>
-                        <form className="login-form row">
+                        <form className="login-form row" onSubmit={handleValidateForm}>
 
                             <div className='col-12'>
-                                <Input id='nicknameInput' label='Login' type='text' value='nick' onChange={function(e: React.ChangeEvent<HTMLInputElement>): void {
-                                    throw new Error('Function not implemented.');
-                                } } />
+                                <Input id='nicknameOrEmail' name='nicknameOrEmail' label='Login' type='text' value={formData.nicknameOrEmail} onChange={handleChange} error={errors.nicknameOrEmail} />
 
-                                <Input id='passwordInput' label='Hasło' type='password' value='passw' onChange={function(e: React.ChangeEvent<HTMLInputElement>): void {
-                                    throw new Error('Function not implemented.');
-                                } } />
+                                <Input id='password' name='password' label='Hasło' type='password' value={formData.password} onChange={handleChange} error={errors.password} />
                             </div>
-                            
 
                             <div className='col-12 mt-3'>
                                 <div className="text-center">
@@ -50,7 +139,11 @@ const LoginPage: React.FC = () => {
                     <Footer />
                 </div>
             </div>
-
+            {isLoading && <div className='position-fixed top-0 start-0 w-100 vh-100 z-3 bg-dark bg-opacity-25 d-flex justify-content-center align-items-center overflow-hidden'>
+                <div className="spinner-border text-dark fs-3" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                </div>
+            </div>}
         </>
     );
 };

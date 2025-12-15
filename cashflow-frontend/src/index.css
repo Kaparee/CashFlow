@@ -24,7 +24,15 @@ body {
     height: 100vh;
 }
 
+.invalid-feedback {
+    display: block !important;
+    opacity: 0;
+    transition: 0.3s all ease-in-out;
+}
 
+.is-invalid ~ .invalid-feedback, .is-invalid ~ .invalid-tooltip, .was-validated :invalid ~ .invalid-feedback, .was-validated :invalid ~ .invalid-tooltip {
+    opacity: 1;
+}
 /* NAVBAR */
 #navbar-main .btn-outline-primary {
     background-color: transparent !important;
