@@ -2,7 +2,7 @@
 using CashFlow.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-[Route("api/[controller]")]
+[Route("api/")]
 [ApiController]
 public class CurrencyController : ControllerBase
 {
