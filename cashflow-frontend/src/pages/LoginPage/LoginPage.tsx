@@ -57,37 +57,18 @@ const LoginPage: React.FC = () => {
         }
     }
 
-    const isEmail = (e: string) => {
-        if (/\S+@\S+\.\S+/.test(e)) {
-            return true;
-        } else {
-            return false;
-        }
-
-    } 
-
     const handleLogin = async () => {
         try {
             setIsLoading(true);
-            let res;
+            const res = await axios.post('http://localhost:5205/api/login', {
+                emailOrNickname: formData['nicknameOrEmail'],
+                password: formData['password'],
+            }, {
+                withCredentials: true
+            });
 
-            if (isEmail(formData['nicknameOrEmail'])) {
-                res = await axios.post('http://localhost:5205/api/login', {
-                    email: formData['nicknameOrEmail'],
-                    password: formData['password'],
-                },
-                {
-                        withCredentials: true
-                 });
-            } else {
-                res = await axios.post('http://localhost:5205/api/login', {
-                    nickname: formData['nicknameOrEmail'],
-                    password: formData['password'],
-                },
-                {
-                        withCredentials: true
-                });
-            }
+            console.log(res);
+
 
             alert("Zalogowano!");
 
