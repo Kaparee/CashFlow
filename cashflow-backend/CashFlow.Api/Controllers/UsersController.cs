@@ -55,9 +55,9 @@ namespace CashFlow.Api.Controllers
                 var token = await _userService.LoginAsync(request);
                 return Ok(token);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return Unauthorized(new { message = "Invalid credentials." });
+                return BadRequest(new { message = ex.Message });
             }
         }
 

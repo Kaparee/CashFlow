@@ -10,6 +10,6 @@ namespace CashFlow.Application.DTO.Responses
         public DateTime Date { get; set; }
         public string? Type { get; set; }
 
-        public ICollection<CategoryResponse> Categories { get; set; } = new List<CategoryResponse>();
+        public CategoryResponse? Category { get; set; }
     }
 }

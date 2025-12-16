@@ -46,11 +46,16 @@ namespace CashFlow.Application.Services
 
         public async Task<LoginResponse> LoginAsync(LoginRequest request)
         {
-            var user = await _userRepository.Exists(request.EmailOrNickname!);
+            var user = await _userRepository.GetUserByEmailOrNicknameAsync(request.EmailOrNickname!);
 
             if (user is null) { throw new Exception("User does not exist!"); }
 
             if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash)) { throw new Exception("Password is invalid!"); }
+
+            if(!user.IsActive || !user.IsVerified)
+            {
+                throw new Exception("Account is not active or not verified.");
+            }
 
             var token = _jwtService.GenerateToken(user);
 

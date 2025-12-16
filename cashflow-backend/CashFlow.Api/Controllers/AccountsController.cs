@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace CashFlow.Api.Controllers
 {
     [Authorize]
-    [Route("api/")]
+    [Route("api/accounts/")]
     [ApiController]
     public class AccountsController : ControllerBase
     {
