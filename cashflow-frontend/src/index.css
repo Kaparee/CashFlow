@@ -24,6 +24,14 @@ body {
     height: 100vh;
 }
 
+.no-after::after{
+    display: none !important;
+}
+
+.outline-0, .outline-0:focus {
+    outline: 0 !important;
+}
+
 .invalid-feedback {
     display: block !important;
     opacity: 0;

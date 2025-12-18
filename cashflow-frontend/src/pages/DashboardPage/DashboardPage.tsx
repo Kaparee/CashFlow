@@ -1,5 +1,7 @@
 import React from 'react'
 import { useNavigate } from "react-router-dom"
+import Header from './components/Header/Header.tsx'
+import Sidebar from './components/Sidebar/Sidebar.tsx'
 
 const DashboardPage: React.FC = () => {
     
@@ -8,16 +10,21 @@ const DashboardPage: React.FC = () => {
         navigate(path);
     }
 
-    const wyloguj = () => {
-        localStorage.removeItem('token');
-        routeChange('/login');
-    }
-
     return (
         <>
-            <div>
-                <button className='btn btn-danger' type='button' onClick={wyloguj}>Wyloguj</button>
+            <div className='container-fluid shadow'>
+                <Header />
             </div>
+            <div className="container-fluid">
+                <div className='row'>
+                    <div className='col-11'>
+                        content
+                    </div>
+                </div>
+            </div>
+            <aside>
+                <Sidebar />
+            </aside>
         </>
     );
 };
