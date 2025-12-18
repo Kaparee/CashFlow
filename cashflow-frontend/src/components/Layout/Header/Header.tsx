@@ -10,7 +10,7 @@ const Header: React.FC = () => {
     const location = useLocation()
     const isHomePage = location.pathname === '/';
 
-    let navigate = useNavigate(); 
+    const navigate = useNavigate(); 
     const routeChange = (path:string) =>{ 
         navigate(path);
     }

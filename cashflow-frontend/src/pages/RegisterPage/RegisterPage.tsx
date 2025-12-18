@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from "react-router-dom";
+import { Form, useNavigate } from "react-router-dom";
 import s from './RegisterPage.module.css';
 import Header from '../../components/Layout/Header/Header.tsx'
 import Footer from '../../components/Layout/Footer/Footer.tsx'
@@ -39,7 +39,7 @@ const RegisterPage: React.FC = () => {
 
         if (formData.lastName.trim().length == 0) {
             err.lastName = 'Wpisz swoje nazwisko'
-        } else if (/[^a-zA-Z\sąęźćżśółńĄĘŹĆŻŚÓŁŃ]/.test(formData.lastName)) {
+        } else if (/[^a-zA-Z\sąęźćżśółńĄĘŹĆŻŚÓŁŃ-]/.test(formData.lastName)) {
             err.lastName = 'Popraw swoje nazwisko'
         }
 
@@ -55,6 +55,12 @@ const RegisterPage: React.FC = () => {
 
         if (formData.password.trim().length < 8) {
             err.password = 'Hasło powinno mieć więcej niż 8 znaków'
+        } else if (!/[A-Z]/.test(formData.password.trim())) {
+            err.password = 'Hasło powinno mieć przynajmniej jedną dużą literę'
+        } else if (!/[^a-zA-Z0-9]/.test(formData.password.trim())) {
+            err.password = 'Hasło powinno mieć przynajmniej jeden znak specjalny'
+        } else if (!/[0-9]/.test(formData.password.trim())) {
+            err.password = 'Hasło powinno mieć przynajmniej jedna cyfre'
         }
 
         if (formData.rePassword.trim().length == 0) {
@@ -103,8 +109,20 @@ const RegisterPage: React.FC = () => {
             routeChange('/login');
 
         } catch (error: any) {
-            console.log(error.response?.data);
-            alert("Błąd: " + JSON.stringify(error.response?.data));
+            if (error.response && error.response.status === 409) {
+                const serverMessage = error.response.data.message;
+                const err: { [key: string]: string } = { ...errors };
+
+                if (serverMessage.includes('nickname')) {
+                    err.nickname = 'Ten login jest już zajęty';
+                }
+                if (serverMessage.includes('email')) {
+                    err.email = 'Ten email jest już zajęty';
+                }
+                setErrors(err);
+            } else {
+                alert('Wystąpił nieoczekiwany błąd serwera.')
+            }
         }
         setIsLoading(false)
     }

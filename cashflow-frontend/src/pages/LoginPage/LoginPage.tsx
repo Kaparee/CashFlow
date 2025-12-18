@@ -8,6 +8,7 @@ import { useLoading } from '../../hooks/useLoading.ts';
 import axios from 'axios';
 
 const LoginPage: React.FC = () => {
+    const [loginError, setLoginError] = useState<string | null>(null);
     const { isLoading, setIsLoading } = useLoading();
 
     useEffect(() => {
@@ -58,25 +59,27 @@ const LoginPage: React.FC = () => {
     }
 
     const handleLogin = async () => {
+        setLoginError(null);
         try {
             setIsLoading(true);
             const res = await axios.post('http://localhost:5205/api/login', {
                 emailOrNickname: formData['nicknameOrEmail'],
                 password: formData['password'],
-            }, {
-                withCredentials: true
             });
 
-            console.log(res);
+            localStorage.setItem('token', res.data.token);
 
 
-            alert("Zalogowano!");
+            //alert("Zalogowano!");
 
             routeChange('/dashboard');
 
         } catch (error: any) {
-            console.log(error.response?.data);
-            alert("Błąd: " + JSON.stringify(error.response?.data));
+            if (error.response && error.response.status === 401) {
+                setLoginError('Niepoprawny login lub hasło')
+            } else {
+                setLoginError('Wystąpił błąd serwera')
+            }
         }
         setIsLoading(false);
     }
@@ -109,6 +112,13 @@ const LoginPage: React.FC = () => {
                                         Zaloguj
                                     </button>
                                 </div>
+
+                                {loginError && (
+                                    <div className="alert alert-danger mt-3 small py-2" role="alert">
+                                        {loginError}
+                                    </div>
+                                )}
+
                                 <div className='text-center small mt-2'>
                                     <a href="#" className='text-secondary text-decoration-none fst-italic' onClick={() => routeChange('/register')}><span className='text-decoration-underline fw-bold'>Zarejestruj się</span> jeśli nie posiadasz konta</a>
                                 </div>
