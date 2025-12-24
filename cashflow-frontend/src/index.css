@@ -72,6 +72,29 @@ body {
         background-position: 40%;
     }
 
+.btn-outline-primary {
+    background-color: transparent !important;
+    color: #00A676 !important;
+    border: 2px solid #00A676 !important;
+    transition: all 0.2s ease-in-out;
+}
+    .btn-outline-primary:hover {
+        background: #00A676 !important;
+        color: #fff !important;
+    }
+
+.btn-outline-white {
+    background-color: transparent !important;
+    color: #fff !important;
+    border: 2px solid #fff !important;
+    transition: all 0.2s ease-in-out;
+}
+    .btn-outline-white:hover {
+        background: #fff !important;
+        color: #000 !important;
+    }
+
+
 /* BORDERS */
 .border-gradient {
     border-image-source: linear-gradient(90deg,rgba(120, 211, 107, 1) 0%, rgba(0, 166, 118, 1) 100%) !important;
@@ -98,6 +121,14 @@ body {
 
 .text-secondary {
     color: #454545 !important;
+}
+
+a.text-white:hover {
+    opacity: 0.8;
+}
+
+.fs-small {
+    font-size: small;
 }
 
 @media (max-width: 1199px) {
