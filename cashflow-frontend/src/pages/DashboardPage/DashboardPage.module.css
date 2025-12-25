@@ -1,0 +1,102 @@
+:root {
+    --bg-dark-primary: #121212;
+    --bg-dark-secondary: #171717;
+    --text-primary: #DEDEDE;
+    --text-secondary: #ECECEC;
+    --accent-primary: #00A676;
+    --accent-secondary: #78D36B;
+    --border-emphasis: #454545;
+    --shadow-dark: rgba(255, 255, 255, 0.1);
+    --shadow-accent-primary: rgba(0, 166, 118, 0.4);
+    --shadow-accent-secondary: rgba(120, 211, 107, 0.4);
+}
+
+.bgDarkPrimary {
+    background-color: var(--bg-dark-primary);
+}
+
+.bgDarkPrimary:focus {
+    background-color: var(--bg-dark-secondary);
+}
+
+.bgDarkSecondary {
+    background-color: var(--bg-dark-secondary);
+}
+
+.textDarkPrimary {
+    color: var(--text-primary);
+}
+
+.textDarkSecondary {
+    color: var(--text-secondary);
+}
+
+.textDarkAccentPrimary {
+    color: var(--accent-primary);
+}
+
+.textDarkAccentSecondary {
+    color: var(--text-secondary);
+}
+
+.textDarkPrimary:hover, textDarkSecondary:hover, .textDarkAccentPrimary:hover, .textDarkAccentSecondary:hover {
+    opacity: 0.8;
+    transition: opacity 0.4s ease-in-out;
+}
+
+.borderDarkEmphasis {
+    border-color: var(--border-emphasis);
+}
+
+.borderDarkEmphasis:focus {
+    border-color: var(--text-primary);
+}
+
+.shadowDark {
+    box-shadow: 0 0.5rem 1rem var(--shadow-dark);
+}
+
+.shadowDarkAccentPrimary {
+    box-shadow: 0 0.5rem 1rem var(--shadow-accent-primary);
+}
+
+.shadowDarkAccentSecondary {
+    box-shadow: 0 0.5rem 1rem var(--shadow-accent-secondary);
+}
+
+.shadowDarkAccentPrimaryHover:hover {
+    box-shadow: 0 0.5rem 1rem var(--shadow-accent-primary);
+}
+
+.shadowDarkAccentSecondaryHover:hover {
+    box-shadow: 0 0.5rem 1rem var(--shadow-accent-secondary);
+}
+
+.shadowDarkAccentPrimaryHover, .shadowDarkAccentSecondaryHover {
+    transition: box-shadow 0.4s ease-in-out;
+}
+
+.btnDarkOutlinePrimary {
+    background-color: transparent !important;
+    color: var(--text-primary) !important;
+    border: 2px solid var(--text-primary) !important;
+    transition: all 0.2s ease-in-out;
+}
+    .btnDarkOutlinePrimary:hover {
+        background: var(--text-primary) !important;
+        color: var(--bg-dark-primary) !important;
+        box-shadow: 0 0.5rem 1rem var(--shadow-dark);
+    }
+
+.btnDarkOutlineAccentPrimary {
+    background-color: transparent !important;
+    color: var(--accent-primary) !important;
+    border: 2px solid var(--accent-primary) !important;
+    transition: all 0.2s ease-in-out;
+}
+    .btnDarkOutlineAccentPrimary:hover {
+        background: var(--accent-primary) !important;
+        color: #fff !important;
+        box-shadow: 0 0.5rem 1rem var(--shadow-accent-primary);
+    }
+

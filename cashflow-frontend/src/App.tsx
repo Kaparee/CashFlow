@@ -5,6 +5,13 @@ import LoginPage from './pages/LoginPage/LoginPage'
 import RegisterPage from './pages/RegisterPage/RegisterPage'
 import DashboardPage from './pages/DashboardPage/DashboardPage'
 import ProtectedRoute from './components/Auth/ProtectedRoute.tsx'
+import AccountSelection from './pages/DashboardPage/pages/AccountSelection/AccountSelection.tsx'
+import DashboardHomePage from './pages/DashboardPage/pages/DashboardHomePage/DashboardHomePage.tsx'
+import Accounts from './pages/DashboardPage/pages/Acccounts/Accounts.tsx'
+import Charts from './pages/DashboardPage/pages/Charts/Charts.tsx'
+import Notifications from './pages/DashboardPage/pages/Notifications/Notifications.tsx';
+import Settings from './pages/DashboardPage/pages/Settings/Settings.tsx';
+import AccountCreator from './pages/DashboardPage/pages/AccountCreator/AccountCreator.tsx'
 import '@fontsource/jost'
 import '@fontsource/jost/600'
 
@@ -39,7 +46,15 @@ const App: React.FC = () => {
                             <DashboardPage />
                         </ProtectedRoute>
                     }
-                />
+                >
+                    <Route index element={<AccountSelection />} />
+                    <Route path='/dashboard/dashboard-home-page' element={<DashboardHomePage />} />
+                    <Route path='/dashboard/accounts' element={<Accounts />} />
+                    <Route path='/dashboard/charts' element={<Charts />} />
+                    <Route path='/dashboard/notifications' element={<Notifications />} />
+                    <Route path='/dashboard/settings' element={<Settings />} />
+                    <Route path='/dashboard/account-creator' element={<AccountCreator />} />
+                </Route>
             </Routes>
         </BrowserRouter>
     );
