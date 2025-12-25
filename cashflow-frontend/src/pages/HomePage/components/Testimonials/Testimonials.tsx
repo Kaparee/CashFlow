@@ -99,8 +99,6 @@ const testimonialsList: Testimonial[] = [
 ];
 
 const Testimonials: React.FC = () => {
-    console.log('Dostępne klucze:', Object.keys(avatars));
-    console.log('Szukany klucz:', `../../../../assets/testimonial/${testimonialsList[0].fileName}`);
     const [activeIndex, setActiveIndex] = useState(0);
 
     useEffect(() => {

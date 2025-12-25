@@ -69,9 +69,6 @@ const LoginPage: React.FC = () => {
 
             localStorage.setItem('token', res.data.token);
 
-
-            //alert("Zalogowano!");
-
             routeChange('/dashboard');
 
         } catch (error: any) {

@@ -32,6 +32,10 @@ body {
     outline: 0 !important;
 }
 
+.point{
+    cursor: pointer;
+}
+
 .invalid-feedback {
     display: block !important;
     opacity: 0;

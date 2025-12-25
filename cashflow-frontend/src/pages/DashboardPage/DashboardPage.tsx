@@ -1,8 +1,10 @@
-import React, { useState } from 'react'
-import { useNavigate } from "react-router-dom"
+import React, { useState, useContext } from 'react'
 import Header from './components/Layout/Header/Header.tsx'
 import Sidebar from './components/Layout/Sidebar/Sidebar.tsx'
 import { useWindowWidth } from '../../hooks/useWindowWidth.ts'
+import { Outlet, useNavigate } from 'react-router-dom'
+import s from './DashboardPage.module.css'
+import AccountProvider, {AccountContext} from './contexts/AccountContext.tsx'
 
 const DashboardPage: React.FC = () => {
     
@@ -14,29 +16,29 @@ const DashboardPage: React.FC = () => {
     const [isSidebarExpanded, setIsSidebarExpanded] = useState<boolean>(false);
     const width = useWindowWidth();
 
-
-
     return (
         <>
-            <div className='container-fluid d-flex px-0 vh-100'>
-                <div className={`px-md-2 bg-dark flex-shrink-0 ${width >= 768 ? 'position-relative container-fluid' :  ''} ${width < 768 && !isSidebarExpanded ? '' : ''}`} style={width < 768 ? {width: '0px'} : {width: '60px'}}>
-                    <Sidebar 
-                        isExpanded={isSidebarExpanded}
-                        onToggle={() => setIsSidebarExpanded(!isSidebarExpanded)}
-                    />
-                </div>
-                <div className='flex-grow-1'>
-                    <div className='container-fluid px-0 shadow'>
-                        <Header 
+            <AccountProvider>
+                <div className='container-fluid d-flex px-0 vh-100'>
+                    <div className={`px-md-2 ${s.bgDarkSecondary} flex-shrink-0 ${width >= 768 ? 'position-relative container-fluid' :  ''} ${width < 768 && !isSidebarExpanded ? '' : ''}`} style={width < 768 ? {width: '0px'} : {width: '60px'}}>
+                        <Sidebar 
                             isExpanded={isSidebarExpanded}
                             onToggle={() => setIsSidebarExpanded(!isSidebarExpanded)}
                         />
                     </div>
-                    <div className='container-fluid'>
-                        content
-                    </div>
-                </div>        
-            </div>
+                    <div className='flex-grow-1 d-flex flex-column'>
+                        <div className={`container-fluid px-0 shadow ${s.bgDarkSecondary}`}>
+                            <Header 
+                                isExpanded={isSidebarExpanded}
+                                onToggle={() => setIsSidebarExpanded(!isSidebarExpanded)}
+                            />
+                        </div>
+                        <div className={`container-fluid ${s.bgDarkPrimary} py-2 flex-grow-1 d-flex align-items-center`}>
+                            <Outlet />
+                        </div>
+                    </div>        
+                </div>
+            </AccountProvider>
         </>
     );
 };

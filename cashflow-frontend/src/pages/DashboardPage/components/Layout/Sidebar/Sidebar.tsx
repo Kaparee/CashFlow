@@ -1,5 +1,7 @@
 import s from './Sidebar.module.css'
+import sDashboard from '../../../DashboardPage.module.css'
 import { useWindowWidth } from '../../../../../hooks/useWindowWidth';
+import { Link } from 'react-router-dom';
 
 interface SidebarProps {
         isExpanded: boolean;
@@ -9,11 +11,11 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ isExpanded, onToggle}) => {
 
     const menuItems = [
-        { icon: 'bi-house', label: 'Strona Główna', path: '#' },
-        { icon: 'bi-person-lines-fill', label: 'Konta', path: '#' },
-        { icon: 'bi-graph-up', label: 'Wykresy', path: '#' },
-        { icon: 'bi-bell', label: 'Powiadomienia', path: '#' },
-        { icon: 'bi-gear', label: 'Ustawienia', path: '#' },
+        { icon: 'bi-house', label: 'Strona Główna', path: 'dashboard-home-page' },
+        { icon: 'bi-person-lines-fill', label: 'Konta', path: 'accounts' },
+        { icon: 'bi-graph-up', label: 'Wykresy', path: 'charts' },
+        { icon: 'bi-bell', label: 'Powiadomienia', path: 'notifications' },
+        { icon: 'bi-gear', label: 'Ustawienia', path: 'settings' },
     ]
 
     const width = useWindowWidth(); 
@@ -33,9 +35,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isExpanded, onToggle}) => {
 
     return (
         <>
-            <div className={`position-absolute row px-2 py-1 flex-column text-white h-100 justify-content-start align-items-start z-1 bg-dark overflow-hidden ${width < 768 ? 'mx-0' : '' }`} style={sidebarStyle}>
+            <div className={`position-absolute row px-2 pt-1 pb-2 flex-column text-white h-100 justify-content-start align-items-start z-2 ${sDashboard.bgDarkSecondary} ${sDashboard.shadowDark} overflow-hidden ${width < 768 ? 'mx-0' : '' }`} style={sidebarStyle}>
                 <div className=''>
-                    <button className={`btn px-0 py-0 border-0 bg-dark`} type="button" onClick={onToggle}>
+                    <button className={`btn px-0 py-0 border-0 ${sDashboard.bgDarkSecondary}`} type="button" onClick={onToggle}>
                         <span className={`${s.w60} text-center`}>
                             <i className="bi bi-list fs-3 text-gradient"></i>
                         </span>
@@ -43,14 +45,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isExpanded, onToggle}) => {
                 </div>
                 {menuItems.map((item, index) => (
                     <div className={`${item.icon == 'bi-gear' ? 'mt-auto' : 'mb-2'}`} key={index}>
-                        <a className={`d-flex align-items-center justify-content-start text-decoration-none transition text-white`} href={item.path}>
+                        <Link to={item.path} className={`d-flex align-items-center justify-content-start text-decoration-none transition ${sDashboard.textDarkPrimary}`}>
                             <span className={`${s.linkTransition} ${s.w60} d-flex align-items-start`}> 
                                 <i className={`bi ${item.icon} fs-4`}></i>
                             </span>
                             <span className='text-nowrap text-start w-100 ms-md-4'>
                                 {item.label}
                             </span>
-                        </a>
+                        </Link>
                     </div>
                 ))}
             </div>
