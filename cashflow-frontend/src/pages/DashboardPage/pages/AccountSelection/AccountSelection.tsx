@@ -15,11 +15,15 @@ interface AccountSelectionProps {
 const AccountSelection: React.FC = () => {
     const {account, setAccount} = useContext(AccountContext);
     const [accounts, setAccounts] = useState<AccountSelectionProps[]>([]);
-
+    const location = useLocation();
     const navigate = useNavigate();
     const routeChange = (path: string, options?: any) => {
         navigate(path, options);
     }
+
+    useEffect(() => {
+        handleGetAccounts();
+    }, []);
 
     const handleGetAccounts = async () => {
         const token = localStorage.getItem('token');
@@ -34,10 +38,6 @@ const AccountSelection: React.FC = () => {
             console.error("Error fetching accounts:", error);
         }
     }
-
-    useEffect(() => {
-        handleGetAccounts();
-    }, []);
 
     const handleAccountSelect = (account: AccountSelectionProps) => {
         setAccount(account);
@@ -56,7 +56,7 @@ const AccountSelection: React.FC = () => {
         <>
             <div className='flex-grow-1 row justify-content-center'>
                 {accounts.map((account, index) => (
-                    <div key={index} className='col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-4 mb-sm-3 h-100'>
+                    <div key={account.accountId} className='col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-4 mb-sm-3 h-100'>
                         <div className={`d-flex flex-column border ${sDashboard.borderDarkEmphasis} ${sDashboard.bgDarkSecondary} ${sDashboard.textDarkSecondary} ${sDashboard.shadowDarkAccentPrimaryHover} rounded-5 p-3 text-center h-100 ${sDashboard.shadowDark}`}>
                             <div className='user-select-none'>{account.photoUrl ? account.photoUrl : <i className="bi bi-person fs-3"></i>}</div>
                             <div className={`user-select-none fs-5 fw-bold ${sDashboard.textDarkPrimary}`}>{account.name}</div>

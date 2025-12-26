@@ -23,8 +23,12 @@
     background-color: var(--bg-dark-secondary);
 }
 
-.textDarkPrimary {
+.textDarkPrimary, .textDarkPrimary:focus {
     color: var(--text-primary);
+    transition: all 0.2s ease-in-out;
+}
+a.textDarkPrimary:hover {
+    color: rgba(222, 222, 222, 0.8);
 }
 
 .textDarkSecondary {
@@ -39,17 +43,24 @@
     color: var(--text-secondary);
 }
 
-.textDarkPrimary:hover, textDarkSecondary:hover, .textDarkAccentPrimary:hover, .textDarkAccentSecondary:hover {
-    opacity: 0.8;
-    transition: opacity 0.4s ease-in-out;
-}
-
 .borderDarkEmphasis {
-    border-color: var(--border-emphasis);
+    border-color: var(--border-emphasis) !important;
 }
 
 .borderDarkEmphasis:focus {
-    border-color: var(--text-primary);
+    border-color: var(--accent-primary) !important;
+}
+
+.borderDarkAccent {
+    border-color: var(--accent-primary);
+}
+
+.borderDarkAccent:focus {
+    border-color: var(--accent-secondary);
+}
+
+.borderDarkFocusAccent:focus {
+    border-color: var(--accent-primary) !important;
 }
 
 .shadowDark {

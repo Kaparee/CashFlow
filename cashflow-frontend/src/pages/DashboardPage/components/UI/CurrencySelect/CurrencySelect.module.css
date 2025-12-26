@@ -1,0 +1,33 @@
+.transitionPopUp {
+    transition: all 0.4s ease-in-out;
+}
+
+.currecnySelectHeight {
+    max-height: 200px;
+    overflow-y: scroll;
+    scrollbar-color: #454545 transparent;
+    scrollbar-width: thin;
+}
+
+.currecnySelectHeight:global(::-webkit-scrollbar) {
+    width: 8px;
+}
+
+.currecnySelectHeight:global(::-webkit-scrollbar-thumb) {
+    background-color: #454545;
+}
+
+.currecnySelectHeight:global(::-webkit-scrollbar-thumb:hover) {
+    background-color: #52525b;
+}
+
+
+.textSelection {
+    transition: all 0.2s ease-in-out;
+}
+
+.textSelection:hover, .textSelection:focus, .textSelection:focus-visible, .textSelection:focus-within {
+    text-decoration: underline #00A676;
+    text-underline-offset: 0.5rem;
+    text-decoration-thickness: 2px;
+}
