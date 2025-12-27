@@ -20,7 +20,19 @@ interface AccountProviderProps {
 export const AccountContext = React.createContext<AccountContextType | undefined>(undefined);
 
 const AccountProvider: React.FC<AccountProviderProps> = ({children}) => {
-    const [ account, setAccount] = useState<AccountContextProps | null>(null) 
+    const [ account, setAccountState] = useState<AccountContextProps | null>(() => {
+        const savedAccount = localStorage.getItem('selectedAccount');
+        return savedAccount ? JSON.parse(savedAccount) : null
+    }) 
+
+    const setAccount = (acc: AccountContextProps | null) => {
+        setAccountState(acc)
+        if (acc) {
+            localStorage.setItem('selectedAccount', JSON.stringify(acc));
+        } else {
+            localStorage.removeItem('selectedAccount');
+        }
+    }
     
     return (
         <AccountContext.Provider value={{account, setAccount}}>
@@ -30,3 +42,11 @@ const AccountProvider: React.FC<AccountProviderProps> = ({children}) => {
 };
 
 export default AccountProvider
+
+export const useAccount = () => {
+    const context = React.useContext(AccountContext);
+    if (context === undefined) {
+        throw new Error('useAccount must be used within an AccountProvider');
+    }
+    return context;
+};
