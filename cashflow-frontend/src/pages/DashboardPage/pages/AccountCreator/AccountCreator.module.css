@@ -1,16 +1,3 @@
-:root {
-    --bg-dark-primary: #121212;
-    --bg-dark-secondary: #171717;
-    --text-primary: #DEDEDE;
-    --text-secondary: #ECECEC;
-    --accent-primary: #00A676;
-    --accent-secondary: #78D36B;
-    --border-emphasis: #454545;
-    --shadow-dark: rgba(255, 255, 255, 0.1);
-    --shadow-accent-primary: rgba(0, 166, 118, 0.4);
-    --shadow-accent-secondary: rgba(120, 211, 107, 0.4);
-}
-
 .btnIcons {
     background-color: transparent;
     border: 1px  solid var(--border-emphasis) ;
@@ -19,12 +6,12 @@
     transition: all 0.3s ease-in-out;
 }
 
-.btnIcons:hover, .btnIcons:focus, .btnIcons:focus-visible, .btnIcons:focus-within {
+.btnIcons:hover, .btnIcons:focus, .btnIcons:focus-visible, .btnIcons:focus-within, .selectedIcon {
     border-color: var(--shadow-accent-primary) ;
     box-shadow: 0 0.1rem 1rem var(--shadow-accent-primary);
 }
 
-.btnIcons:hover i, .btnIcons:focus i, .btnIcons:focus-visible i, .btnIcons:focus-within i{
+.btnIcons:hover i, .btnIcons:focus i, .btnIcons:focus-visible i, .btnIcons:focus-within i, .selectedIcon i{
     color: var(--accent-primary);
 }
 

@@ -9,6 +9,8 @@
     --shadow-dark: rgba(255, 255, 255, 0.1);
     --shadow-accent-primary: rgba(0, 166, 118, 0.4);
     --shadow-accent-secondary: rgba(120, 211, 107, 0.4);
+    --bs-form-invalid-color: #dc3545;
+    --bs-danger: #dc3545;
 }
 
 .bgDarkPrimary {
@@ -21,6 +23,16 @@
 
 .bgDarkSecondary {
     background-color: var(--bg-dark-secondary);
+}
+
+.alertDarkAccent {
+    background-color: var(--accent-secondary);
+    border: 1px solid var(--accent-primary);
+}
+
+.alertDarkRed {
+    background-color: var(--bs-form-invalid-color);
+    border: 1px solid var(--bs-danger);
 }
 
 .textDarkPrimary, .textDarkPrimary:focus {
@@ -111,3 +123,23 @@ a.textDarkPrimary:hover {
         box-shadow: 0 0.5rem 1rem var(--shadow-accent-primary);
     }
 
+.scrollStyle {
+    scrollbar-color: #454545 transparent;
+    scrollbar-width: thin;
+    scroll-margin-top: 100rem;
+}
+.scrollStyle:global(::-webkit-scrollbar) {
+    width: 5px;
+}
+
+.scrollStyle:global(::-webkit-scrollbar-thumb) {
+    background-color: #454545;
+}
+
+.scrollStyle:global(::-webkit-scrollbar-thumb:hover) {
+    background-color: #52525b;
+}
+
+.minHeight0 {
+    min-height: 0px;
+}

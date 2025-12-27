@@ -11,7 +11,7 @@ interface CurrencySelectProps {
     currencies: CurrencyData[];
     isLoading: boolean;
     selected: string;
-    onChange: (code: string) => void;
+    onChange: (e: React.MouseEvent<HTMLButtonElement>) => void;
     error?: string;
 }
 
@@ -45,8 +45,8 @@ const CurrencySelect: React.FC<CurrencySelectProps> = ({currencies, isLoading, s
 
     const handleShow = () => setIsShown(!isShown);
 
-    const handleChange = (code: string) => {
-        onChange(code);
+    const handleChange = (e: React.MouseEvent<HTMLButtonElement>) => {
+        onChange(e);
         handleShow();
     }
 
@@ -86,7 +86,7 @@ const CurrencySelect: React.FC<CurrencySelectProps> = ({currencies, isLoading, s
                 >
                     {currencies.map((item, index) => (
                         <div key={item.code}>
-                            <button type='button' className={`btn ${sDashboard.textDarkSecondary} ${s.textSelection}`} onClick={ () => handleChange(item.code)} ref={index === 0 ? firstItemRef : undefined}>{item.currency} {item.code}</button>
+                            <button type='button' name='currency' value={item.code} className={`btn ${sDashboard.textDarkSecondary} ${s.textSelection} ${selected == item.code ? s.selectedCurrency : ''}`} onClick={(e) => handleChange(e)} ref={index === 0 ? firstItemRef : undefined}>{item.currency} {item.code}</button>
                         </div>
                     ))}
                 </div>

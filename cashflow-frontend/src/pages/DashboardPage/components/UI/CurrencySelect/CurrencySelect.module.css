@@ -22,11 +22,11 @@
 }
 
 
-.textSelection {
+.textSelection, .selectedCurrency {
     transition: all 0.2s ease-in-out;
 }
 
-.textSelection:hover, .textSelection:focus, .textSelection:focus-visible, .textSelection:focus-within {
+.textSelection:hover, .textSelection:focus, .textSelection:focus-visible, .textSelection:focus-within,  .selectedCurrency {
     text-decoration: underline #00A676;
     text-underline-offset: 0.5rem;
     text-decoration-thickness: 2px;
