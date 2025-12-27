@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useWindowWidth } from "../../../../../hooks/useWindowWidth";
 import s from './Header.module.css'
 import sDashboard from '../../../DashboardPage.module.css'
+import { AccountContext, useAccount } from "../../../contexts/AccountContext";
 
 interface HeaderProps {
     isExpanded: boolean;
@@ -10,6 +11,8 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({isExpanded, onToggle}) => {
+
+    const { account } = useAccount()
 
     const navigate = useNavigate();
 
@@ -37,6 +40,7 @@ const Header: React.FC<HeaderProps> = ({isExpanded, onToggle}) => {
                         </span>
                     </button>
                 </div>
+
                 <div className={`d-flex align-items-center justify-content-center col ${width < 768 ? '' : 'ps-5'}`}>
                     
                     {location['pathname'] != '/dashboard' && 
@@ -47,6 +51,9 @@ const Header: React.FC<HeaderProps> = ({isExpanded, onToggle}) => {
                     }
                 
                 </div>
+
+                <div className={`${sDashboard.textDarkPrimary} `}>{account?account.name:"Nie wybrano konta!"}</div>
+
                 <div className={`col-auto text-end`}>
                     <button className={`btn btn-outline-primary px-2 py-1 rounded-4 fs-small ${sDashboard.btnDarkOutlineAccentPrimary}`} type="button" onClick={logout}>Wyloguj</button>
                 </div>    
