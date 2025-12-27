@@ -5,6 +5,7 @@ interface InputProps {
     type?: string;
     value: string;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
     placeholder?: string;
     id: string;
     divClass?: string;
@@ -20,6 +21,7 @@ const Input: React.FC<InputProps> = ({
     type = 'text',
     value,
     onChange,
+    onBlur,
     placeholder,
     id,
     divClass,
@@ -31,7 +33,7 @@ const Input: React.FC<InputProps> = ({
         <div className={`mb-3 text-start  ${divClass}`}>
             <label htmlFor={id} className={`fw-bold form-label small ${labelClass}`}>{label}</label>
 
-            <input id={id} name={name} className={`form-control py-2 px-3 rounded-5 shadow-sm ${error ? 'is-invalid' : ''} ${inputClass}`} type={type} value={value} placeholder={placeholder} onChange={onChange} />
+            <input id={id} name={name} className={`form-control py-2 px-3 rounded-5 shadow-sm ${error ? 'is-invalid' : ''} ${inputClass}`} type={type} value={value} placeholder={placeholder} onChange={onChange} onBlur={onBlur}/>
 
             {error && <div className="invalid-feedback ps-2">{error}</div>}
         </div>
