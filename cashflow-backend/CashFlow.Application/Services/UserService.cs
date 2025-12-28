@@ -89,23 +89,5 @@ namespace CashFlow.Application.Services
                 UpdatedAt = user.UpdatedAt,
             };
         }
-
-        public async Task<List<AccountResponse>> GetUserAccounts(int userId)
-        {
-            var accounts = await _userRepository.GetUserAccountsWithDetailsAsync(userId);
-
-            if(accounts == null || !accounts.Any())
-            {
-                throw new Exception("User does not have any accounts");
-            }
-
-            return accounts.Select(account => new AccountResponse
-            {
-                AccountId = account.AccountId!,
-                Name = account.Name!,
-                Balance = account.Balance!,
-                CurrencyCode = account.CurrencyCode!,
-            }).ToList();
-        }
     }
 }
