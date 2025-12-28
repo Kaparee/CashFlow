@@ -16,26 +16,22 @@ namespace CashFlow.Application.Services
             _accountRepository = accountRepository;
         }
 
-        public async Task<List<TransactionResponse>> GetAccountTransactions(int userId, int accountId)
+        public async Task<List<AccountResponse>> GetUserAccounts(int userId)
         {
-            var transactions = await _accountRepository.GetAccountTransactionsWithDetailsAsync(userId, accountId);
+            var accounts = await _accountRepository.GetUserAccountsWithDetailsAsync(userId);
 
-            return transactions.Select(transaction => new TransactionResponse
+            if (accounts == null || !accounts.Any())
             {
-                TransactionId = transaction.TransactionId,
-                Amount = transaction.Amount,
-                Description = transaction.Description,
-                Date = transaction.Date,
-                Type = transaction.Type,
+                throw new Exception("User does not have any accounts");
+            }
 
-                Category = transaction.Category == null ? null : new CategoryResponse
-                {
-                    CategoryId = transaction.Category.CategoryId,
-                    Name = transaction.Category.Name,
-                    Color = transaction.Category.Color,
-                    Type = transaction.Category.Type,
-                    LimitAmount = transaction.Category.LimitAmount,
-                }
+            return accounts.Select(account => new AccountResponse
+            {
+                AccountId = account.AccountId!,
+                Name = account.Name!,
+                Balance = account.Balance!,
+                CurrencyCode = account.CurrencyCode!,
+                PhotoUrl = account.PhotoUrl!,
             }).ToList();
         }
 

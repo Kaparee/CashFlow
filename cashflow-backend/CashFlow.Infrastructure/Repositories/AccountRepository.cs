@@ -15,14 +15,6 @@ namespace CashFlow.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<List<Transaction>> GetAccountTransactionsWithDetailsAsync(int userId, int accountId)
-        {
-            return await _context.Transactions
-                .Include(c => c.Category)
-                .Where(a => a.AccountId == accountId && a.UserId == userId)
-                .ToListAsync();
-        }
-
         public async Task<Account?> GetAccountByIdAsync(int userId, int accountId)
         {
             return await _context.Accounts
@@ -45,6 +37,13 @@ namespace CashFlow.Infrastructure.Repositories
         {
             _context.Accounts.Update(account);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<Account>> GetUserAccountsWithDetailsAsync(int userId)
+        {
+            return await _context.Accounts
+                .Where(u => u.UserId == userId && u.IsActive == true)
+                .ToListAsync();
         }
     }
 }

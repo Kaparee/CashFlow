@@ -21,13 +21,6 @@ namespace CashFlow.Infrastructure.Repositories
             .FirstOrDefaultAsync(u => u.UserId == userId);
         }
 
-        public async Task<List<Account>> GetUserAccountsWithDetailsAsync(int userId)
-        {
-            return await _context.Accounts
-                .Where(u => u.UserId == userId && u.IsActive == true)
-                .ToListAsync();
-        }
-
         public async Task AddAsync(User user)
         {
             _context.Users.Add(user);
