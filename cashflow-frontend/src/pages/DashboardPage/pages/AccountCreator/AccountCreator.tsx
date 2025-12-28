@@ -1,11 +1,12 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import sDashboard from '../../DashboardPage.module.css'
 import Input from '../../../../components/UI/Input/Input'
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useCurrencySelect } from '../../hooks/useCurrencySelect';
 import CurrencySelect from '../../components/UI/CurrencySelect/CurrencySelect';
 import s from './AccountCreator.module.css'
-import axios from 'axios';
+import { ToastContext } from '../../../../contexts/ToastContext';
+import api from '../../../../api/api';
 
 interface FormDataProps {
     name: string;
@@ -24,6 +25,7 @@ const AccountCreator: React.FC = () => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState<FormDataProps>({ name: "", balance: "", currency: "", photoUrl: ""});
     const [isSending, setIsSending] = useState<boolean>(false);
+    const { addToast } = useContext(ToastContext);
     
     const validateForm = () => {
             const err: {[key: string] : string} = {}
@@ -31,7 +33,7 @@ const AccountCreator: React.FC = () => {
             if (formData.name.trim().length == 0) {
                 err.name = 'Proszę wpisać nazwe'
             } else if (formData.name.trim().length > 30) {
-                err.name = 'Nazwa musi być krótsz niż 30 znaków'
+                err.name = 'Nazwa musi być krótsza niż 30 znaków'
             }
 
             if (formData.balance.trim().length == 0) {
@@ -84,16 +86,17 @@ const AccountCreator: React.FC = () => {
         const handleAddAccount = async () => {
             try{
                 setIsSending(true);
-                const res = await axios.post('http://localhost:5205/api/#',{
+                const res = await api.post('/create-new-account',{
                     "name": formData['name'],
                     "balance": parseFloat(parseFloat(formData['balance']).toFixed(2)),
                     "currencyCode": formData['currency'],
                     "photoUrl": formData['photoUrl']
-                }); 
+                });
+                addToast('Utworzono konto!', 'info');
                 routeChange(previousPath);
             } catch (error: any) {
                 if (error.message){
-                    console.log(error.message);
+                    addToast('Coś poszło nie tak, spróbuj ponownie', 'error');
                 }
             } finally {
                 setIsSending(false);

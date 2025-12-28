@@ -1,32 +1,27 @@
-import React, { useState, useEffect } from 'react'
-import { Form, useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useContext } from 'react'
+import { useNavigate } from "react-router-dom";
 import s from './RegisterPage.module.css';
 import Header from '../../components/Layout/Header/Header.tsx'
 import Footer from '../../components/Layout/Footer/Footer.tsx'
 import Input from '../../components/UI/Input/Input.tsx';
-import axios from 'axios';
 import { useLoading } from '../../hooks/useLoading.ts'
+import { ToastContext } from '../../contexts/ToastContext.tsx';
+import api from '../../api/api.ts';
  
 const RegisterPage: React.FC = () => {
     const { isLoading, setIsLoading } = useLoading();
+    const { addToast } = useContext(ToastContext);
+    const [ formData, setFormData ] = useState<{ [key: string]: string }>({ firstName: "", lastName: "", email: "", nickname: "", password: "", rePassword : "" });
+    const navigate = useNavigate()
+    const [ errors, setErrors ] = useState<{ [key: string]: string }>({});
 
-    useEffect(() => {
-        const htmlTag = document.body;
-        if (isLoading) {
-            htmlTag.style.overflow = 'hidden';
-        } else {
-            htmlTag.style.overflow = '';
-        }
-    },[isLoading]);
-
-
-    const [formData, setFormData] = useState<{ [key: string]: string }>({ firstName: "", lastName: "", email: "", nickname: "", password: "", rePassword : "" });
+    const routeChange = (path:string) => {
+        navigate(path);
+    }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name] : e.target.value}); 
     }
-
-    const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
     const validateForm = () => {
         const err: { [key: string]: string } = {};
@@ -88,15 +83,11 @@ const RegisterPage: React.FC = () => {
         }
     }
 
-    let navigate = useNavigate()
-    const routeChange = (path:string) => {
-        navigate(path);
-    }
-
     const handleRegister = async () => {
         try {
             setIsLoading(true);
-            const res = await axios.post('http://localhost:5205/api/register', {
+
+            const res = await api.post('/register', {
                 firstName: formData['firstName'],
                 lastName: formData['lastName'],
                 nickname: formData['nickname'],
@@ -104,7 +95,8 @@ const RegisterPage: React.FC = () => {
                 password: formData['password'] 
             });
 
-            alert("Zarejestrowano!");
+            
+            addToast('Pomyślnie zarejestrowano', 'info');
 
             routeChange('/login');
 
@@ -121,11 +113,20 @@ const RegisterPage: React.FC = () => {
                 }
                 setErrors(err);
             } else {
-                alert('Wystąpił nieoczekiwany błąd serwera.')
+                addToast('Wystąpił nieoczekiwany błąd serwera', 'error');
             }
         }
         setIsLoading(false)
     }
+
+    useEffect(() => {
+        const htmlTag = document.body;
+        if (isLoading) {
+            htmlTag.style.overflow = 'hidden';
+        } else {
+            htmlTag.style.overflow = '';
+        }
+    },[isLoading]);
 
     return (
         <>
