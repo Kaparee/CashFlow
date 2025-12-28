@@ -22,5 +22,29 @@ namespace CashFlow.Infrastructure.Repositories
                 .Where(a => a.AccountId == accountId && a.UserId == userId)
                 .ToListAsync();
         }
+
+        public async Task<Account?> GetAccountByIdAsync(int userId, int accountId)
+        {
+            return await _context.Accounts
+                .FirstOrDefaultAsync(a => a.AccountId == accountId && a.UserId == userId);
+        }
+
+        public async Task AddAsync(Account account)
+        {
+            _context.Accounts.Add(account);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> isAccountCreated(int userId, string name)
+        {
+            return await _context.Accounts
+                .AnyAsync(c => c.UserId == userId && c.Name == name);
+        }
+
+        public async Task UpdateAsync(Account account)
+        {
+            _context.Accounts.Update(account);
+            await _context.SaveChangesAsync();
+        }
     }
 }
