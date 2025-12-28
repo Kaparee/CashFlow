@@ -1,11 +1,12 @@
 import React, {useEffect, useState, useContext} from 'react'
-import axios from 'axios';
 import sDashboard from '../../DashboardPage.module.css'
-import { AccountContext } from '../../contexts/AccountContext'; 
+import { useAccount } from '../../contexts/AccountContext'; 
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ToastContext } from '../../../../contexts/ToastContext';
+import api from '../../../../api/api';
+import { AuthContext } from '../../../../contexts/AuthContext';
 
-interface AccountSelectionProps {
+interface Account {
     accountId: number;
     name: string;
     balance: number;
@@ -15,9 +16,10 @@ interface AccountSelectionProps {
 
 const AccountSelection: React.FC = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const {account, setAccount} = useContext(AccountContext);
-    const [accounts, setAccounts] = useState<AccountSelectionProps[]>([]);
+    const [accounts, setAccounts] = useState<Account[]>([]);
     const {addToast} = useContext(ToastContext);
+    const { account, setAccount } = useAccount()
+    const {logout} = useContext(AuthContext);
     const location = useLocation();
     const navigate = useNavigate();
     const routeChange = (path: string, options?: any) => {
@@ -29,15 +31,11 @@ const AccountSelection: React.FC = () => {
     }, []);
 
     const handleGetAccounts = async () => {
-        const token = localStorage.getItem('token');
         try {
             setIsLoading(true);
-            const res = await axios.get('http://localhost:5205/api/accounts-info', {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
+            const res = await api.get('/accounts-info');
             setAccounts(res.data);
+            addToast('pobrano', 'info');
         } catch (error: any) {
             addToast('Nie udało się pobrać kont','error');
         } finally {
@@ -45,7 +43,7 @@ const AccountSelection: React.FC = () => {
         }
     }
 
-    const handleAccountSelect = (account: AccountSelectionProps) => {
+    const handleAccountSelect = (account: Account) => {
         setAccount(account);
         routeChange('/dashboard/dashboard-home-page');
     }
@@ -61,15 +59,15 @@ const AccountSelection: React.FC = () => {
     return (
         <>
             <div className='flex-grow-1 row justify-content-center my-auto'>
-                {!isLoading && accounts.map((account, index) => (
-                    <div key={account.accountId} className='col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-4 mb-sm-3 h-100'>
+                {!isLoading && accounts.map((acc, index) => (
+                    <div key={acc.accountId} className='col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-4 mb-sm-3 h-100'>
                         <div className={`d-flex flex-column border ${sDashboard.borderDarkEmphasis} ${sDashboard.bgDarkSecondary} ${sDashboard.textDarkSecondary} ${sDashboard.shadowDarkAccentPrimaryHover} rounded-5 p-3 text-center h-100 ${sDashboard.shadowDark}`}>
-                            <div className='user-select-none'><i className={`bi ${account.photoUrl ? account.photoUrl : 'bi-coin' } fs-3`}></i></div>
-                            <div className={`user-select-none fs-5 fw-bold ${sDashboard.textDarkPrimary}`}>{account.name}</div>
-                            <div className='user-select-none'><span className='text-gradient fw-bold'>{handleCurrencyFormatting(account.balance, account.currencyCode)}</span></div>
+                            <div className='user-select-none'><i className={`bi ${acc.photoUrl ? acc.photoUrl : 'bi-coin' } fs-3`}></i></div>
+                            <div className={`user-select-none fs-5 fw-bold ${sDashboard.textDarkPrimary}`}>{acc.name}</div>
+                            <div className='user-select-none'><span className='text-gradient fw-bold'>{handleCurrencyFormatting(acc.balance, acc.currencyCode)}</span></div>
                             <div>
-                                <button type='button' className='btn btn-primary btn-sm mt-2 rounded-5' onClick={() => handleAccountSelect(account)}>
-                                    Wybierz
+                                <button type='button' className={`btn ${acc.accountId == account?.accountId ? 'btn-primary': 'btn-outline-primary'} btn-sm mt-2 rounded-5`} onClick={() => handleAccountSelect(acc)}>
+                                    {acc.accountId == account?.accountId ? 'Wybrane Konto': 'Zamień konto'}
                                 </button>
                             </div>
                         </div>
@@ -106,4 +104,4 @@ const AccountSelection: React.FC = () => {
     );
 };
 
-export default AccountSelection
+export default AccountSelection;

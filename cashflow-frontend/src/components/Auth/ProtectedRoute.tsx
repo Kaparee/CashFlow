@@ -1,7 +1,6 @@
-﻿import React, { useEffect, useState } from 'react'
-import { useLoading } from '../../hooks/useLoading.ts'
-import { useNavigate, useLocation, Route, Navigate } from 'react-router-dom'
-import axios from 'axios'
+﻿import React, { useEffect, useContext } from 'react'
+import { useLocation, Navigate } from 'react-router-dom'
+import { AuthContext } from '../../contexts/AuthContext.tsx'
 
 interface ProtectedRouteProps {
     children: React.ReactNode;
@@ -9,8 +8,11 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({children, requireAuth}) => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false)
-    const { isLoading, setIsLoading } = useLoading();
+    const {isAuthenticated, isLoading} = useContext(AuthContext);
+    const location = useLocation();
+    const from = location.state?.from?.pathname || '/dashboard';
+
+
     useEffect(() => {
         const htmlTag = document.body;
         if (isLoading) {
@@ -20,51 +22,6 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({children, requireAuth}) 
         }
     }, [isLoading]);
 
-    const handleRequest = async () => {
-        try {
-            setIsLoading(true);
-
-            const token = localStorage.getItem('token');
-
-            if (!token) {
-                setIsLoggedIn(false);
-                setIsLoading(false);
-                return;
-            }
-
-            const res = await axios.get('http://localhost:5205/api/login-info', {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-            setIsLoggedIn(true);
-        } catch (error: any) {
-            setIsLoggedIn(false);
-            if (error.response && error.response.status === 401) {
-                localStorage.removeItem('token')
-
-                if (requireAuth) {
-                    alert('Sesja Wygasła, zaloguj się ponownie');
-                    routeChange('/login');
-                }
-
-            } else {
-                console.error('Błąd połączenia z serwerem: ', error.message);
-            }
-        }
-        setIsLoading(false);
-    }
-
-    const location = useLocation();
-
-    useEffect(() => {
-        handleRequest();
-    }, [location]);
-
-    let navigate = useNavigate();
-    const routeChange = (path: string) => {
-        navigate(path);
-    }
 
     return (
         <>
@@ -75,9 +32,9 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({children, requireAuth}) 
                     </div>
                 </div>
             ) : requireAuth ? (
-                    isLoggedIn ? children : <Navigate to='/login' />
+                    isAuthenticated ? children : <Navigate to='/login'  state={{from: location}}/>
             ) : (
-                    isLoggedIn ? <Navigate to='/dashboard' /> : children
+                    isAuthenticated ? <Navigate to={from} /> : children
             )}
         </>
     );
