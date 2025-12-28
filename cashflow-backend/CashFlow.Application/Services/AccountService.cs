@@ -38,5 +38,27 @@ namespace CashFlow.Application.Services
                 }
             }).ToList();
         }
+
+        public async Task CreateNewAccountAsync(int userId, NewAccountRequest request)
+        {
+            var isAccountCreated = await _accountRepository.isAccountCreated(userId!, request.Name!);
+
+            if (isAccountCreated == true)
+            {
+                throw new Exception("Given account name is already created in your profile");
+            }
+
+            var newAccount = new Account
+            {
+                UserId = userId!,
+                Name = request.Name!,
+                Balance = (decimal)request.Balance!,
+                CurrencyCode = request.CurrencyCode!,
+                PhotoUrl = request.PhotoUrl!,
+                IsActive = true,
+            };
+
+            await _accountRepository.AddAsync(newAccount);
+        }
     }
 }
