@@ -79,5 +79,27 @@ namespace CashFlow.Application.Services
             await _accountRepository.UpdateAsync(account);
 		}
 
-	}
+        public async Task<List<TransactionResponse>> GetAccountTransactions(int userId, int accountId)
+        {
+            var transactions = await _transactionRepository.GetAccountTransactionsWithDetailsAsync(userId, accountId);
+
+            return transactions.Select(transaction => new TransactionResponse
+            {
+                TransactionId = transaction.TransactionId,
+                Amount = transaction.Amount,
+                Description = transaction.Description,
+                Date = transaction.Date,
+                Type = transaction.Type,
+
+                Category = transaction.Category == null ? null : new CategoryResponse
+                {
+                    CategoryId = transaction.Category.CategoryId,
+                    Name = transaction.Category.Name,
+                    Color = transaction.Category.Color,
+                    Type = transaction.Category.Type,
+                    LimitAmount = transaction.Category.LimitAmount,
+                }
+            }).ToList();
+        }
+    }
 }

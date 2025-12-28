@@ -80,24 +80,5 @@ namespace CashFlow.Api.Controllers
             }
             
         }
-
-        [HttpGet]
-        [Route("accounts-info")]
-        public async Task<ActionResult<AccountResponse>> GetUserAccounts()
-        {
-            try
-            {
-                var accountDto = await _userService.GetUserAccounts(CurrentUserId);
-                return Ok(accountDto);
-            }
-            catch(Exception ex)
-            {
-                if(ex.Message.Contains("does not have"))
-                {
-                    return NotFound();
-                }
-                throw;
-            }
-        }
     }
 }

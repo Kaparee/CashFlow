@@ -25,6 +25,14 @@ namespace CashFlow.Api.Controllers
             _transactionService = transactionService;
         }
 
+        [HttpGet]
+        [Route("transactions-info")]
+        public async Task<ActionResult<TransactionResponse>> GetAccountTransaction(int accountId)
+        {
+            var transactionDto = await _transactionService.GetAccountTransactions(CurrentUserId, accountId);
+            return Ok(transactionDto);
+        }
+
         [HttpPost]
         [Route("create-new-transaction")]
         public async Task<IActionResult> CreateNewTransaction([FromBody] NewTransactionRequest request)

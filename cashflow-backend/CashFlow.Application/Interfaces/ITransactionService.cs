@@ -6,5 +6,6 @@ namespace CashFlow.Application.Interfaces
     public interface ITransactionService
     {
         Task CreateNewTransactionAsync(int userId, NewTransactionRequest request);
+        Task<List<TransactionResponse>> GetAccountTransactions(int userId, int accountId);
     }
 }

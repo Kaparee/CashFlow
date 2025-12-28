@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace CashFlow.Api.Controllers
 {
     [Authorize]
-    [Route("api/accounts/")]
+    [Route("api/")]
     [ApiController]
     public class AccountsController : ControllerBase
     {
@@ -27,11 +27,22 @@ namespace CashFlow.Api.Controllers
         }
 
         [HttpGet]
-        [Route("{accountId}")]
-        public async Task<ActionResult<TransactionResponse>> GetAccountTransaction(int accountId)
+        [Route("accounts-info")]
+        public async Task<ActionResult<AccountResponse>> GetUserAccounts()
         {
-            var transactionDto = await _accountService.GetAccountTransactions(CurrentUserId, accountId);
-            return Ok(transactionDto);
+            try
+            {
+                var accountDto = await _accountService.GetUserAccounts(CurrentUserId);
+                return Ok(accountDto);
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("does not have"))
+                {
+                    return NotFound();
+                }
+                throw;
+            }
         }
 
         [HttpPost]
