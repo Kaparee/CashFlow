@@ -27,7 +27,7 @@ namespace CashFlow.Api.Controllers
 		}
 
 		[HttpGet]
-		[Route("categories")]
+		[Route("categories-info")]
 		public async Task<ActionResult<CategoryResponse>> GetUserCategory()
 		{
 			var categoryDto = await _categoryService.GetUserCategories(CurrentUserId);

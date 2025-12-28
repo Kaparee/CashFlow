@@ -13,39 +13,41 @@ using System.Threading.Tasks;
 namespace CashFlow.Api.Controllers
 {
     [Authorize]
-    [Route("api/accounts/")]
+    [Route("api/")]
     [ApiController]
-    public class AccountsController : ControllerBase
+    public class KeyWordController : ControllerBase
     {
-        private readonly IAccountService _accountService;
+        private readonly IKeyWordService _keyWordService;
+        private readonly ICategoryService _categoryService;
 
         private int CurrentUserId => int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
 
-        public AccountsController(IAccountService accountService)
+        public KeyWordController(IKeyWordService keyWordService, ICategoryService categoryService)
         {
-            _accountService = accountService;
+            _keyWordService = keyWordService;
+            _categoryService = categoryService;
         }
 
         [HttpGet]
-        [Route("{accountId}")]
-        public async Task<ActionResult<TransactionResponse>> GetAccountTransaction(int accountId)
+        [Route("key-words-info")]
+        public async Task<ActionResult<IEnumerable<KeyWordResponse>>> GetUserKeyWords()
         {
-            var transactionDto = await _accountService.GetAccountTransactions(CurrentUserId, accountId);
-            return Ok(transactionDto);
+            var categoryDto = await _categoryService.GetUserCategories(CurrentUserId);
+            return Ok(categoryDto);
         }
 
         [HttpPost]
-        [Route("create-new-account")]
-        public async Task<IActionResult> CreateNewAccount([FromBody] NewAccountRequest request)
+        [Route("create-new-key-word")]
+        public async Task<IActionResult> CreateNewKeyWord([FromBody] NewKeyWordRequest request)
         {
             try
             {
-                await _accountService.CreateNewAccountAsync(CurrentUserId, request);
+                await _keyWordService.CreateNewKeyWordAsync(CurrentUserId, request);
                 return Created();
             }
             catch (Exception ex)
             {
-                if(ex.Message.Contains("Given account name is already created"))
+                if (ex.Message.Contains("Given Key Word word is already created") || ex.Message.Contains("You must insert a word for KeyWord"))
                 {
                     return Conflict(new { message = ex.Message });
                 }

@@ -6,5 +6,6 @@ namespace CashFlow.Application.Interfaces
     public interface IAccountService
     {
         Task<List<TransactionResponse>> GetAccountTransactions(int userId, int accountId);
+        Task CreateNewAccountAsync(int userId, NewAccountRequest request);
     }
 }
