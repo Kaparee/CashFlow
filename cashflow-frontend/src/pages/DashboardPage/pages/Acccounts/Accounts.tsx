@@ -36,7 +36,7 @@ const Accounts: React.FC = () => {
     const { account: selectedAccount, setAccount } = context;
 
     const handleAddAccount = () => {
-        routeChange('account-creator');
+        routeChange('/dashboard/account-creator');
     }
 
     const handleSetAccount = (acc: AccountContextProps) => {
