@@ -1,23 +1,28 @@
-import axios from 'axios'
-import {useState, useEffect} from 'react'
+import {useState, useEffect, useContext} from 'react'
+import { ToastContext } from '../../../contexts/ToastContext';
+import api from '../../../api/api';
 
 interface CurrencySelectProps {
-    currency: string;
-    code: string;
+    currencyCode: string;
+    name: string;
+    symbol: string;
 }
 
 const CurrencyPlaceHolder: CurrencySelectProps[] = [
     {
-        currency: 'Polski Złoty',
-        code: 'PLN'
+        currencyCode: 'PLN',
+        name: 'Polski Złoty',
+        symbol: 'zł'
     },
     {
-        currency: 'Dollar',
-        code: 'USD'
+        currencyCode: 'USD',
+        name: 'Dollar',
+        symbol: '$'
     },
     {
-        currency: 'Euro',
-        code: 'EUR'
+        currencyCode: 'EUR',
+        name: 'Euro',
+        symbol: '€'
     }
 ]
 
@@ -25,21 +30,18 @@ export const useCurrencySelect = () => {
 
     const [currencies, setCurrencies] = useState<CurrencySelectProps[]>(CurrencyPlaceHolder);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const { addToast } = useContext(ToastContext);
 
     const handleGetCurrency = async () => {
         try {
             setIsLoading(true);
-            const token = localStorage.getItem('token');
-            const res = await axios.post('http://localhost:5205/api/NBP',{}, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
+            const res = await api.get('/currencies-info');
             setCurrencies(res.data);
         } catch (error: any) {
-            console.log('Błąd serwera' + error.message)
+            addToast('Nie udało się załadować aktualnych walut, korzystasz z wersji offline', 'error')
+        }finally {
+            setIsLoading(false);
         }
-        setIsLoading(false);
     }
 
     useEffect(() => {

@@ -1,12 +1,16 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import sDashboard from '../../DashboardPage.module.css';
-import { AccountContext } from '../../contexts/AccountContext';
+import {useAccount, AccountContextProps } from '../../contexts/AccountContext';
+import api from '../../../../api/api';
+import { ToastContext } from '../../../../contexts/ToastContext';
 
 const Accounts: React.FC = () => {
-    const context = useContext(AccountContext);
-    const [accounts, setAccounts] = useState<any[]>([]);
+    const context = useAccount();
+    const [accounts, setAccounts] = useState<AccountContextProps[]>([]);
+    const [ isLoading, setIsLoading ] = useState<boolean>(true);
+
+    const {addToast} = useContext(ToastContext);
 
     const navigate = useNavigate();
     const routeChange = (path: string, options?: any) => {
@@ -15,13 +19,15 @@ const Accounts: React.FC = () => {
 
     useEffect(() => {
         const fetchAccounts = async () => {
-            const token = localStorage.getItem('token');
             try {
-                const res = await axios.get('http://localhost:5205/api/accounts-info', {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+                setIsLoading(true);
+                const res = await api.get('/accounts-info');
                 setAccounts(res.data);
-            } catch (err) { console.error(err); }
+            } catch (error: any) { 
+                addToast('Wystąpił błąd podczas ładowania kont', 'info') 
+            } finally {
+                setIsLoading(false);
+            }
         };
         fetchAccounts();
     }, []);
@@ -33,6 +39,11 @@ const Accounts: React.FC = () => {
         routeChange('account-creator');
     }
 
+    const handleSetAccount = (acc: AccountContextProps) => {
+        setAccount(acc);
+        routeChange('/dashboard/dashboard-home-page');
+    }
+
     const handleCurrencyFormatting = (balance: number, format: string) => {
         return  new Intl.NumberFormat(navigator.language, { style: "currency", currency: format, useGrouping: true }).format(balance)
     }
@@ -41,8 +52,23 @@ const Accounts: React.FC = () => {
         <div className="container-fluid p-4">
             <h2 className={sDashboard.textDarkPrimary}>Twoje Konta</h2>
             <div className="row mt-4">
-                {accounts.map((account, index) => (
+                {isLoading && Array.from({length: 3}).map((_, index) => (
                     <div key={index} className="col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-4 mb-sm-3 h-100">
+                        <div className={`d-flex flex-column border half-blurred ${sDashboard.borderDarkEmphasis} ${sDashboard.bgDarkSecondary} ${sDashboard.textDarkSecondary} ${sDashboard.shadowDarkAccentPrimaryHover} rounded-5 p-3 text-center h-100 ${sDashboard.shadowDark}`}>
+                            <h5 className={`full-blurred ${sDashboard.textDarkPrimary}`}>Placeholder</h5>
+                            <p className="text-gradient fw-bold fs-4 full-blurred ">
+                                Placeholder
+                            </p>
+                            <button 
+                                className={`btn w-100 rounded-5 btn-outline-primary full-blurred `}>
+                                Wybierz
+                            </button>
+                        </div>
+                    </div>
+                ))}
+
+                {!isLoading && accounts.map((account, index) => (
+                    <div key={account.accountId} className="col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-4 mb-sm-3 h-100">
                         <div className={`d-flex flex-column border ${sDashboard.borderDarkEmphasis} ${sDashboard.bgDarkSecondary} ${sDashboard.textDarkSecondary} ${sDashboard.shadowDarkAccentPrimaryHover} rounded-5 p-3 text-center h-100 ${sDashboard.shadowDark}`}>
                             <h5 className={sDashboard.textDarkPrimary}>{account.name}</h5>
                             <p className="text-gradient fw-bold fs-4">
@@ -50,7 +76,7 @@ const Accounts: React.FC = () => {
                             </p>
                             <button 
                                 className={`btn w-100 rounded-5 ${selectedAccount?.accountId === account.accountId ? 'btn-success' : 'btn-outline-primary'}`}
-                                onClick={() => setAccount(account)}
+                                onClick={() => handleSetAccount(account)}
                             >
                                 {selectedAccount?.accountId === account.accountId ? 'Aktywne' : 'Przełącz na to konto'}
                             </button>

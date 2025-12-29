@@ -3,8 +3,9 @@ import sDashboard from '../../../DashboardPage.module.css'
 import s from './CurrencySelect.module.css'
 
 interface CurrencyData {
-    currency: string;
-    code: string;
+    currencyCode: string;
+    name: string;
+    symbol: string;
 }
 
 interface CurrencySelectProps {
@@ -85,8 +86,8 @@ const CurrencySelect: React.FC<CurrencySelectProps> = ({currencies, isLoading, s
                     style={isShown && !isLoading ? {transform: 'translate(0%,22%)'} : {transform: 'translate(0%,30%)'}}
                 >
                     {currencies.map((item, index) => (
-                        <div key={item.code}>
-                            <button type='button' name='currency' value={item.code} className={`btn ${sDashboard.textDarkSecondary} ${s.textSelection} ${selected == item.code ? s.selectedCurrency : ''}`} onClick={(e) => handleChange(e)} ref={index === 0 ? firstItemRef : undefined}>{item.currency} {item.code}</button>
+                        <div key={item.currencyCode}>
+                            <button type='button' name='currency' value={item.currencyCode} className={`btn ${sDashboard.textDarkSecondary} ${s.textSelection} ${selected == item.currencyCode ? s.selectedCurrency : ''}`} onClick={(e) => handleChange(e)} ref={index === 0 ? firstItemRef : undefined}>{item.name} {item.currencyCode} {item.currencyCode == item.symbol ? '' : item.symbol}</button>
                         </div>
                     ))}
                 </div>

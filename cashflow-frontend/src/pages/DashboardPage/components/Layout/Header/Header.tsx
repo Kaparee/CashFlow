@@ -4,6 +4,7 @@ import { useWindowWidth } from "../../../../../hooks/useWindowWidth";
 import s from './Header.module.css'
 import sDashboard from '../../../DashboardPage.module.css'
 import { AccountContext, useAccount } from "../../../contexts/AccountContext";
+import { AuthContext } from "../../../../../contexts/AuthContext";
 
 interface HeaderProps {
     isExpanded: boolean;
@@ -11,18 +12,13 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({isExpanded, onToggle}) => {
-
+    const { logout } = useContext(AuthContext);
     const { account } = useAccount()
 
     const navigate = useNavigate();
 
     const routeChange = (path: string) => {
         navigate(path);
-    } 
-
-    const logout = () => {
-        localStorage.removeItem('token');
-        routeChange('/login');
     }
 
     const location = useLocation();

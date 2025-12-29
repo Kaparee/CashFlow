@@ -15,48 +15,37 @@ namespace CashFlow.Api.Controllers
     [Authorize]
     [Route("api/")]
     [ApiController]
-    public class AccountsController : ControllerBase
+    public class LimitController : ControllerBase
     {
-        private readonly IAccountService _accountService;
+        private readonly ILimitService _limitService;
 
         private int CurrentUserId => int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
 
-        public AccountsController(IAccountService accountService)
+        public LimitController(ILimitService limitService)
         {
-            _accountService = accountService;
+            _limitService = limitService;
         }
 
         [HttpGet]
-        [Route("accounts-info")]
-        public async Task<ActionResult<AccountResponse>> GetUserAccounts()
+        [Route("limits-info")]
+        public async Task<ActionResult<LimitResponse>> GetUserLimits()
         {
-            try
-            {
-                var accountDto = await _accountService.GetUserAccounts(CurrentUserId);
-                return Ok(accountDto);
-            }
-            catch (Exception ex)
-            {
-                if (ex.Message.Contains("does not have"))
-                {
-                    return NotFound();
-                }
-                throw;
-            }
+            var limitDto = await _limitService.GetLimitsAsync(CurrentUserId);
+            return Ok(limitDto);
         }
 
         [HttpPost]
-        [Route("create-new-account")]
-        public async Task<IActionResult> CreateNewAccount([FromBody] NewAccountRequest request)
+        [Route("create-new-limit")]
+        public async Task<IActionResult> CreateNewLimit([FromBody] NewLimitRequest request)
         {
             try
             {
-                await _accountService.CreateNewAccountAsync(CurrentUserId, request);
+                await _limitService.CreateNewLimitAsync(CurrentUserId, request);
                 return Created();
             }
             catch (Exception ex)
             {
-                if(ex.Message.Contains("Given account name is already created"))
+                if (ex.Message.Contains("End date can not be earlier than the start date") || ex.Message.Contains("Category does not exist or is not your"))
                 {
                     return Conflict(new { message = ex.Message });
                 }

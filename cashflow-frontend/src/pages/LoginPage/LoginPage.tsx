@@ -1,15 +1,21 @@
-﻿import React, { useState, useEffect } from 'react';
-import { useNavigate } from "react-router-dom";
+﻿import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate, useLocation } from "react-router-dom";
 import s from './LoginPage.module.css';
 import Header from '../../components/Layout/Header/Header.tsx'
 import Footer from '../../components/Layout/Footer/Footer.tsx'
 import Input from '../../components/UI/Input/Input.tsx';
 import { useLoading } from '../../hooks/useLoading.ts';
-import axios from 'axios';
+import api from '../../api/api.ts';
+import { AuthContext } from '../../contexts/AuthContext.tsx';
 
 const LoginPage: React.FC = () => {
     const [loginError, setLoginError] = useState<string | null>(null);
     const { isLoading, setIsLoading } = useLoading();
+    const location = useLocation();
+    const from = location.state?.from?.pathname || '/dashboard';
+    const {login} = useContext(AuthContext);
+    const [errors, setErrors] = useState<{ [key: string]: string }>({});
+    const navigate = useNavigate()
 
     useEffect(() => {
         const htmlTag = document.body;
@@ -27,9 +33,6 @@ const LoginPage: React.FC = () => {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     }
-
-
-    const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
     const validateForm = () => {
         const err: {[key: string] : string} = {}
@@ -62,26 +65,32 @@ const LoginPage: React.FC = () => {
         setLoginError(null);
         try {
             setIsLoading(true);
-            const res = await axios.post('http://localhost:5205/api/login', {
-                emailOrNickname: formData['nicknameOrEmail'],
-                password: formData['password'],
+            const resToken = await api.post('/login', {
+                emailOrNickname: formData.nicknameOrEmail,
+                password: formData.password
             });
+            const myToken = resToken.data.token;
+            
+            localStorage.setItem('token', myToken);
 
-            localStorage.setItem('token', res.data.token);
+            const resUser = await api.get('/login-info');
+            const userData = resUser.data;
 
-            routeChange('/dashboard');
 
+            login(myToken,userData,from);
         } catch (error: any) {
-            if (error.response && error.response.status === 401) {
-                setLoginError('Niepoprawny login lub hasło')
+            if (error.response?.status === 401) {
+                setLoginError('Niepoprawny login lub hasło');
+            } else if (error.response?.status === 500) {
+                setLoginError('Błąd serwera. Spróbuj później.');
             } else {
-                setLoginError('Wystąpił błąd serwera')
+                setLoginError('Konto jest niezweryfikowane');
             }
+        } finally {
+            setIsLoading(false);
         }
-        setIsLoading(false);
     }
 
-    let navigate = useNavigate()
     const routeChange = (path: string) => {
         navigate(path);
     }
