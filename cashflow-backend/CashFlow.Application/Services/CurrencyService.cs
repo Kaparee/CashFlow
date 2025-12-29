@@ -46,9 +46,9 @@ namespace CashFlow.Application.Services
                 await _currencyRepository.AddAsync(new Currency
                 {
                     CurrencyCode = "PLN",
-                    Name = "Polski Z³oty",
+                    Name = "Polski Zï¿½oty",
                     RateToBase = 1.0m,
-                    Symbol = "z³"
+                    Symbol = "zï¿½"
                 });
             }
 

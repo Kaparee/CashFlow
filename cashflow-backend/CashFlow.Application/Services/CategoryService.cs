@@ -27,6 +27,7 @@ namespace CashFlow.Application.Services
                 Color = category.Color,
                 Type = category.Type,
                 LimitAmount = category.LimitAmount,
+                Icon = category.Icon,
 
                 KeyWords = category.KeyWords.Select(keyword => new KeyWordResponse
                 {
