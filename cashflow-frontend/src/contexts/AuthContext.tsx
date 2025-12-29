@@ -85,8 +85,6 @@ const AuthProvider: React.FC<AuthPriovider> = ({children}) => {
                     logout();
                 } else if (error.response?.status === 500) {
                     addToast('Serwer jest aktualnie nie dostępny', 'error')
-                } else {
-                    addToast('Brak internetu', 'error');
                 }
                 return Promise.reject(error);
             }

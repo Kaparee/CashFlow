@@ -15,7 +15,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isExpanded, onToggle}) => {
         { icon: 'bi-person-lines-fill', label: 'Konta', path: 'accounts' },
         { icon: 'bi-graph-up', label: 'Wykresy', path: 'charts' },
         { icon: 'bi-bell', label: 'Powiadomienia', path: 'notifications' },
-        { icon: 'bi-gear', label: 'Ustawienia', path: 'settings' },
+        { icon: 'bi-bookmarks', label: 'Kategorie', path: 'categories' },
+        { icon: 'bi-gear', label: 'Ustawienia', path: 'settings' }
     ]
 
     const width = useWindowWidth(); 
