@@ -167,3 +167,7 @@ a.textDarkPrimary:hover {
     color: var(--text-primary);
     box-shadow: 0 0.5rem 1rem var(--shadow-dark);
 }
+
+.squareBox {
+    aspect-ratio: 1/1;
+}
