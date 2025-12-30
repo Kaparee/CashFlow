@@ -15,6 +15,8 @@ import AccountCreator from './pages/DashboardPage/pages/AccountCreator/AccountCr
 import ToastProvider from './contexts/ToastContext.tsx';
 import ToastContainer from './components/Layout/ToastContainer/ToastContainer.tsx';
 import AuthProvider from './contexts/AuthContext.tsx';
+import Categories from './pages/DashboardPage/pages/Categories/Categories.tsx';
+import CategoriesCreator from './pages/DashboardPage/pages/CategoriesCreator/CategoriesCreator.tsx';
 import '@fontsource/jost'
 import '@fontsource/jost/600'
 
@@ -60,6 +62,8 @@ const App: React.FC = () => {
                             <Route path='/dashboard/notifications' element={<Notifications />} />
                             <Route path='/dashboard/settings' element={<Settings />} />
                             <Route path='/dashboard/account-creator' element={<AccountCreator />} />
+                            <Route path='/dashboard/categories' element={<Categories />} />
+                            <Route path='/dashboard/categories/create-category' element={<CategoriesCreator />} />
                         </Route>
                     </Routes>
                 </AuthProvider>
