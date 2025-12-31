@@ -1,22 +1,24 @@
 import React, {useEffect, useRef, useState} from 'react'
 import sDashboard from '../../../DashboardPage.module.css'
-import s from './CurrencySelect.module.css'
+import s from './CustomSelect.module.css'
 
-interface CurrencyData {
-    currencyCode: string;
-    name: string;
-    symbol: string;
+
+interface SelectItem {
+    value: string | number;
+    dName: string;         
 }
 
-interface CurrencySelectProps {
-    currencies: CurrencyData[];
+interface CustomSelectProps {
+    table: SelectItem[];
     isLoading: boolean;
+    label: string;
+    name: string;
     selected: string;
     onChange: (e: React.MouseEvent<HTMLButtonElement>) => void;
     error?: string;
 }
 
-const CurrencySelect: React.FC<CurrencySelectProps> = ({currencies, isLoading, selected, onChange, error}) => {
+const CustomSelect: React.FC<CustomSelectProps> = ({table, isLoading, label, name, selected, onChange, error}) => {
     const [isShown, setIsShown] = useState<boolean>(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const firstItemRef = useRef<HTMLButtonElement>(null);
@@ -64,13 +66,13 @@ const CurrencySelect: React.FC<CurrencySelectProps> = ({currencies, isLoading, s
     return (
         <div className='mb-3 text-start'>
             <label 
-                htmlFor="currencySelect" 
+                htmlFor="CustomSelect" 
                 className={`fw-bold small form-label ${sDashboard.textDarkSecondary}`}
             >
-                Waluta
+                {label}
             </label>
             <div 
-                id='currencySelect' 
+                id='CustomSelect' 
                 className={`position-relative rounded-5 py-2 px-3 border point ${sDashboard.textDarkPrimary} ${sDashboard.bgDarkPrimary} ${error ? 'is-invalid' : sDashboard.borderDarkEmphasis} `} 
                 onClick={isLoading ? undefined : handleShow} 
                 ref={dropdownRef}
@@ -80,14 +82,14 @@ const CurrencySelect: React.FC<CurrencySelectProps> = ({currencies, isLoading, s
                 aria-expanded={isShown}
                 aria-haspopup='listbox'
             >
-                {isLoading ? 'Ładowanie ... ' : selected ? selected : 'Wybierz walutę...'}
+                {isLoading ? 'Ładowanie ... ' : selected ? selected : 'Wybierz...'}
                 <div 
                     className={`position-absolute py-2 px-3 top-0 w-100 start-0 rounded-5 d-flex flex-column border ${isShown && !isLoading ? 'visible opacity-100': 'invisible opacity-0'} ${s.transitionPopUp} ${sDashboard.bgDarkPrimary} ${sDashboard.borderDarkEmphasis} ${sDashboard.shadowDark} ${s.currecnySelectHeight}`} 
-                    style={isShown && !isLoading ? {transform: 'translate(0%,22%)'} : {transform: 'translate(0%,30%)'}}
+                    style={isShown && !isLoading ? {transform: 'translate(0rem,2.5rem)'} : {transform: 'translate(0%,30%)'}}
                 >
-                    {currencies.map((item, index) => (
-                        <div key={item.currencyCode}>
-                            <button type='button' name='currency' value={item.currencyCode} className={`btn ${sDashboard.textDarkSecondary} ${s.textSelection} ${selected == item.currencyCode ? s.selectedCurrency : ''}`} onClick={(e) => handleChange(e)} ref={index === 0 ? firstItemRef : undefined}>{item.name} {item.currencyCode} {item.currencyCode == item.symbol ? '' : item.symbol}</button>
+                    {table.map((item, index) => (
+                        <div key={item.value || index}>
+                            <button type='button' name={name} value={item.value} className={`btn ${sDashboard.textDarkSecondary} ${s.textSelection} ${selected == item.dName ? s.selectedItem : ''}`} onClick={(e) => handleChange(e)} ref={index === 0 ? firstItemRef : undefined}>{item.dName}</button>
                         </div>
                     ))}
                 </div>
@@ -97,4 +99,4 @@ const CurrencySelect: React.FC<CurrencySelectProps> = ({currencies, isLoading, s
     );
 };
 
-export default CurrencySelect;
+export default CustomSelect;

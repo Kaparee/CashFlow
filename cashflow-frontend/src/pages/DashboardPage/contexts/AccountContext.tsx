@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-interface AccountContextProps {
+export interface AccountContextProps {
     accountId: number;
     name: string;
     balance: number;
@@ -41,7 +41,7 @@ const AccountProvider: React.FC<AccountProviderProps> = ({children}) => {
     );
 };
 
-export default AccountProvider
+export default AccountProvider;
 
 export const useAccount = () => {
     const context = React.useContext(AccountContext);

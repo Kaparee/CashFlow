@@ -25,6 +25,10 @@
     background-color: var(--bg-dark-secondary);
 }
 
+.bgDarkAccent {
+    background-color: var(--accent-primary);
+}
+
 .alertDarkAccent {
     background-color: var(--accent-secondary);
     border: 1px solid var(--accent-primary);
@@ -142,4 +146,28 @@ a.textDarkPrimary:hover {
 
 .minHeight0 {
     min-height: 0px;
+}
+
+.textDarkUnderline {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-decoration-color: var(--accent-primary);
+    text-underline-offset: 0.3rem;
+}
+
+.btnDarkOutlinePrimaryActive {
+    background-color: var(--text-primary);
+    color: var(--bg-dark-primary);
+    border: 2px solid var(--text-primary) !important;
+    transition: all 0.2s ease-in-out;
+}
+
+.btnDarkOutlinePrimaryActive:hover {
+    background-color: transparent;
+    color: var(--text-primary);
+    box-shadow: 0 0.5rem 1rem var(--shadow-dark);
+}
+
+.squareBox {
+    aspect-ratio: 1/1;
 }
