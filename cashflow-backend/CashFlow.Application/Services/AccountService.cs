@@ -10,10 +10,12 @@ namespace CashFlow.Application.Services
     public class AccountService : IAccountService
     {
         private readonly IAccountRepository _accountRepository;
+        private readonly ITransactionRepository _transactionRepository;
 
-        public AccountService(IAccountRepository accountRepository)
+        public AccountService(IAccountRepository accountRepository, ITransactionRepository transactionRepository)
         {
             _accountRepository = accountRepository;
+            _transactionRepository = transactionRepository;
         }
 
         public async Task<List<AccountResponse>> GetUserAccounts(int userId)
@@ -55,6 +57,27 @@ namespace CashFlow.Application.Services
             };
 
             await _accountRepository.AddAsync(newAccount);
+        }
+
+        public async Task DeleteAccountAsync(int userId, int accountId)
+        {
+            var account = await _accountRepository.GetAccountByIdAsync(userId, accountId);
+            var transactions = await _transactionRepository.GetAccountTransactionsWithDetailsAsync(userId, accountId);
+
+            if (account == null)
+            {
+                throw new Exception("Account not found or access denied.");
+            }
+
+            account.IsActive = false;
+            account.DeletedAt = DateTime.UtcNow;
+
+            foreach(var transaction in transactions)
+            {
+                transaction.DeletedAt = DateTime.UtcNow;
+            }
+
+            await _accountRepository.UpdateAsync(account);
         }
     }
 }

@@ -18,6 +18,7 @@ namespace CashFlow.Infrastructure.Repositories
         public async Task<Account?> GetAccountByIdAsync(int userId, int accountId)
         {
             return await _context.Accounts
+                .Where(x => x.DeletedAt == null)
                 .FirstOrDefaultAsync(a => a.AccountId == accountId && a.UserId == userId);
         }
 
@@ -42,6 +43,7 @@ namespace CashFlow.Infrastructure.Repositories
         public async Task<List<Account>> GetUserAccountsWithDetailsAsync(int userId)
         {
             return await _context.Accounts
+                .Where(x => x.DeletedAt == null)
                 .Where(u => u.UserId == userId && u.IsActive == true)
                 .ToListAsync();
         }

@@ -25,8 +25,21 @@ namespace CashFlow.Infrastructure.Repositories
         {
             return await _context.Transactions
                 .Include(c => c.Category)
-                .Where(a => a.AccountId == accountId && a.UserId == userId)
+                .Where(a => a.AccountId == accountId && a.UserId == userId && a.DeletedAt == null)
                 .ToListAsync();
         }
+
+		public async Task UpdateAsync(Transaction transaction)
+		{
+			_context.Transactions.Update(transaction);
+			await _context.SaveChangesAsync();
+		}
+
+		public async Task<Transaction?> GetTransactionInfoByIdWithDetailsAsync(int userId, int transactionId)
+		{
+			return await _context.Transactions
+				.Where(t => t.UserId == userId && t.TransactionId == transactionId && t.DeletedAt == null)
+				.FirstOrDefaultAsync();
+		}
     }
 }

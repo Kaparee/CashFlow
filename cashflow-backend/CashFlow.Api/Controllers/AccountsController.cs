@@ -63,5 +63,24 @@ namespace CashFlow.Api.Controllers
                 return StatusCode(500, new { message = "An internal server error occured" });
             }
         }
+
+        [HttpDelete]
+        [Route("delete-account")]
+        public async Task<IActionResult> DeleteAccount(int accountId)
+        {
+            try
+            {
+                await _accountService.DeleteAccountAsync(CurrentUserId, accountId);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                if(ex.Message.Contains("Account not found"))
+                {
+                    return NotFound();
+                }
+                throw;
+            }
+        }
     }
 }

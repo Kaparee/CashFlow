@@ -8,5 +8,6 @@ namespace CashFlow.Application.Interfaces
 		Task RegisterAsync(RegisterRequest request);
 		Task<LoginResponse> LoginAsync(LoginRequest request);
 		Task<UserResponse> GetUserByIdAsync(int userId);
+		Task VerifyEmailAsync(string verificationToken);
     }
 }

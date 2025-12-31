@@ -56,7 +56,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+//builder.Services.AddSwaggerGen();
 
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<IUserService>();
@@ -77,6 +77,7 @@ builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<ILimitService, LimitService>();
 builder.Services.AddScoped<ICurrencyService, CurrencyService>();
 builder.Services.AddScoped<IKeyWordService, KeyWordService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 builder.Services.AddHttpClient<ICurrencyFetcher, CurrencyFetcher>();
 

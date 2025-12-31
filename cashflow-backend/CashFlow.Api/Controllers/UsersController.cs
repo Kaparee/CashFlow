@@ -80,5 +80,25 @@ namespace CashFlow.Api.Controllers
             }
             
         }
+
+        [HttpGet]
+        [Route("verify")]
+        [AllowAnonymous]
+        public async Task<ActionResult> VerifyEmail([FromQuery] string verificationToken)
+        {
+            try
+            {
+                await _userService.VerifyEmailAsync(verificationToken);
+                return Ok("Poprawnie zweryfikowano!");
+            }
+            catch(Exception ex)
+            {
+                if(ex.Message.Contains("Invalid token"))
+                {
+                    return NotFound();
+                }
+                throw;
+            }
+        }
     }
 }

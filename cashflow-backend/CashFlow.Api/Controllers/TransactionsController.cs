@@ -51,5 +51,43 @@ namespace CashFlow.Api.Controllers
                 return StatusCode(500, new { message = "An internal server error occured" });
             }
         }
+
+        [HttpDelete]
+        [Route("delete-transaction")]
+        public async Task<IActionResult> DeleteTransaction(int transactionId, int accountId)
+        {
+            try
+            {
+                await _transactionService.DeleteTransaction(CurrentUserId, transactionId, accountId);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                if(ex.Message.Contains("Transaction not found"))
+                {
+                    return NotFound();
+                }
+                throw;
+            }
+        }
+
+        [HttpPatch]
+        [Route("update-transaction")]
+        public async Task<IActionResult> UpdateTransaction([FromBody] UpdateTransactionRequest request)
+        {
+            try
+            {
+                await _transactionService.UpdateTransaction(CurrentUserId, request);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("Transaction not found"))
+                {
+                    return NotFound();
+                }
+                throw;
+            }
+        }
     }
 }
