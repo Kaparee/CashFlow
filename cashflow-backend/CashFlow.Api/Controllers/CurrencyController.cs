@@ -19,7 +19,7 @@ public class CurrencyController : ControllerBase
     [Route("currencies-info")]
     public async Task<ActionResult<IEnumerable<CurrencyResponse>>> GetCurrencies()
     {
-        var currencyDto = await _currencyService.GetAllCurrencies();
+        var currencyDto = await _currencyService.GetAllCurrenciesAsync();
         return Ok(currencyDto);
     }
 

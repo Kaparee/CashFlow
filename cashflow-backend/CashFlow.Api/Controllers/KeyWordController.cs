@@ -32,7 +32,7 @@ namespace CashFlow.Api.Controllers
         [Route("key-words-info")]
         public async Task<ActionResult<IEnumerable<KeyWordResponse>>> GetUserKeyWords()
         {
-            var categoryDto = await _categoryService.GetUserCategories(CurrentUserId);
+            var categoryDto = await _categoryService.GetUserCategoriesAsync(CurrentUserId);
             return Ok(categoryDto);
         }
 

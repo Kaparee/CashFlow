@@ -10,13 +10,17 @@ namespace CashFlow.Application.Services
     public class CategoryService : ICategoryService
     {
         private readonly ICategoryRepository _categoryRepository;
+        private readonly ITransactionRepository _transactionRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CategoryService(ICategoryRepository categoryRepository)
+        public CategoryService(ICategoryRepository categoryRepository, ITransactionRepository transactionRepository, IUnitOfWork unitOfWork)
         {
             _categoryRepository = categoryRepository;
+            _transactionRepository = transactionRepository;
+            _unitOfWork = unitOfWork;
         }
 
-        public async Task<List<CategoryResponse>> GetUserCategories(int userId)
+        public async Task<List<CategoryResponse>> GetUserCategoriesAsync(int userId)
         {
             var categories = await _categoryRepository.GetUserCategoriesWithDetailsAsync(userId);
 
@@ -57,6 +61,60 @@ namespace CashFlow.Application.Services
             };
 
             await _categoryRepository.AddAsync(newCategory);
+        }
+
+        public async Task DeleteCategoryAsync(int userId, int categoryId)
+        {
+            var category = await _categoryRepository.GetCategoryInfoByIdWithDetailsAsync(userId, categoryId);
+
+            if (category == null)
+            {
+                throw new Exception("Category not found or access denied.");
+            }
+
+            category.DeletedAt = DateTime.UtcNow;
+
+            await _categoryRepository.UpdateAsync(category);
+        }
+
+        public async Task UpdateCategoryAsync(int userId, UpdateCategoryRequest request)
+        {
+            using var dbTransaction = await _unitOfWork.BeginTransactionAsync();
+            try
+            {
+                var category = await _categoryRepository.GetCategoryInfoByIdWithDetailsAsync(userId, request.CategoryId);
+                var transactions = await _transactionRepository.GetTransactionsInfoByCategoryIdWithDetailsAsync(userId, request.CategoryId);
+
+                if (category == null)
+                {
+                    throw new Exception("Category not found or access denied.");
+                }
+
+                if (category.Type != request.NewType)
+                {
+                    var hasTransactions = await _transactionRepository.HasTransactionsAsync(userId, request.CategoryId);
+                    if (hasTransactions)
+                    {
+                        throw new Exception("Cannot change type of category with existing transactions.");
+                    }
+                }
+
+                category.UpdatedAt = DateTime.UtcNow;
+
+                category.Name = request.NewName;
+                category.Color = request.NewColor;
+                category.Icon = request.NewIcon;
+                category.Type = request.NewType;
+                category.LimitAmount = request.NewLimitAmount;
+
+                await _categoryRepository.UpdateAsync(category);
+                await dbTransaction.CommitAsync();
+            }
+            catch
+            {
+                await dbTransaction.RollbackAsync();
+                throw;
+            }
         }
     }
 }

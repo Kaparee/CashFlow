@@ -4,8 +4,6 @@
 	  <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-	  <!-- DO USUNIĘCIA PO AKTUALIZACJI PAKIETÓW-->
-	  <NoWarn>$(NoWarn);NU1603;NU1903</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

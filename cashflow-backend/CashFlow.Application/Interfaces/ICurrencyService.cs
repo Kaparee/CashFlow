@@ -4,7 +4,7 @@ namespace CashFlow.Application.Interfaces
 {
 	public interface ICurrencyService
 	{
-		Task<List<CurrencyResponse>> GetAllCurrencies();
+		Task<List<CurrencyResponse>> GetAllCurrenciesAsync();
 		Task SyncRatesAsync();
     }
 }
