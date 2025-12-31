@@ -31,7 +31,7 @@ namespace CashFlow.Infrastructure.Repositories
         public async Task<bool> isAccountCreated(int userId, string name)
         {
             return await _context.Accounts
-                .AnyAsync(c => c.UserId == userId && c.Name == name);
+                .AnyAsync(c => c.UserId == userId && c.Name == name && c.DeletedAt == null);
         }
 
         public async Task UpdateAsync(Account account)
