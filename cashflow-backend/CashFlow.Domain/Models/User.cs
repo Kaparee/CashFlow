@@ -51,6 +51,12 @@ namespace CashFlow.Domain.Models
         [Column("deleted_at")]
         public DateTime? DeletedAt { get; set; }
 
+        [Column("verification_token")]
+        public string? VerificationToken { get; set; }
+
+        [Column("verified_at")]
+        public DateTime? VerifiedAt { get; set; }
+
         public ICollection<Account> Accounts { get; set; } = new List<Account>();
 
         public ICollection<KeyWord> KeyWords { get; set; } = new List<KeyWord>();

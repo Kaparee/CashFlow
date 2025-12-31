@@ -7,5 +7,7 @@ namespace CashFlow.Application.Interfaces
     {
         Task CreateNewTransactionAsync(int userId, NewTransactionRequest request);
         Task<List<TransactionResponse>> GetAccountTransactions(int userId, int accountId);
+        Task DeleteTransaction(int userId, int transactionId, int accountId);
+        Task UpdateTransaction(int userId, UpdateTransactionRequest request);
     }
 }

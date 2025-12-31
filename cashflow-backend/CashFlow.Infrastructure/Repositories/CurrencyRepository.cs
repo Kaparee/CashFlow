@@ -16,7 +16,8 @@ namespace CashFlow.Infrastructure.Repositories
 
         public async Task<List<Currency>> GetAllCurrenciesWithDetailsAsync()
         {
-            return await _context.Currencies.ToListAsync();
+            return await _context.Currencies
+                .ToListAsync();
         }
 
         public async Task AddAsync(Currency currency)

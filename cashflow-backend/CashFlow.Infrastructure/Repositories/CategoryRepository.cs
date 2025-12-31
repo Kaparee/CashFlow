@@ -19,6 +19,7 @@ namespace CashFlow.Infrastructure.Repositories
         {
             return await _context.Categories
                 .Include(c => c.KeyWords)
+                .Where(x => x.DeletedAt == null)
                 .Where(a => a.UserId == userId)
                 .ToListAsync();
         }
