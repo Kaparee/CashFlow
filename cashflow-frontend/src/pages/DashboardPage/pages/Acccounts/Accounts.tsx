@@ -12,6 +12,7 @@ const Accounts: React.FC = () => {
     const [ isLoading, setIsLoading ] = useState<boolean>(true);
 
     const [selectedAccountOptions, setSelectedAccountOptions] = useState<AccountContextProps | null>(null);
+    const [isConfirmingDelete, setIsConfirmingDelete] = useState<boolean>(false);
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
     const [isClosing, setIsClosing] = useState<boolean>(false);
@@ -56,6 +57,7 @@ const Accounts: React.FC = () => {
 
     const openOptionsModal = (acc: AccountContextProps) => {
         setIsClosing(false);
+        setIsConfirmingDelete(false)
         setSelectedAccountOptions(acc);
     }
 
@@ -65,7 +67,35 @@ const Accounts: React.FC = () => {
         setTimeout(() => {
             setSelectedAccountOptions(null);
             setIsClosing(false);
+            setIsConfirmingDelete(false)
         }, 300);
+    }
+
+    const handleDeleteAccount = async () => {
+        if (!selectedAccountOptions) return;
+
+        if (!isConfirmingDelete) {
+            setIsConfirmingDelete(true)
+            return;
+        }
+
+        try {
+            setIsDeleting(true);
+            await api.delete(`/delete-account`, { params: { 'accountId': selectedAccountOptions.accountId } } );
+            
+            setAccounts(prev => prev.filter(a => a.accountId !== selectedAccountOptions.accountId));
+            
+            if (selectedAccount?.accountId === selectedAccountOptions.accountId) {
+                setAccount(null as any); 
+            }
+
+            addToast('Konto zostało usunięte pomyślnie', 'info');
+            closeOptionsModal();
+        } catch (error: any) {
+            addToast('Nie udało się usunąć konta', 'error');
+        } finally {
+            setIsDeleting(false);
+        }
     }
 
     return (
@@ -91,7 +121,7 @@ const Accounts: React.FC = () => {
                 {!isLoading && accounts.map((account, index) => (
                     <div key={index} className="col-sm-6 col-md-4 col-lg-3 col-xl-3 mb-4 mb-sm-3 h-100">
                         <div className={`d-flex flex-column justify-content-between border ${sDashboard.borderDarkEmphasis} ${sDashboard.bgDarkSecondary} ${sDashboard.textDarkSecondary} ${sDashboard.shadowDarkAccentPrimaryHover} ${sDashboard.squareBox} rounded-5 p-3 text-center h-100 ${sDashboard.shadowDark}`}>
-                            <div className={`bi bi-person-circle fs-1`}></div>
+                            <div className={`bi ${account.photoUrl ? account.photoUrl : 'bi-coin' } fs-1`}></div>
                             <div>
                                 <h5 className={sDashboard.textDarkPrimary}>{account.name}</h5>
                                 <p className="text-gradient fw-bold fs-4">
@@ -148,15 +178,23 @@ const Accounts: React.FC = () => {
                         <div className="d-grid gap-2">
                             <button 
                                 className="btn btn-outline-danger btn-lg rounded-5 d-flex align-items-center justify-content-center gap-2"
-                                onClick={closeOptionsModal}
+                                onClick={handleDeleteAccount}
                                 disabled={isDeleting}
                             >
                                 {isDeleting ? (
                                     <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                ) : isConfirmingDelete ? (
+                                    <>
+                                        <i className='bi bi-exclamation-triangle fill'></i>
+                                        Na pewno? Kliknij aby potwierdzić
+                                    </>
                                 ) : (
-                                    <i className="bi bi-trash3"></i>
+                                    <>
+                                        <i className="bi bi-trash3"></i>
+                                        Usuń trwale to konto
+                                    </>
                                 )}
-                                Usuń trwale to konto
+                                
                             </button>
                             
                             <button 
