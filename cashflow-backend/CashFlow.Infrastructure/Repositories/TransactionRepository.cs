@@ -41,5 +41,19 @@ namespace CashFlow.Infrastructure.Repositories
 				.Where(t => t.UserId == userId && t.TransactionId == transactionId && t.DeletedAt == null)
 				.FirstOrDefaultAsync();
 		}
+
+		public async Task<bool> HasTransactionsAsync(int userId, int categoryId)
+		{
+			return await _context.Transactions
+				.Where(t => t.UserId == userId && t.CategoryId == categoryId && t.DeletedAt == null)
+				.AnyAsync();
+		}
+
+        public async Task<List<Transaction>> GetTransactionsInfoByCategoryIdWithDetailsAsync(int userId, int categoryId)
+        {
+            return await _context.Transactions
+                .Where(t => t.UserId == userId && t.CategoryId == categoryId && t.DeletedAt == null)
+                .ToListAsync();
+        }
     }
 }

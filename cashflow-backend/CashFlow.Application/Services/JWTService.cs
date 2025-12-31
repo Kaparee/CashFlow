@@ -16,7 +16,7 @@ namespace CashFlow.Application.Services
             _configuration = configuration;
         }
 
-        public string GenerateToken(User user)
+        public string GenerateTokenAsync(User user)
         {
             var claims = new List<Claim>
             {

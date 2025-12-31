@@ -100,5 +100,43 @@ namespace CashFlow.Api.Controllers
                 throw;
             }
         }
+
+        [HttpDelete]
+        [Route("delete-user")]
+        public async Task<IActionResult> DeleteUser()
+        {
+            try
+            {
+                await _userService.DeleteUserAsync(CurrentUserId);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("User not found"))
+                {
+                    return NotFound();
+                }
+                throw;
+            }
+        }
+
+        [HttpPatch]
+        [Route("update-user")]
+        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserRequest request)
+        {
+            try
+            {
+                await _userService.UpdateUserAsync(CurrentUserId, request);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("User not found"))
+                {
+                    return NotFound();
+                }
+                throw;
+            }
+        }
     }
 }

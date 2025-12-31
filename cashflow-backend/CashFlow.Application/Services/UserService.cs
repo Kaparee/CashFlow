@@ -15,8 +15,9 @@ namespace CashFlow.Application.Services
         private readonly ICategoryRepository _categoryRepository;
         private readonly IKeyWordRepository _keyWordRepository;
         private readonly IAccountRepository _accountRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public UserService(IUserRepository userRepository, IJWTService jwtService, IEmailService emailService, ICategoryRepository categoryRepository, IKeyWordRepository keyWordRepository, IAccountRepository accountRepository)
+        public UserService(IUserRepository userRepository, IJWTService jwtService, IEmailService emailService, ICategoryRepository categoryRepository, IKeyWordRepository keyWordRepository, IAccountRepository accountRepository, IUnitOfWork unitOfWork)
         {
             _userRepository = userRepository;
             _jwtService = jwtService;
@@ -24,6 +25,7 @@ namespace CashFlow.Application.Services
             _categoryRepository = categoryRepository;
             _keyWordRepository = keyWordRepository;
             _accountRepository = accountRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task RegisterAsync(RegisterRequest request)
@@ -73,7 +75,7 @@ namespace CashFlow.Application.Services
                 throw new Exception("Account is not active or not verified.");
             }
 
-            var token = _jwtService.GenerateToken(user);
+            var token = _jwtService.GenerateTokenAsync(user);
 
             LoginResponse response = new LoginResponse();
             response.Token = token;
@@ -175,5 +177,66 @@ namespace CashFlow.Application.Services
                 }
             }
         }
+
+        public async Task DeleteUserAsync(int userId)
+        {
+            using var dbTransaction = await _unitOfWork.BeginTransactionAsync();
+            try
+            {
+                var user = await _userRepository.GetUserByIdWithDetailsAsync(userId);
+
+                if (user == null)
+                {
+                    throw new Exception("User not found or access denied.");
+                }
+
+                user.IsActive = false;
+                user.DeletedAt = DateTime.UtcNow;
+
+                foreach (var account in user.Accounts)
+                {
+                    account.DeletedAt = DateTime.UtcNow;
+                    account.IsActive = false;
+                }
+                foreach (var transaction in user.Transactions)
+                {
+                    transaction.DeletedAt = DateTime.UtcNow;
+                }
+
+                await _userRepository.UpdateAsync(user);
+                await _unitOfWork.SaveChangesAsync();
+                await dbTransaction.CommitAsync();
+            }
+            catch
+            {
+                await dbTransaction.RollbackAsync();
+                throw;
+            }
+        }
+
+        public async Task UpdateUserAsync(int userId, UpdateUserRequest request)
+        {
+            var user = await _userRepository.GetUserByIdWithDetailsAsync(userId);
+            if (user == null)
+            {
+                throw new Exception("User not found or access denied.");
+            }
+
+            if (user.Nickname != request.NewNickname)
+            {
+                if (await _userRepository.IsNicknameTakenAsync(request.NewNickname))
+                    throw new Exception("This nickname is already taken.");
+            }
+
+            user.UpdatedAt = DateTime.UtcNow;
+
+            user.FirstName = request.NewFirstName;
+            user.LastName = request.NewLastName;
+            user.Nickname = request.NewNickname;
+            user.PhotoUrl = request.NewPhotoUrl;
+
+            await _userRepository.UpdateAsync(user);
+        }
+
     }
 }

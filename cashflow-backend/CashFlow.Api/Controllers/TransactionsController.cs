@@ -29,7 +29,7 @@ namespace CashFlow.Api.Controllers
         [Route("transactions-info")]
         public async Task<ActionResult<TransactionResponse>> GetAccountTransaction(int accountId)
         {
-            var transactionDto = await _transactionService.GetAccountTransactions(CurrentUserId, accountId);
+            var transactionDto = await _transactionService.GetAccountTransactionsAsync(CurrentUserId, accountId);
             return Ok(transactionDto);
         }
 
@@ -58,7 +58,7 @@ namespace CashFlow.Api.Controllers
         {
             try
             {
-                await _transactionService.DeleteTransaction(CurrentUserId, transactionId, accountId);
+                await _transactionService.DeleteTransactionAsync(CurrentUserId, transactionId, accountId);
                 return NoContent();
             }
             catch (Exception ex)
@@ -77,7 +77,7 @@ namespace CashFlow.Api.Controllers
         {
             try
             {
-                await _transactionService.UpdateTransaction(CurrentUserId, request);
+                await _transactionService.UpdateTransactionAsync(CurrentUserId, request);
                 return NoContent();
             }
             catch (Exception ex)

@@ -18,7 +18,7 @@ namespace CashFlow.Application.Services
             _currencyRepository = currencyRepository;
         }
 
-        public async Task<List<CurrencyResponse>> GetAllCurrencies()
+        public async Task<List<CurrencyResponse>> GetAllCurrenciesAsync()
         {
             var currencies = await _currencyRepository.GetAllCurrenciesWithDetailsAsync();
 
