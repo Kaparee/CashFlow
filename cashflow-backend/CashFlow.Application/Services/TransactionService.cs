@@ -99,7 +99,6 @@ namespace CashFlow.Application.Services
                     Name = transaction.Category.Name,
                     Color = transaction.Category.Color,
                     Type = transaction.Category.Type,
-                    LimitAmount = transaction.Category.LimitAmount,
                     Icon = transaction.Category.Icon
                 }
             }).ToList();

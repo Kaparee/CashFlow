@@ -10,5 +10,6 @@ namespace CashFlow.Application.Repositories
         Task<Transaction?> GetTransactionInfoByIdWithDetailsAsync(int userId, int transactionId);
         Task<List<Transaction>> GetTransactionsInfoByCategoryIdWithDetailsAsync(int userId, int categoryId);
         Task<bool> HasTransactionsAsync(int userId, int categoryId);
+        Task<decimal> GetCategorySpendingsAsync(int userId, int categoryId, DateTime start, DateTime end);
     }
 }

@@ -1,10 +1,10 @@
 public class UpdateTransactionRequest
 {
-    public int TransactionId { get; set; }
-    public int AccountId { get; set; }
-    public int NewCategoryId { get; set; }
-    public decimal NewAmount { get; set; }
-    public string NewDescription { get; set; } = string.Empty;
-    public string NewType { get; set; } = "expense";
-    public DateTime NewDate { get; set; }
+    public required int TransactionId { get; set; }
+    public required int AccountId { get; set; }
+    public required int NewCategoryId { get; set; }
+    public required decimal NewAmount { get; set; }
+    public required string NewDescription { get; set; }
+    public required string NewType { get; set; }
+    public required DateTime NewDate { get; set; }
 }

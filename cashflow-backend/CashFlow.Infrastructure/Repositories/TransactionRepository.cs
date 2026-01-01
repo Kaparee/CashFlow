@@ -55,5 +55,16 @@ namespace CashFlow.Infrastructure.Repositories
                 .Where(t => t.UserId == userId && t.CategoryId == categoryId && t.DeletedAt == null)
                 .ToListAsync();
         }
+
+        public async Task<decimal> GetCategorySpendingsAsync(int userId, int categoryId, DateTime start, DateTime end)
+        {
+            return await _context.Transactions
+                .Where(t => t.UserId == userId &&
+                            t.CategoryId == categoryId &&
+                            t.Type == "expense" &&
+                            t.DeletedAt == null &&
+                            t.Date >= start && t.Date <= end)
+                .SumAsync(t => t.Amount);
+        }
     }
 }

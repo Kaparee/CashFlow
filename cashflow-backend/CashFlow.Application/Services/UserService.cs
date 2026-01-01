@@ -238,5 +238,107 @@ namespace CashFlow.Application.Services
             await _userRepository.UpdateAsync(user);
         }
 
+        public async Task ModifyPasswordAsync(int userId, ModifyPasswordRequest request)
+        {
+            var user = await _userRepository.GetUserByIdWithDetailsAsync(userId);
+
+            if (user == null)
+            {
+                throw new Exception("User not found or access denied.");
+            }
+
+            if (!BCrypt.Net.BCrypt.Verify(request.OldPassword, user.PasswordHash))
+            {
+                throw new Exception("Current password is invalid.");
+            }
+
+            if (request.OldPassword == request.NewPassword)
+            {
+                throw new Exception("New password cannot be same as the old password.");
+            }
+
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+            user.UpdatedAt = DateTime.UtcNow;
+
+            await _userRepository.UpdateAsync(user);
+            await _emailService.SendEmailAsync(user.Email, "Reset Password - CashFlow", "<h1>Your password has been changed, thank you for supporting our project</h1>");
+        }
+
+        public async Task RequestPasswordResetAsync(string email)
+        {
+            var user = await _userRepository.GetUserByEmailOrNicknameAsync(email);
+            if (user == null)
+            {
+                return;
+            }
+
+            var resetGUID = Guid.NewGuid().ToString();
+            user.PasswordResetToken = resetGUID;
+            user.ResetTokenExpiresAt = DateTime.UtcNow.AddHours(1);
+
+            await _userRepository.UpdateAsync(user);
+            await _emailService.SendEmailAsync(user.Email, "Reset Password - CashFlow", $"<h1>Welcome {user.FirstName} {user.LastName}</h1><br>To reset, click the link below:<br> <a href=\"http://localhost:5173/api/confirm-password-reset?token={resetGUID}\">RESET PASSWORD</a>");
+        }
+
+        public async Task ResetPasswordConfirmAsync(ResetPasswordRequest request)
+        {
+            var user = await _userRepository.GetUserByPasswordResetTokenAsync(request.Token);
+
+            if (user == null || user.ResetTokenExpiresAt < DateTime.UtcNow)
+            {
+                throw new Exception("Invalid or expired token.");
+            }
+
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+            user.PasswordResetToken = null;
+            user.ResetTokenExpiresAt = null;
+
+            await _userRepository.UpdateAsync(user);
+            await _emailService.SendEmailAsync(user.Email, "Reset Password - CashFlow", "<h1>Your password has been changed, thank you for supporting our project</h1>");
+        }
+
+        public async Task RequestEmailChangeAsync(int userId, string newEmail )
+        {
+            var user = await _userRepository.GetUserByIdWithDetailsAsync(userId);
+
+            if (user == null)
+            {
+                throw new Exception("User not found or access denied.");
+            }
+
+            if(await _userRepository.IsEmailTakenAsync(newEmail))
+            {
+                throw new Exception("This email is already taken.");
+            }
+
+            var token = Guid.NewGuid().ToString();
+
+            user.NewEmailPending = newEmail;
+            user.EmailChangeToken = token;
+            user.EmailChangeTokenExpiresAt = DateTime.UtcNow.AddHours(1);
+
+            await _userRepository.UpdateAsync(user);
+
+            await _emailService.SendEmailAsync(newEmail, "Confirm your new email - CashFlow", $"<h1>Welcome {user.FirstName} {user.LastName}</h1><br>To confirm your new Email, click the link below:<br> <a href=\"http://localhost:5173/api/confirm-email-change?token={token}\">CHANGE EMAIL</a>");
+        }
+
+        public async Task EmailChangeConfirmAsync(string token)
+        {
+            var user = await _userRepository.GetUserByEmailChangeTokenAsync(token);
+
+            if (user == null || user.EmailChangeTokenExpiresAt < DateTime.UtcNow)
+            {
+                throw new Exception("Invalid or expired email change token.");
+            }
+
+            user.Email = user.NewEmailPending!;
+
+            user.NewEmailPending = null;
+            user.EmailChangeToken = null;
+            user.EmailChangeTokenExpiresAt = null;
+            user.UpdatedAt = DateTime.UtcNow;
+
+            await _userRepository.UpdateAsync(user);
+        }
     }
 }

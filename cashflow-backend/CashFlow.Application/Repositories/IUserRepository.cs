@@ -11,5 +11,7 @@ namespace CashFlow.Application.Repositories
         Task<User?> GetUserByEmailOrNicknameAsync(string emailOrNickname);
         Task<User?> GetUserByVerificationTokenAsync(string verificationToken);
         Task UpdateAsync(User user);
+        Task<User?> GetUserByPasswordResetTokenAsync(string passwordResetToken);
+        Task<User?> GetUserByEmailChangeTokenAsync(string token);
     }
 }
