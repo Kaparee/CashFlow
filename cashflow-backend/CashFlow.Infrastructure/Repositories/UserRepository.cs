@@ -65,5 +65,19 @@ namespace CashFlow.Infrastructure.Repositories
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<User?> GetUserByPasswordResetTokenAsync(string passwordResetToken)
+        {
+            var user = await _context.Users
+                .Where(x => x.DeletedAt == null)
+                .FirstOrDefaultAsync(u => u.PasswordResetToken == passwordResetToken);
+            return user;
+        }
+
+        public async Task<User?> GetUserByEmailChangeTokenAsync(string token)
+        {
+            return await _context.Users
+                .FirstOrDefaultAsync(u => u.EmailChangeToken == token && u.IsActive == true);
+        }
     }
 }

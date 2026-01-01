@@ -30,7 +30,6 @@ namespace CashFlow.Application.Services
                 Name = category.Name,
                 Color = category.Color,
                 Type = category.Type,
-                LimitAmount = category.LimitAmount,
                 Icon = category.Icon,
 
                 KeyWords = category.KeyWords.Select(keyword => new KeyWordResponse
@@ -57,7 +56,6 @@ namespace CashFlow.Application.Services
                 Color = request.Color!,
                 Icon = request.Icon!,
                 Type = request.Type!,
-                LimitAmount = request.LimitAmount!
             };
 
             await _categoryRepository.AddAsync(newCategory);
@@ -65,16 +63,36 @@ namespace CashFlow.Application.Services
 
         public async Task DeleteCategoryAsync(int userId, int categoryId)
         {
-            var category = await _categoryRepository.GetCategoryInfoByIdWithDetailsAsync(userId, categoryId);
-
-            if (category == null)
+            using var dbTransaction = await _unitOfWork.BeginTransactionAsync();
+            try
             {
-                throw new Exception("Category not found or access denied.");
+                var category = await _categoryRepository.GetCategoryInfoByIdWithDetailsAsync(userId, categoryId);
+
+                if (category == null)
+                {
+                    throw new Exception("Category not found or access denied.");
+                }
+
+                category.DeletedAt = DateTime.UtcNow;
+
+                foreach (var limit in category.Limits)
+                {
+                    limit.DeletedAt = DateTime.UtcNow;
+                }
+                foreach (var word in category.KeyWords)
+                {
+                    word.DeletedAt = DateTime.UtcNow;
+                }
+
+                await _categoryRepository.UpdateAsync(category);
+                await _unitOfWork.SaveChangesAsync();
+                await dbTransaction.CommitAsync();
             }
-
-            category.DeletedAt = DateTime.UtcNow;
-
-            await _categoryRepository.UpdateAsync(category);
+            catch
+            {
+                await dbTransaction.RollbackAsync();
+                throw;
+            }
         }
 
         public async Task UpdateCategoryAsync(int userId, UpdateCategoryRequest request)
@@ -105,9 +123,9 @@ namespace CashFlow.Application.Services
                 category.Color = request.NewColor;
                 category.Icon = request.NewIcon;
                 category.Type = request.NewType;
-                category.LimitAmount = request.NewLimitAmount;
 
                 await _categoryRepository.UpdateAsync(category);
+                await _unitOfWork.SaveChangesAsync();
                 await dbTransaction.CommitAsync();
             }
             catch

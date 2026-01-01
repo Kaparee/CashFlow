@@ -30,9 +30,6 @@ namespace CashFlow.Domain.Models
         [Column("type")]
         public required string Type { get; set; }
 
-        [Column("limit_amount")]
-        public decimal? LimitAmount { get; set; }
-
         [Column("created_at")]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

@@ -11,11 +11,13 @@ namespace CashFlow.Application.Services
     {
         private readonly ILimitRepository _limitRepository;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly ITransactionRepository _transactionRepository;
 
-        public LimitService(ILimitRepository limitRepository, ICategoryRepository categoryRepository)
+        public LimitService(ILimitRepository limitRepository, ICategoryRepository categoryRepository, ITransactionRepository transactionRepository)
         {
             _limitRepository = limitRepository;
             _categoryRepository = categoryRepository;
+            _transactionRepository = transactionRepository;
         }
 
         public async Task CreateNewLimitAsync(int userId, NewLimitRequest request)
@@ -46,19 +48,67 @@ namespace CashFlow.Application.Services
         public async Task<List<LimitResponse>> GetLimitsAsync(int userId)
         {
             var limits = await _limitRepository.GetUserLimitsAsync(userId);
+            var response = new List<LimitResponse>();
 
-            return limits.Select(limit => new LimitResponse
+            foreach (var limit in limits)
             {
-                LimitId = limit.LimitId,
-                Name = limit.Name,
-                Value = limit.Value,
-                StartDate = limit.StartDate,
-                EndDate = limit.EndDate,
+                var spent = await _transactionRepository.GetCategorySpendingsAsync(userId, limit.CategoryId, limit.StartDate, limit.EndDate);
 
-                CategoryName = limit.Category.Name,
-                CategoryIcon = limit.Category.Icon
+                response.Add(new LimitResponse
+                {
+                    LimitId = limit.LimitId,
+                    Name = limit.Name,
+                    Value = limit.Value,
+                    CurrentAmount = spent,
+                    StartDate = limit.StartDate,
+                    EndDate = limit.EndDate,
 
-            }).ToList();
+                    CategoryName = limit.Category.Name,
+                    CategoryIcon = limit.Category.Icon
+                });
+            }
+            return response;
+        }
+
+        public async Task DeleteLimitAsync(int userId, int limitId)
+        {
+            var limit = await _limitRepository.GetLimitByIdAsync(limitId, userId);
+
+            if (limit == null)
+            {
+                throw new Exception("Limit not found or access denied.");
+            }
+
+            limit.DeletedAt = DateTime.UtcNow;
+
+            await _limitRepository.UpdateAsync(limit);
+        }
+
+        public async Task UpdateLimitAsync(int userId, UpdateLimitRequest request)
+        {
+            var limit = await _limitRepository.GetLimitByIdAsync(request.LimitId, userId);
+            var category = await _categoryRepository.GetCategoryInfoByIdWithDetailsAsync(userId, request.NewCategoryId);
+
+            if (limit == null || category == null)
+            {
+                throw new Exception("Limit not found or access denied.");
+            }
+
+            if (request.NewStartDate > request.NewEndDate)
+            {
+                throw new Exception("End date can not be earlier than the start date");
+            }
+
+            limit.UpdatedAt = DateTime.UtcNow;
+
+            limit.CategoryId = request.NewCategoryId;
+            limit.Name = request.NewName;
+            limit.Value = request.NewValue;
+            limit.Description = request.NewDescription;
+            limit.StartDate = request.NewStartDate;
+            limit.EndDate = request.NewEndDate;
+
+            await _limitRepository.UpdateAsync(limit);
         }
     }
 }

@@ -18,7 +18,8 @@ namespace CashFlow.Infrastructure.Repositories
         public async Task<List<Category>> GetUserCategoriesWithDetailsAsync(int userId)
         {
             return await _context.Categories
-                .Include(c => c.KeyWords)
+                .Include(c => c.KeyWords.Where(k => k.DeletedAt == null))
+                .Include(c => c.Limits.Where(l => l.DeletedAt == null))
                 .Where(x => x.DeletedAt == null)
                 .Where(a => a.UserId == userId)
                 .ToListAsync();

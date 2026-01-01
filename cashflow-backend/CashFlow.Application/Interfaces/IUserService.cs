@@ -11,5 +11,10 @@ namespace CashFlow.Application.Interfaces
 		Task VerifyEmailAsync(string verificationToken);
 		Task DeleteUserAsync(int userId);
 		Task UpdateUserAsync(int userId, UpdateUserRequest request);
+		Task ModifyPasswordAsync(int userId, ModifyPasswordRequest request);
+		Task RequestPasswordResetAsync(string email);
+        Task ResetPasswordConfirmAsync(ResetPasswordRequest request);
+		Task RequestEmailChangeAsync(int userId, string newEmail);
+        Task EmailChangeConfirmAsync(string token);
     }
 }

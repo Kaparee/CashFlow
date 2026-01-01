@@ -138,5 +138,76 @@ namespace CashFlow.Api.Controllers
                 throw;
             }
         }
+
+        [HttpPatch]
+        [Route("modify-password")]
+        public async Task<IActionResult> ModifyPassword([FromBody] ModifyPasswordRequest request)
+        {
+            try
+            {
+                await _userService.ModifyPasswordAsync(CurrentUserId, request);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("request-password-reset")]
+        public async Task<IActionResult> RequestPasswordReset([FromBody] ForgotPasswordRequest request)
+        {
+            await _userService.RequestPasswordResetAsync(request.Email);
+            return Ok(new { message = "If the email is in our system, a reset link has been sent." });
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("confirm-password-reset")]
+        public async Task<IActionResult> ConfirmPasswordReset([FromBody] ResetPasswordRequest request)
+        {
+            try
+            {
+                await _userService.ResetPasswordConfirmAsync(request);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("request-email-change")]
+        public async Task<IActionResult> RequestEmailChange([FromBody] RequestEmailChangeRequest request)
+        {
+            try
+            {
+                await _userService.RequestEmailChangeAsync(CurrentUserId, request.NewEmail);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("confirm-email-change")]
+        public async Task<IActionResult> ConfirmEmailChange([FromBody] ConfirmEmailChangeRequest request)
+        {
+            try
+            {
+                await _userService.EmailChangeConfirmAsync(request.Token);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
     }
 }

@@ -52,5 +52,47 @@ namespace CashFlow.Api.Controllers
                 return StatusCode(500, new { message = "An internal server error occured" });
             }
         }
+
+        [HttpDelete]
+        [Route("delete-limit")]
+        public async Task<IActionResult> DeleteLimit(int limitId)
+        {
+            try
+            {
+                await _limitService.DeleteLimitAsync(CurrentUserId, limitId);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("Limit not found"))
+                {
+                    return NotFound();
+                }
+                throw;
+            }
+        }
+
+        [HttpPatch]
+        [Route("update-limit")]
+        public async Task<IActionResult> UpdateLimit([FromBody] UpdateLimitRequest request)
+        {
+            try
+            {
+                await _limitService.UpdateLimitAsync(CurrentUserId, request);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("Limit not found"))
+                {
+                    return NotFound();
+                }
+                if(ex.Message.Contains("End date can not be"))
+                {
+                    return Conflict();
+                }
+                throw;
+            }
+        }
     }
 }

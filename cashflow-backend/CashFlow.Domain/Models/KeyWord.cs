@@ -26,6 +26,9 @@ namespace CashFlow.Domain.Models
         [Column("deleted_at")]
         public DateTime? DeletedAt { get; set; }
 
+        [Column("updated_at")]
+        public DateTime? UpdatedAt { get; set; }
+
         public User User { get; set; } = null!;
 
         public Category Category { get; set; } = null!;
