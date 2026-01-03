@@ -32,7 +32,7 @@ namespace CashFlow.Api.Controllers
         [Route("key-words-info")]
         public async Task<ActionResult<IEnumerable<KeyWordResponse>>> GetUserKeyWords()
         {
-            var categoryDto = await _categoryService.GetUserCategories(CurrentUserId);
+            var categoryDto = await _categoryService.GetUserCategoriesAsync(CurrentUserId);
             return Ok(categoryDto);
         }
 
@@ -52,6 +52,44 @@ namespace CashFlow.Api.Controllers
                     return Conflict(new { message = ex.Message });
                 }
                 return StatusCode(500, new { message = "An internal server error occured" });
+            }
+        }
+
+        [HttpDelete]
+        [Route("delete-key-word")]
+        public async Task<IActionResult> DeleteKeyWord(int keyWordId)
+        {
+            try
+            {
+                await _keyWordService.DeleteKeyWordAsync(CurrentUserId, keyWordId);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("Key Word not found"))
+                {
+                    return NotFound();
+                }
+                throw;
+            }
+        }
+
+        [HttpPatch]
+        [Route("update-key-word")]
+        public async Task<IActionResult> UpdateKeyWord([FromBody] UpdateKeyWordRequest request)
+        {
+            try
+            {
+                await _keyWordService.UpdateKeyWordAsync(CurrentUserId, request);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("Key Word not found"))
+                {
+                    return NotFound();
+                }
+                throw;
             }
         }
     }

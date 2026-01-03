@@ -39,5 +39,35 @@ namespace CashFlow.Application.Services
             await _keyWordRepository.AddAsync(newKeyWord);
         }
 
+        public async Task DeleteKeyWordAsync(int userId, int keyWordId)
+        {
+            var keyword = await _keyWordRepository.GetUserKeyWordByIdWithDetailsAsync(userId, keyWordId);
+
+            if(keyword == null)
+            {
+                throw new Exception("Key Word not found or access denied.");
+            }
+
+            keyword.DeletedAt = DateTime.UtcNow;
+
+            await _keyWordRepository.UpdateAsync(keyword);
+        }
+
+        public async Task UpdateKeyWordAsync(int userId, UpdateKeyWordRequest request)
+        {
+            var keyword = await _keyWordRepository.GetUserKeyWordByIdWithDetailsAsync(userId, request.KeyWordId);
+
+            if (keyword == null)
+            {
+                throw new Exception("Key Word not found or access denied.");
+            }
+
+            keyword.UpdatedAt = DateTime.UtcNow;
+
+            keyword.CategoryId = request.NewCategoryId;
+            keyword.Word = request.NewWord;
+
+            await _keyWordRepository.UpdateAsync(keyword);
+        }
     }
 }

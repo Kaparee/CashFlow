@@ -32,7 +32,7 @@ namespace CashFlow.Api.Controllers
         {
             try
             {
-                var accountDto = await _accountService.GetUserAccounts(CurrentUserId);
+                var accountDto = await _accountService.GetUserAccountsAsync(CurrentUserId);
                 return Ok(accountDto);
             }
             catch (Exception ex)
@@ -61,6 +61,44 @@ namespace CashFlow.Api.Controllers
                     return Conflict(new { message = ex.Message });
                 }
                 return StatusCode(500, new { message = "An internal server error occured" });
+            }
+        }
+
+        [HttpDelete]
+        [Route("delete-account")]
+        public async Task<IActionResult> DeleteAccount(int accountId)
+        {
+            try
+            {
+                await _accountService.DeleteAccountAsync(CurrentUserId, accountId);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                if(ex.Message.Contains("Account not found"))
+                {
+                    return NotFound();
+                }
+                throw;
+            }
+        }
+
+        [HttpPatch]
+        [Route("update-account")]
+        public async Task<IActionResult> UpdateAccount([FromBody] UpdateAccountRequest request)
+        {
+            try
+            {
+                await _accountService.UpdateAccountAsync(CurrentUserId, request);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("Account not found"))
+                {
+                    return NotFound();
+                }
+                throw;
             }
         }
     }

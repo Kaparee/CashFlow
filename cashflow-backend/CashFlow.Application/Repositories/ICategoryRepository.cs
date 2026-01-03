@@ -7,5 +7,7 @@ namespace CashFlow.Application.Repositories
         Task<List<Category>> GetUserCategoriesWithDetailsAsync(int userId);
         Task AddAsync(Category category);
         Task<bool> isCategoryCreated(int userId, string name);
+        Task<Category?> GetCategoryInfoByIdWithDetailsAsync(int userId, int categoryId);
+        Task UpdateAsync(Category category);
     }
 }

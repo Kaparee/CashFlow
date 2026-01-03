@@ -12,13 +12,15 @@ namespace CashFlow.Application.Services
         private readonly ITransactionRepository _transactionRepository;
         private readonly IAccountRepository _accountRepository;
         private readonly IKeyWordRepository _keyWordRepository;
-    
+        private readonly IUnitOfWork _unitOfWork;
 
-        public TransactionService(ITransactionRepository transactionRepository, IAccountRepository accountRepository, IKeyWordRepository keyWordRepository)
+
+        public TransactionService(ITransactionRepository transactionRepository, IAccountRepository accountRepository, IKeyWordRepository keyWordRepository, IUnitOfWork unitOfWork)
         {
             _transactionRepository = transactionRepository;
             _accountRepository = accountRepository;
             _keyWordRepository = keyWordRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task CreateNewTransactionAsync(int userId, NewTransactionRequest request)
@@ -79,7 +81,7 @@ namespace CashFlow.Application.Services
             await _accountRepository.UpdateAsync(account);
 		}
 
-        public async Task<List<TransactionResponse>> GetAccountTransactions(int userId, int accountId)
+        public async Task<List<TransactionResponse>> GetAccountTransactionsAsync(int userId, int accountId)
         {
             var transactions = await _transactionRepository.GetAccountTransactionsWithDetailsAsync(userId, accountId);
 
@@ -97,9 +99,95 @@ namespace CashFlow.Application.Services
                     Name = transaction.Category.Name,
                     Color = transaction.Category.Color,
                     Type = transaction.Category.Type,
-                    LimitAmount = transaction.Category.LimitAmount,
+                    Icon = transaction.Category.Icon
                 }
             }).ToList();
+        }
+
+        public async Task DeleteTransactionAsync(int userId, int transactionId, int accountId)
+        {
+            using var dbTransaction = await _unitOfWork.BeginTransactionAsync();
+            try
+            {
+                var transaction = await _transactionRepository.GetTransactionInfoByIdWithDetailsAsync(userId, transactionId);
+                var account = await _accountRepository.GetAccountByIdAsync(userId, accountId);
+
+                if (transaction == null || account == null)
+                {
+                    throw new Exception("Transaction not found or access denied.");
+                }
+
+                transaction.DeletedAt = DateTime.UtcNow;
+
+                if (transaction.Type == "income")
+                {
+                    account.Balance -= transaction.Amount;
+                }
+
+                if (transaction.Type == "expense")
+                {
+                    account.Balance += transaction.Amount;
+                }
+
+                await _transactionRepository.UpdateAsync(transaction);
+                await _accountRepository.UpdateAsync(account);
+                await dbTransaction.CommitAsync();
+            }
+            catch
+            {
+                await dbTransaction.RollbackAsync();
+                throw;
+            }
+        }
+
+        public async Task UpdateTransactionAsync(int userId, UpdateTransactionRequest request)
+        {
+            using var dbTransaction = await _unitOfWork.BeginTransactionAsync();
+            try
+            {
+                var transaction = await _transactionRepository.GetTransactionInfoByIdWithDetailsAsync(userId, request.TransactionId);
+                var account = await _accountRepository.GetAccountByIdAsync(userId, request.AccountId);
+
+                if (transaction == null || account == null)
+                {
+                    throw new Exception("Transaction not found or access denied.");
+                }
+
+                transaction.UpdatedAt = DateTime.UtcNow;
+
+                if (transaction.Type == "expense")
+                {
+                    account.Balance += transaction.Amount;
+                }
+                else if (transaction.Type == "income")
+                {
+                    account.Balance -= transaction.Amount;
+                }
+
+                transaction.Amount = request.NewAmount;
+                transaction.Type = request.NewType;
+                transaction.Description = request.NewDescription;
+                transaction.CategoryId = request.NewCategoryId;
+                transaction.Date = request.NewDate;
+
+                if (transaction.Type == "expense")
+                {
+                    account.Balance -= transaction.Amount;
+                }
+                else if (transaction.Type == "income")
+                {
+                    account.Balance += transaction.Amount;
+                }
+
+                await _transactionRepository.UpdateAsync(transaction);
+                await _accountRepository.UpdateAsync(account);
+                await dbTransaction.CommitAsync();
+            }
+            catch
+            {
+                await dbTransaction.RollbackAsync();
+                throw;
+            }
         }
     }
 }

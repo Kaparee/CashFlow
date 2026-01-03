@@ -42,12 +42,25 @@ namespace CashFlow.Infrastructure.Repositories
         public async Task<bool> IsKeyWordCreated(int userId, string word)
         {
             return await _context.KeyWords
-                .AnyAsync(k => k.UserId == userId && k.Word == word);
+                .AnyAsync(k => k.UserId == userId && k.Word == word && k.DeletedAt == null);
         }
 
         public async Task AddAsync(KeyWord keyWord)
         {
             _context.KeyWords.Add(keyWord);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<KeyWord?> GetUserKeyWordByIdWithDetailsAsync(int userId, int keyWordId)
+        {
+            return await _context.KeyWords
+                .Where(k => k.UserId == userId && k.WordId == keyWordId && k.DeletedAt == null)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task UpdateAsync(KeyWord keyWord)
+        {
+            _context.KeyWords.Update(keyWord);
             await _context.SaveChangesAsync();
         }
     }

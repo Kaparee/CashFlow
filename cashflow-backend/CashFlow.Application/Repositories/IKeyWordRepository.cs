@@ -8,5 +8,7 @@ namespace CashFlow.Application.Repositories
         Task<int?> GetCategoryIdByDescriptionAsync(int userId, string description);
         Task<bool> IsKeyWordCreated(int userId, string word);
         Task AddAsync(KeyWord keyWord);
+        Task<KeyWord?> GetUserKeyWordByIdWithDetailsAsync(int userId, int keyWordId);
+        Task UpdateAsync(KeyWord keyWord);
     }
 }

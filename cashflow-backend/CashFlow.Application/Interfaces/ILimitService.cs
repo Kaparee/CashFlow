@@ -7,5 +7,7 @@ namespace CashFlow.Application.Interfaces
     {
         Task CreateNewLimitAsync(int userId, NewLimitRequest request);
         Task<List<LimitResponse>> GetLimitsAsync(int userId);
+        Task DeleteLimitAsync(int userId, int limitId);
+        Task UpdateLimitAsync(int userId, UpdateLimitRequest request);
     }
 }

@@ -9,5 +9,9 @@ namespace CashFlow.Application.Repositories
         Task<bool> IsNicknameTakenAsync(string nickname);
         Task AddAsync(User user);
         Task<User?> GetUserByEmailOrNicknameAsync(string emailOrNickname);
+        Task<User?> GetUserByVerificationTokenAsync(string verificationToken);
+        Task UpdateAsync(User user);
+        Task<User?> GetUserByPasswordResetTokenAsync(string passwordResetToken);
+        Task<User?> GetUserByEmailChangeTokenAsync(string token);
     }
 }

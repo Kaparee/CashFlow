@@ -1,6 +1,5 @@
 using CashFlow.Domain.Models;
 
-//TO DO USUNIÊCIA PO DODANIU PRACOWNIKA
 
 namespace CashFlow.Application.Repositories
 {

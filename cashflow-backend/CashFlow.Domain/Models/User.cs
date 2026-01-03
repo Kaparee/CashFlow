@@ -51,6 +51,27 @@ namespace CashFlow.Domain.Models
         [Column("deleted_at")]
         public DateTime? DeletedAt { get; set; }
 
+        [Column("verification_token")]
+        public string? VerificationToken { get; set; }
+
+        [Column("verified_at")]
+        public DateTime? VerifiedAt { get; set; }
+
+        [Column("password_reset_token")]
+        public string? PasswordResetToken { get; set; }
+
+        [Column("reset_token_expires_at")]
+        public DateTime? ResetTokenExpiresAt { get; set; }
+
+        [Column("new_email_pending")]
+        public string? NewEmailPending { get; set; }
+
+        [Column("email_change_token")]
+        public string? EmailChangeToken { get; set; }
+
+        [Column("email_change_token_expires_at")]
+        public DateTime? EmailChangeTokenExpiresAt { get; set; }
+
         public ICollection<Account> Accounts { get; set; } = new List<Account>();
 
         public ICollection<KeyWord> KeyWords { get; set; } = new List<KeyWord>();

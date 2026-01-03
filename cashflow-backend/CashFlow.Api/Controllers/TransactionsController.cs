@@ -29,7 +29,7 @@ namespace CashFlow.Api.Controllers
         [Route("transactions-info")]
         public async Task<ActionResult<TransactionResponse>> GetAccountTransaction(int accountId)
         {
-            var transactionDto = await _transactionService.GetAccountTransactions(CurrentUserId, accountId);
+            var transactionDto = await _transactionService.GetAccountTransactionsAsync(CurrentUserId, accountId);
             return Ok(transactionDto);
         }
 
@@ -49,6 +49,44 @@ namespace CashFlow.Api.Controllers
                     return Conflict(new { message = ex.Message });
                 }
                 return StatusCode(500, new { message = "An internal server error occured" });
+            }
+        }
+
+        [HttpDelete]
+        [Route("delete-transaction")]
+        public async Task<IActionResult> DeleteTransaction(int transactionId, int accountId)
+        {
+            try
+            {
+                await _transactionService.DeleteTransactionAsync(CurrentUserId, transactionId, accountId);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                if(ex.Message.Contains("Transaction not found"))
+                {
+                    return NotFound();
+                }
+                throw;
+            }
+        }
+
+        [HttpPatch]
+        [Route("update-transaction")]
+        public async Task<IActionResult> UpdateTransaction([FromBody] UpdateTransactionRequest request)
+        {
+            try
+            {
+                await _transactionService.UpdateTransactionAsync(CurrentUserId, request);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("Transaction not found"))
+                {
+                    return NotFound();
+                }
+                throw;
             }
         }
     }

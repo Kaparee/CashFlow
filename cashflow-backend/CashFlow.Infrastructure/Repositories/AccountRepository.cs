@@ -18,6 +18,7 @@ namespace CashFlow.Infrastructure.Repositories
         public async Task<Account?> GetAccountByIdAsync(int userId, int accountId)
         {
             return await _context.Accounts
+                .Where(x => x.DeletedAt == null)
                 .FirstOrDefaultAsync(a => a.AccountId == accountId && a.UserId == userId);
         }
 
@@ -30,7 +31,7 @@ namespace CashFlow.Infrastructure.Repositories
         public async Task<bool> isAccountCreated(int userId, string name)
         {
             return await _context.Accounts
-                .AnyAsync(c => c.UserId == userId && c.Name == name);
+                .AnyAsync(c => c.UserId == userId && c.Name == name && c.DeletedAt == null);
         }
 
         public async Task UpdateAsync(Account account)
@@ -42,6 +43,7 @@ namespace CashFlow.Infrastructure.Repositories
         public async Task<List<Account>> GetUserAccountsWithDetailsAsync(int userId)
         {
             return await _context.Accounts
+                .Where(x => x.DeletedAt == null)
                 .Where(u => u.UserId == userId && u.IsActive == true)
                 .ToListAsync();
         }
