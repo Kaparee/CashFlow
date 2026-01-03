@@ -1,6 +1,10 @@
 import React, { useEffect } from 'react'
 import s from './MainDisplay.module.css'
+import sDashboard from '../../../DashboardPage.module.css'
 import { PieChart } from '@mui/x-charts/PieChart';
+import {valueFormatter } from './webUsageStats';
+import { useWindowWidth } from '../../../../../hooks/useWindowWidth';
+import Button from '@mui/material/Button';
 
 interface KeyWords {
     wordId: number;
@@ -26,20 +30,26 @@ interface Transactions {
     category: Category;
 }
 
+interface pieData {
+    id: number;
+    value: number;
+    label: string;
+    color: string;
+}
+
 interface MainDisplayProps {
     transactions: Transactions[];
     isLoading: boolean;
     date: string;
     currency: string | undefined;
+    pieData: pieData[];
 }
 
-const dryData = [
-  { id: 0, value: 400, label: 'Jedzenie', color: '#ff5733' },
-  { id: 1, value: 200, label: 'Paliwo', color: '#33ff57' },
-  { id: 2, value: 150, label: 'Rozrywka', color: '#3357ff' },
-];
+const emptyPiePlaceholder = [{ id: 0, value: 1, color: '#121212', label: '' }];
 
-const MainDisplay: React.FC<MainDisplayProps> = ({transactions, isLoading, date, currency}) => {
+const MainDisplay: React.FC<MainDisplayProps> = ({transactions, isLoading, date, currency, pieData}) => {
+
+    const width = useWindowWidth();
 
     const getContrastColor = (hexColor: string): 'white' | 'black' => {
         const cleanHex = hexColor.replace('#','');
@@ -51,49 +61,97 @@ const MainDisplay: React.FC<MainDisplayProps> = ({transactions, isLoading, date,
         return yiq >= 128 ? 'black' : 'white';
     }
 
+    const handleCurrencyFormatting = (balance: number, format: string) => {
+        return  new Intl.NumberFormat(navigator.language, { style: "currency", currency: format, useGrouping: true }).format(balance)
+    }
 
     return (
-        <div className={`col-md-6 d-flex flex-column text-white`}>
-            <div className={`border-bottom`}>
-                {/* <i className="bi bi-pie-chart display-1"></i> */}
+        <div className={`col-lg-6 d-flex flex-column text-white`}>
+            <div className={`p-md-5 mb-3 mb-md-0`}>
                 <PieChart
                     series={[
                         {
-                        data: dryData,
-                        innerRadius: 30,
-                        paddingAngle: 5,
-                        cornerRadius: 5,
-                        }
+                            data: pieData.length > 0 ? pieData : emptyPiePlaceholder,
+                            arcLabel: undefined,
+                            valueFormatter: (obj) => handleCurrencyFormatting(obj.value, currency || 'PLN'),
+                            highlightScope: { fade: 'global', highlight: 'item' },
+                            faded: { innerRadius: 30, additionalRadius: -30, color: '#DEDEDE' },
+                            
+                            innerRadius: 30,
+                            paddingAngle: 5,
+                            cornerRadius: 5,
+                        },
                     ]}
                     height={250}
-                    width={200}
+                    margin={{bottom: 25}}
+                    slotProps={{ 
+                        legend: {
+                            hidden: pieData.length === 0,
+                            position: { vertical: 'bottom', horizontal: 'middle' },
+                            direction: 'row',
+                        },
+                        tooltip: { trigger: pieData.length > 0 ? 'item' : 'none' }
+                    }}
                     sx={{ 
                         "& .MuiChartsLegend-label": {
-                             color: "white !important" 
+                             color: "#DEDEDE !important" 
                         },
                         "& text": {
-                            color: "white !important",
+                            color: "#DEDEDE !important",
                         } 
                     }}
-                />
+                    />
             </div>
-            <div className={`border-bottom d-flex flex-column overflow-y-auto`} style={{maxHeight: '30rem'}}>
-                {transactions.map((item, index) => (
-                    <div key={item.transactionId} className={`my-1`}>
-                        <div className={`py-2 px-3 rounded-5 d-flex align-items-center`} style={{backgroundColor: item.category.color, color: getContrastColor(item.category.color)}}>
-                            <span className={`me-2`}>
-                                <i className={`bi fs-5 ${item.category.icon ? item.category.icon : 'bi-box-seam'}`}></i>
-                                </span> <span className={``}>{item.category.name}</span> 
-                                {item.description && 
-                                    <>
-                                        <span className='fw-bold mx-2'>|</span> 
-                                        <span>{item.description}</span>
-                                    </>
-                                }
-                                <span className={`ms-auto fw-bold`}>{item.amount} {currency}</span>
+            <div className={`d-flex flex-column overflow-y-auto`} style={{maxHeight: '30rem'}}>
+                {isLoading &&
+                    <>
+                        {isLoading && Array.from({length: 3}).map((_, index) => (
+                            <div key={index} className={`my-1 half-blurred`}>
+                                <div className={`py-2 px-3 rounded-5 d-flex align-items-center ${sDashboard.bgDarkAccent} border ${sDashboard.borderDarkEmphasis} ${sDashboard.shadowDark}`}>
+                                    <span className={`me-2 half-blurred`}>
+                                        <i className={`bi fs-5 bi-box-seam`}></i>
+                                    </span> 
+                                    <span className={`half-blurred`}>Placeholder</span> 
+                                    <span className='fw-bold mx-2 half-blurred'>|</span> 
+                                    <span className='half-blurred'>Placeholder</span>
+                                    <span className={`ms-auto fw-bold half-blurred`}>00000.00 {currency}</span>
+                                </div>
+                            </div>
+                        ))}
+                    </>
+                }
+
+                {!isLoading && transactions.length > 0 &&
+                    <>
+                        {transactions.map((item, index) => (
+                            <div key={item.transactionId} className={`my-1`}>
+                                <button className={`btn w-100 py-2 px-3 rounded-5 d-flex align-items-center`} style={{backgroundColor: item.category.color, color: getContrastColor(item.category.color)}}>
+                                    <span className={`me-2`}>
+                                        <i className={`bi fs-5 ${item.category.icon ? item.category.icon : 'bi-box-seam'}`}></i>
+                                    </span> 
+                                    <span className='row'>
+                                        <div className='col-auto'>
+                                            <span className={`text-start fw-bold`}>{item.category.name}</span> 
+                                        </div>
+                                        {item.description && 
+                                            <div className='col-auto'>
+                                                <span>{item.description}</span>
+                                            </div>
+                                        }
+                                    </span>
+                                    <span className={`ms-auto fw-bold`}>{handleCurrencyFormatting(item.amount, currency || 'PLN')}</span>                    
+                                </button>
+                            </div>
+                        ))}
+                    </>
+                }
+                {!isLoading && transactions.length === 0 &&
+                    <>
+                        <div className={`${sDashboard.textDarkPrimary}`}>
+                            Brak danych z tego okresu
                         </div>
-                    </div>
-                ))}
+                    </>
+                }
             </div>
         </div>
     );

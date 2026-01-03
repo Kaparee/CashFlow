@@ -4,7 +4,7 @@ import sDashboard from '../../DashboardPage.module.css'
 import SidebarControl from '../../components/HomePage/SidebarControl/SidebarControl';
 import MainDisplay from '../../components/HomePage/MainDisplay/MainDisplay';
 import { useSearchParams } from 'react-router-dom';
-import { format, formatDistance, formatRelative, subDays, startOfDay, endOfDay, startOfDecade, startOfToday, startOfWeek, endOfWeek, startOfYear, endOfYear, startOfMonth, endOfMonth } from 'date-fns'
+import { format, startOfDay, endOfDay, startOfWeek, endOfWeek, startOfYear, endOfYear, startOfMonth, endOfMonth, addDays, subDays, addWeeks, subWeeks, addMonths, subMonths, addYears, subYears, differenceInDays} from 'date-fns'
 import { pl } from 'date-fns/locale';
 import { useTransactions } from '../../hooks/useTransactions';
 import { AccountContext, useAccount } from '../../contexts/AccountContext';
@@ -61,6 +61,16 @@ const DashboardHomePage: React.FC = () => {
     const [ isLooking, setIsLooking] = useState<boolean>(true);
     const [ user, setUser] = useState<User>({userId: 0, firstName: "", lastName: "", nickname: "", email: "", photoUrl: "", isActive: true, isAdmin: true, isVerified: true, createdAt: "", updatedAt: ""});
 
+    const periodOfTime = useMemo (() => {
+        const daysDiff = differenceInDays(endDate, startDate);
+        if (daysDiff === 0) return 'day';
+        if (daysDiff === 6) return 'week';
+        if (daysDiff >= 27 && daysDiff <= 30) return 'month';
+        if (daysDiff >= 364) return 'year';
+
+        return 'custom';
+    }, [startDate, endDate]);
+
     const handleUserInfo = async () => {
         try {
             setIsLooking(true);
@@ -91,17 +101,66 @@ const DashboardHomePage: React.FC = () => {
                 setStartDate(startOfYear(new Date()));
                 setEndDate(endOfYear(new Date()));
                 break;
-            default:
-
         }
     }
 
     const handleSetStartDate = (date: Date) => {
+        if (date > endDate) {
+            setEndDate(endOfDay(date));
+        }
         setStartDate(startOfDay(date));
     }
 
     const handleSetEndDate = (date: Date) => {
+        if (startDate && date < startDate) {
+            setStartDate(startOfDay(date));
+        }
         setEndDate(endOfDay(date));
+    }
+    
+    const handleShift = (i: number) => {
+
+        switch (periodOfTime) {
+            case 'day':
+                {
+                    const newDate = addDays(startDate, i);
+                    setStartDate(startOfDay(newDate));
+                    setEndDate(endOfDay(newDate));
+                }
+                break;
+            case 'week':
+                {
+                    const newDate = addWeeks(startDate, i);
+                    setStartDate(startOfWeek(newDate, {weekStartsOn: 1}));
+                    setEndDate(endOfWeek(newDate, {weekStartsOn: 1}));
+                }
+                break;
+            case 'month':
+                {
+                    const newDate = addMonths(startDate, i);
+                    setStartDate(startOfMonth(newDate));
+                    setEndDate(endOfMonth(newDate));
+                }
+                break;
+            case 'year':
+                {
+                    const newDate = addYears(startDate, i);
+                    setStartDate(startOfYear(newDate));
+                    setEndDate(endOfYear(newDate));
+                }
+                break;
+            case 'custom':
+                {
+                    const diff = differenceInDays(endDate, startDate) + 1;
+                    setStartDate(addDays(startDate, diff * i));
+                    setEndDate(addDays(endDate, diff * i));
+                }
+                break;
+        }
+    }
+
+    const handleCurrencyFormatting = (balance: number, format: string) => {
+        return  new Intl.NumberFormat(navigator.language, { style: "currency", currency: format, useGrouping: true }).format(balance)
     }
 
     useEffect(() => {
@@ -120,11 +179,34 @@ const DashboardHomePage: React.FC = () => {
         return transactions.reduce((acc, t) => acc + t.amount, 0)
     }, [transactions]);
 
+    const pieData = useMemo(() => {
+        const raw = transactions.reduce((piggyBank, element) => {
+            if (!piggyBank[element.category.name]){
+                piggyBank[element.category.name] = {sum: element.amount, color: element.category.color};
+            } else {
+                piggyBank[element.category.name]['sum'] += element.amount;
+            }
+            return piggyBank;
+        }, {} as Record<string, {sum: number, color: string}>);
+
+        const entries = Object.entries(raw);
+
+        const finalData = entries.map(([name, {sum, color}], index) => {
+            return {
+                id: index,
+                value: sum,
+                label: name,
+                color: color
+            }
+        });
+
+        return finalData;
+    },[transactions])
 
     return (
         <div className='row w-100 mx-auto'>
-            <SidebarControl userName={user?.firstName} balance={account?.balance} totalAmount={totalSum} isExpense={isExpense} onPeriodChange={handleChangeTime} startDate={format(startDate, 'yyyy-MM-dd')} endDate={format(endDate, 'yyyy-MM-dd')} setStartDate={handleSetStartDate} setEndDate={handleSetEndDate} />
-            <MainDisplay transactions={transactions} isLoading={isLoading} date={currentPeriod} currency={account?.currencyCode} />
+            <SidebarControl userName={user?.firstName} balance={handleCurrencyFormatting(account?.balance || 0, account?.currencyCode || 'PLN')} totalAmount={handleCurrencyFormatting(totalSum || 0, account?.currencyCode || 'PLN')} isExpense={isExpense} onPeriodChange={handleChangeTime} startDate={format(startDate, 'yyyy-MM-dd')} endDate={format(endDate, 'yyyy-MM-dd')} setStartDate={handleSetStartDate} setEndDate={handleSetEndDate} setPeriodOfTime={handleShift} />
+            <MainDisplay transactions={transactions} isLoading={isLoading} date={currentPeriod} currency={account?.currencyCode} pieData={pieData} />
         </div>
     );
 };

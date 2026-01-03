@@ -48,7 +48,6 @@ export const useTransactions = (accId: number | undefined, startDate: Date, endD
             }));
 
             setAllTransactions(mappedData);
-
         } catch (error: any) {
             console.log(error.message);
         } finally {
@@ -58,13 +57,13 @@ export const useTransactions = (accId: number | undefined, startDate: Date, endD
 
     const transactions = useMemo(() => {
         return allTransactions.filter(t => t.date >= startDate && t.date <= endDate && t.type == (isExpense ? 'expense': 'income'));
+
     },[startDate, endDate, allTransactions, isExpense]);
 
     useEffect(() => {
         setAllTransactions([]);
         handleFetchTransactions();
     },[accId]);
-
 
     return {transactions, isLoading};
 }
