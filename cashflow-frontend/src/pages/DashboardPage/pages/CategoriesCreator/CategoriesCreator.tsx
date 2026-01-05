@@ -154,7 +154,7 @@ const CategoriesCreator: React.FC = () => {
                                             ●
                                         </span>
                                     ))}
-                                </div>
+                        </div>
                         <button type='submit' className={`btn ${sDashboard.btnDarkOutlineAccentPrimary} py-2 px-4 rounded-5`} disabled={isSending}>
                             {isSending ? 'Dodawanie...': 'Dodaj'}
                         </button>

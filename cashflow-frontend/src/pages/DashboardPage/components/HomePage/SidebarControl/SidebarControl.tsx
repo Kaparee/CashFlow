@@ -52,7 +52,7 @@ const SidebarControl: React.FC<SidebarControlProps> = ({userName, balance, total
                     </div>
             </div>
             <div className={`mb-3 px-3 py-2 rounded-5`}>
-                <button className={`btn btn-primary rounded-5 px-5 fs-5 py-2`}>Nowa transakcja</button>
+                <button className={`btn btn-primary rounded-5 px-5 fs-5 py-2`} data-bs-toggle="modal" data-bs-target="#addTransactionModal">Nowa transakcja</button>
             </div>
         </div>
     );

@@ -84,7 +84,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({table, isLoading, label, nam
             >
                 {isLoading ? 'Ładowanie ... ' : selected ? selected : 'Wybierz...'}
                 <div 
-                    className={`position-absolute py-2 px-3 top-0 w-100 start-0 rounded-5 d-flex flex-column border ${isShown && !isLoading ? 'visible opacity-100': 'invisible opacity-0'} ${s.transitionPopUp} ${sDashboard.bgDarkPrimary} ${sDashboard.borderDarkEmphasis} ${sDashboard.shadowDark} ${s.currecnySelectHeight}`} 
+                    className={`position-absolute py-2 px-3 top-0 w-100 z-1 start-0 rounded-5 d-flex flex-column border ${isShown && !isLoading ? 'visible opacity-100': 'invisible opacity-0'} ${s.transitionPopUp} ${sDashboard.bgDarkPrimary} ${sDashboard.borderDarkEmphasis} ${sDashboard.shadowDark} ${s.currecnySelectHeight}`} 
                     style={isShown && !isLoading ? {transform: 'translate(0rem,2.5rem)'} : {transform: 'translate(0%,30%)'}}
                 >
                     {table.map((item, index) => (

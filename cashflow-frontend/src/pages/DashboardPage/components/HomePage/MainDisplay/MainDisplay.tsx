@@ -43,11 +43,12 @@ interface MainDisplayProps {
     date: string;
     currency: string | undefined;
     pieData: pieData[];
+    showModal: (item: Transactions) => void;
 }
 
 const emptyPiePlaceholder = [{ id: 0, value: 1, color: '#121212', label: '' }];
 
-const MainDisplay: React.FC<MainDisplayProps> = ({transactions, isLoading, date, currency, pieData}) => {
+const MainDisplay: React.FC<MainDisplayProps> = ({transactions, isLoading, date, currency, pieData, showModal}) => {
 
     const width = useWindowWidth();
 
@@ -125,7 +126,7 @@ const MainDisplay: React.FC<MainDisplayProps> = ({transactions, isLoading, date,
                     <>
                         {transactions.map((item, index) => (
                             <div key={item.transactionId} className={`my-1`}>
-                                <button className={`btn w-100 py-2 px-3 rounded-5 d-flex align-items-center`} style={{backgroundColor: item.category.color, color: getContrastColor(item.category.color)}}>
+                                <button className={`btn w-100 py-2 px-3 rounded-5 d-flex align-items-center`} style={{backgroundColor: item.category.color, color: getContrastColor(item.category.color)}} onClick={() => showModal(item)}>
                                     <span className={`me-2`}>
                                         <i className={`bi fs-5 ${item.category.icon ? item.category.icon : 'bi-box-seam'}`}></i>
                                     </span> 
