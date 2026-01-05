@@ -65,5 +65,5 @@ export const useTransactions = (accId: number | undefined, startDate: Date, endD
         handleFetchTransactions();
     },[accId]);
 
-    return {transactions, isLoading};
+    return {transactions, isLoading, handleFetchTransactions};
 }
