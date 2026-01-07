@@ -45,7 +45,7 @@ const Categories: React.FC = () => {
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const modalCloseButtonEditFormRef = useRef<HTMLButtonElement | null>(null);
     
-    const [selectedCategoryOptions, setSelectedCategoryOptions] = useState<CategoriesTable | null>(null);
+    const [currentCategory, setCurrentCategory] = useState<CategoriesTable | null>(null);
     const [isConfirmingDelete, setIsConfirmingDelete] = useState<boolean>(false);
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
     
@@ -58,6 +58,9 @@ const Categories: React.FC = () => {
     const iconsPerPage = 10;
     const currentIconsList = formData.newType === 'income' ? incomeCategoryIcons : expenseCategoryIcons;
     const totalPages = Math.ceil(currentIconsList.length / iconsPerPage);
+
+    const [newKeyword, setNewKeyword] = useState<string>("");
+    const [isAddingKeyword, setIsAddingKeyword] = useState<boolean>(false);
 
 
     const handleFetchCategories = async () => {
@@ -72,7 +75,6 @@ const Categories: React.FC = () => {
         }
     }
 
-    
     const getContrastColor = (hexColor: string): 'white' | 'black' => {
         const cleanHex = hexColor.replace('#','');
 
@@ -100,14 +102,14 @@ const Categories: React.FC = () => {
     const openOptionsModal = (cat: CategoriesTable) => {
         setIsClosing(false);
         setIsConfirmingDelete(false)
-        setSelectedCategoryOptions(cat);
+        setCurrentCategory(cat);
     }
 
     const closeOptionsModal = () => {
         setIsClosing(true);
 
         setTimeout(() => {
-            setSelectedCategoryOptions(null);
+            setCurrentCategory(null);
             setIsClosing(false);
             setIsConfirmingDelete(false)
         }, 300);
@@ -190,11 +192,11 @@ const Categories: React.FC = () => {
 
     const handleFillEditForm = () => {
         const newItem: FormDataProps = {
-            ['categoryId']: String(selectedCategoryOptions?.categoryId),
-            ['newName']: String(selectedCategoryOptions?.name),
-            ['newColor']: String(selectedCategoryOptions?.color),
-            ['newIcon']: String(selectedCategoryOptions?.icon),
-            ['newType']: String(selectedCategoryOptions?.type)
+            ['categoryId']: String(currentCategory?.categoryId),
+            ['newName']: String(currentCategory?.name),
+            ['newColor']: String(currentCategory?.color),
+            ['newIcon']: String(currentCategory?.icon),
+            ['newType']: String(currentCategory?.type)
         }
         setFormData({...formData, ...newItem});
     }
@@ -208,7 +210,7 @@ const Categories: React.FC = () => {
     }
 
     const handleDeleteCategory = async () => {
-        if (!selectedCategoryOptions) return;
+        if (!currentCategory) return;
 
         if (!isConfirmingDelete) {
             setIsConfirmingDelete(true)
@@ -219,7 +221,7 @@ const Categories: React.FC = () => {
             setIsDeleting(true);
             const res = await api.delete(`/delete-category`, { 
                 params: { 
-                    'categoryId': selectedCategoryOptions.categoryId
+                    'categoryId': currentCategory.categoryId
                 } 
             });
 
@@ -256,6 +258,65 @@ const Categories: React.FC = () => {
         });
         setCurrentPage(0);
     },[formData.newType]);
+
+    const handleAddKeyword = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!newKeyword.trim() || !currentCategory) return;
+
+        const wordExists = currentCategory.keyWords.some(
+            kw => kw.word.toLowerCase() === newKeyword.trim().toLowerCase()
+        );
+
+        if (wordExists) {
+            addToast('To słowo kluczowe już istnieje', 'error');
+            return;
+        }
+
+        try {
+            setIsAddingKeyword(true);
+            await api.post('/create-new-key-word', {
+                categoryId: currentCategory.categoryId,
+                word: newKeyword.trim()
+            });
+
+            addToast('Dodano słowo kluczowe', 'info');
+            setNewKeyword("");
+
+            const res = await api.get('/categories-info');
+            setCategories(res.data);
+
+            const updatedCategory = res.data.find(
+                (cat: CategoriesTable) => cat.categoryId === currentCategory.categoryId
+            );
+            
+            if (updatedCategory) {
+                setCurrentCategory(updatedCategory);
+            }
+
+        } catch (error: any) {
+            addToast('Nie udało się dodać słowa', 'error');
+        } finally {
+            setIsAddingKeyword(false);
+        }
+    }
+
+    const handleDeleteKeyword = async (wordId: number) => {
+        try {
+            await api.delete(`/delete-key-word`, { params: { keyWordId: wordId } });
+            addToast('Słowo kluczowe usunięte', 'info');
+        
+            setCurrentCategory(prev => {
+                if (!prev) return null;
+                return {
+                    ...prev,
+                    keyWords: prev.keyWords.filter(k => k.wordId !== wordId)
+                };
+            });
+            handleFetchCategories();
+        } catch (error) {
+            addToast('Błąd podczas usuwania', 'error');
+        }
+    }
 
     return (
         <div className={`w-100 h-100 d-flex flex-column`}>
@@ -295,7 +356,7 @@ const Categories: React.FC = () => {
                         </button>
                 </div>
             </div>
-            {selectedCategoryOptions && (
+            {currentCategory && (
                 <div
                     className={`${s.modalOverlay} ${isClosing ? s.modalOverlayClosing : ''}`} 
                     onClick={!isClosing ? closeOptionsModal : undefined}
@@ -312,9 +373,9 @@ const Categories: React.FC = () => {
 
                         <div className="text-center mb-4">
                             <h5 className="text-white mb-2">Wybrana kategoria:</h5>
-                            <h3 className="text-white fw-bold"><i className={`bi ${selectedCategoryOptions.icon}`}></i> {selectedCategoryOptions.name}</h3>
+                            <h3 className="text-white fw-bold"><i className={`bi ${currentCategory.icon}`}></i> {currentCategory.name}</h3>
                             <p className="text-gradient fw-bold fs-4">
-                                Typ: {selectedCategoryOptions.type == 'expense' ? 'Wydatki' : 'Przychody'}
+                                Typ: {currentCategory.type == 'expense' ? 'Wydatki' : 'Przychody'}
                             </p>
                         </div>
 
@@ -349,7 +410,16 @@ const Categories: React.FC = () => {
                             >
                                 Edytuj
                             </button>
-                            
+
+                            <button 
+                                className={`btn btn-outline-primary  btn-lg rounded-5 mt-2`}
+                                data-bs-toggle="modal" 
+                                data-bs-target="#keywordsModal"
+                                type='button'
+                            >
+                                Słowa kluczowe
+                            </button>
+
                             <button 
                                 className="btn btn-dark btn-lg rounded-5 mt-2" 
                                 onClick={closeOptionsModal}
@@ -406,6 +476,76 @@ const Categories: React.FC = () => {
                                 <button type="button" className="btn btn-outline-primary rounded-5 w-100" data-bs-dismiss="modal" ref={modalCloseButtonEditFormRef}>Zamknij</button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            </div>
+            
+
+            <div className="modal fade" id="keywordsModal" tabIndex={-1} aria-labelledby="keywordsModalLabel" aria-hidden="true">
+                <div className="modal-dialog modal-dialog-centered">
+                    <div className={`modal-content rounded-5 py-2 px-3 ${sDashboard.bgDarkSecondary} ${sDashboard.shadowDark} border-0`}>
+                        <div className="modal-header border-0">
+                            <div>
+                                <h5 className={`modal-title fw-bold ${sDashboard.textDarkPrimary}`} id="keywordsModalLabel">
+                                    Słowa kluczowe
+                                </h5>
+                                <small className={sDashboard.textDarkSecondary}>
+                                    Kategoria: <span className="fw-bold" style={{color: currentCategory?.color}}>{currentCategory?.name}</span>
+                                </small>
+                            </div>
+                            <button type="button" className="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+
+                        <div className="modal-body">
+                            <form onSubmit={handleAddKeyword} className="mb-4">
+                                <div className="input-group">
+                                    <input 
+                                        type="text" 
+                                        className={`form-control rounded-start-5 ${sDashboard.bgDarkPrimary} ${sDashboard.textDarkPrimary} ${sDashboard.borderDarkEmphasis}`}
+                                        placeholder="np. Biedronka, Przelew..."
+                                        value={newKeyword}
+                                        onChange={(e) => setNewKeyword(e.target.value)}
+                                        maxLength={50}
+                                    />
+                                    <button 
+                                        className="btn btn-primary rounded-end-5 px-4 fw-bold" 
+                                        type="submit"
+                                        disabled={isAddingKeyword || !newKeyword.trim()}
+                                    >
+                                        {isAddingKeyword ? <span className="spinner-border spinner-border-sm"></span> : 'Dodaj'}
+                                    </button>
+                                </div>
+                            </form>
+                            <div className="d-flex flex-wrap gap-2" style={{maxHeight: '300px', overflowY: 'auto'}}>
+                                {currentCategory?.keyWords && currentCategory.keyWords.length > 0 ? (
+                                    currentCategory.keyWords.map((kw) => (
+                                        <div 
+                                            key={kw.wordId} 
+                                            className={`d-flex align-items-center px-3 py-2 rounded-5 border ${sDashboard.borderDarkEmphasis} ${sDashboard.bgDarkPrimary}`}
+                                        >
+                                            <span className={`me-2 ${sDashboard.textDarkPrimary}`}>{kw.word}</span>
+                                            <button 
+                                                type="button" 
+                                                className="btn-close btn-close-white small" 
+                                                style={{fontSize: '0.6rem'}}
+                                                onClick={() => handleDeleteKeyword(kw.wordId)}
+                                            ></button>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className={`text-center w-100 py-4 ${sDashboard.textDarkSecondary} opacity-50`}>
+                                        <i className="bi bi-tag fs-2 d-block mb-2"></i>
+                                        Brak przypisanych słów kluczowych
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="modal-footer border-0">
+                            <button type="button" className="btn btn-outline-primary rounded-5 w-100" data-bs-dismiss="modal">
+                                Zamknij
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
