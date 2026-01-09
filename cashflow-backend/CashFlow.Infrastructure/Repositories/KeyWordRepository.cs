@@ -32,7 +32,7 @@ namespace CashFlow.Infrastructure.Repositories
 
             var matchedKeyWord = allKeyWords.FirstOrDefault(k => description.Contains(k.Word.ToLower()));
 
-            if(matchedKeyWord != null)
+            if (matchedKeyWord != null)
             {
                 return matchedKeyWord.CategoryId;
             }
