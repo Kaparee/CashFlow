@@ -3,7 +3,6 @@ using CashFlow.Application.Repositories;
 using CashFlow.Domain.Models;
 using CashFlow.Application.DTO.Requests;
 using CashFlow.Application.DTO.Responses;
-using BCrypt.Net;
 
 namespace CashFlow.Application.Services
 {
@@ -46,9 +45,9 @@ namespace CashFlow.Application.Services
                 await _currencyRepository.AddAsync(new Currency
                 {
                     CurrencyCode = "PLN",
-                    Name = "Polski Z�oty",
+                    Name = "Polski Złoty",
                     RateToBase = 1.0m,
-                    Symbol = "z�"
+                    Symbol = "zł"
                 });
             }
 
@@ -77,6 +76,28 @@ namespace CashFlow.Application.Services
             }
 
             await _currencyRepository.SaveChangesAsync();
+        }
+
+        public async Task<decimal> GetExchangeRateAsync(string fromCode, string toCode)
+        {
+            if (fromCode == toCode) return 1.0m;
+
+            decimal fromRate = 1.0m;
+            if (fromCode != "PLN")
+            {
+                var fromCurrency = await _currencyRepository.GetCurrencyByCodeAsync(fromCode);
+                if (fromCurrency == null) throw new Exception($"Brak kursu dla waluty: {fromCode}");
+                fromRate = fromCurrency.RateToBase;
+            }
+            decimal toRate = 1.0m;
+            if (toCode != "PLN")
+            {
+                var toCurrency = await _currencyRepository.GetCurrencyByCodeAsync(toCode);
+                if (toCurrency == null) throw new Exception($"Brak kursu dla waluty: {toCode}");
+                toRate = toCurrency.RateToBase;
+            }
+
+            return fromRate / toRate;
         }
     }
 }

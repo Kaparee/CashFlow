@@ -115,9 +115,14 @@ namespace CashFlow.Infrastructure.Data
                 .WithMany(c => c.Limits)
                 .HasForeignKey(l => l.CategoryId)
                 .IsRequired();
+            modelBuilder.Entity<Limit>()
+                .HasOne(l => l.Account)
+                .WithMany(a => a.Limits)
+                .HasForeignKey(l => l.AccountId)
+                .IsRequired();
             base.OnModelCreating(modelBuilder);
 
-           
+
         }
     }
 }
