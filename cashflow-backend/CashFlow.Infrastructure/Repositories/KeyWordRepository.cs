@@ -34,7 +34,7 @@ namespace CashFlow.Infrastructure.Repositories
                 .OrderByDescending(k => k.Word.Length)
                 .FirstOrDefault(k => description.Contains(k.Word.ToLower()));
 
-            if(matchedKeyWord != null)
+            if (matchedKeyWord != null)
             {
                 return matchedKeyWord.CategoryId;
             }
