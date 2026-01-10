@@ -1,11 +1,10 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import HomePage from './pages/HomePage/HomePage';
 import LoginPage from './pages/LoginPage/LoginPage'
 import RegisterPage from './pages/RegisterPage/RegisterPage'
 import DashboardPage from './pages/DashboardPage/DashboardPage'
 import ProtectedRoute from './components/Auth/ProtectedRoute.tsx'
-import AccountSelection from './pages/DashboardPage/pages/AccountSelection/AccountSelection.tsx'
 import DashboardHomePage from './pages/DashboardPage/pages/DashboardHomePage/DashboardHomePage.tsx'
 import Accounts from './pages/DashboardPage/pages/Acccounts/Accounts.tsx'
 import Charts from './pages/DashboardPage/pages/Charts/Charts.tsx'
@@ -19,6 +18,9 @@ import Categories from './pages/DashboardPage/pages/Categories/Categories.tsx';
 import CategoriesCreator from './pages/DashboardPage/pages/CategoriesCreator/CategoriesCreator.tsx';
 import '@fontsource/jost'
 import '@fontsource/jost/600'
+import RequestPasswordReset from './pages/RequestPasswordReset/RequestPasswordReset.tsx';
+import ConfirmPasswordReset from './pages/ConfirmPasswordReset/ConfirmPasswordReset.tsx';
+import ConfirmEmailChange from './pages/ConfirmEmailReset/ConfirmEmailChange.tsx';
 
 const App: React.FC = () => {
     return (
@@ -48,6 +50,33 @@ const App: React.FC = () => {
                         />
 
                         <Route
+                            path="/reset-password"
+                            element={
+                                <ProtectedRoute requireAuth={false}>
+                                    <RequestPasswordReset/>
+                                </ProtectedRoute>
+                            }
+                        />
+
+                        <Route
+                            path='/api/confirm-password-reset'
+                            element={
+                                <ProtectedRoute requireAuth={false}>
+                                    <ConfirmPasswordReset/>
+                                </ProtectedRoute>
+                            }
+                        />
+
+                        <Route
+                            path='/api/confirm-email-change'
+                            element={
+                                <ProtectedRoute requireAuth={true}>
+                                    <ConfirmEmailChange/>
+                                </ProtectedRoute>
+                            }
+                        />
+
+                        <Route
                             path="/dashboard"
                             element={
                                 <ProtectedRoute requireAuth={true}>
@@ -55,7 +84,7 @@ const App: React.FC = () => {
                                 </ProtectedRoute>
                             }
                         >
-                            <Route index element={<AccountSelection />} />
+                            <Route index element={<Navigate to='accounts' replace />} />
                             <Route path='/dashboard/dashboard-home-page' element={<DashboardHomePage />} />
                             <Route path='/dashboard/accounts' element={<Accounts />} />
                             <Route path='/dashboard/charts' element={<Charts />} />
