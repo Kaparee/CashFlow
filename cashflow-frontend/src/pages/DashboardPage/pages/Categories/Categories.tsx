@@ -6,10 +6,24 @@ import { useSearchParams, useNavigate } from 'react-router-dom'
 import s from './Categories.module.css'
 import Input from '../../../../components/UI/Input/Input';
 import CustomSelect from '../../components/UI/CustomSelect/CustomSelect';
+import {useAccount, AccountContext } from '../../contexts/AccountContext';
 
 interface KeyWords {
     wordId: number;
     word: string;
+}
+
+interface Limits {
+    limitId: number;
+    value: number;
+    currentAmount: number;
+    name: string;
+    description?: string;
+    startDate: string;
+    endDate: string;
+    categoryName: string;
+    categoryIcon: string;
+    period: 'month' | 'quarter' | 'year';
 }
 
 interface CategoriesTable {
@@ -30,11 +44,25 @@ interface FormDataProps {
     newType: string;
 }
 
+interface NewLimitForm {
+    name: string;
+    value: string;
+    description: string;
+    period: 'month' | 'quarter' | 'year';
+}
+
 const expenseCategoryIcons: string[] = ["bi-egg-fried", "bi-cup-hot", "bi-cup-straw", "bi-apple", "bi-cake", "bi-cookie", "bi-basket", "bi-cart", "bi-bag", "bi-shop", "bi-handbag", "bi-car-front", "bi-fuel-pump", "bi-bus-front", "bi-bicycle", "bi-airplane", "bi-train-front", "bi-house", "bi-lightbulb", "bi-droplet", "bi-lightning-charge", "bi-wifi", "bi-thermometer-half", "bi-heart-pulse", "bi-capsule", "bi-bandaid", "bi-hospital", "bi-scissors", "bi-controller", "bi-film", "bi-music-note", "bi-ticket-perforated", "bi-camera", "bi-cash-stack", "bi-credit-card", "bi-bank", "bi-piggy-bank", "bi-wallet2", "bi-gift", "bi-mortarboard"];
 const incomeCategoryIcons: string[] = ["bi-cash", "bi-cash-coin", "bi-cash-stack", "bi-coin", "bi-wallet2", "bi-piggy-bank", "bi-bank", "bi-graph-up-arrow", "bi-briefcase", "bi-gift", "bi-gem", "bi-bar-chart-line", "bi-pie-chart", "bi-currency-exchange", "bi-laptop", "bi-tools", "bi-house-heart", "bi-check-circle", "bi-trophy", "bi-award", "bi-arrow-down-left-circle", "bi-journal-check", "bi-lightning-fill", "bi-star-fill"];
 const typeOfCategory = [{dName: 'Przychody', type: 'income', value: 'income'}, {dName: 'Wydatki', type: 'expense', value: 'expense'}]
 
+const periodOptions = [
+    {dName: 'Miesiąc', value: 'month'},
+    {dName: 'Kwartał', value: 'quarter'},
+    {dName: 'Rok', value: 'year'}
+];
+
 const Categories: React.FC = () => {
+    const { account } = useAccount()
     const [ isLoading, setIsLoading ] = useState<boolean>(true);
     const { addToast } = useContext(ToastContext);
     const [ categories, setCategories ] = useState<CategoriesTable[] | null>(null);
@@ -62,6 +90,20 @@ const Categories: React.FC = () => {
     const [newKeyword, setNewKeyword] = useState<string>("");
     const [isAddingKeyword, setIsAddingKeyword] = useState<boolean>(false);
 
+    const [limits, setLimits] = useState<Limits[]>([]);
+    const [isLoadingLimits, setIsLoadingLimits] = useState<boolean>(false);
+    const [newLimit, setNewLimit] = useState<NewLimitForm>({
+        name: "",
+        value: "",
+        description: "",
+        period: "month"
+    });
+    const [isAddingLimit, setIsAddingLimit] = useState<boolean>(false);
+    const [limitErrors, setLimitErrors] = useState<{ [key: string]: string }>({});
+    
+    const [editingLimit, setEditingLimit] = useState<Limits | null>(null);
+    const [isEditingLimit, setIsEditingLimit] = useState<boolean>(false);
+
 
     const handleFetchCategories = async () => {
         try {
@@ -72,6 +114,18 @@ const Categories: React.FC = () => {
             addToast('Nie udało się pobrać kategorii', 'error');
         } finally {
             setIsLoading(false);
+        }
+    }
+
+    const handleFetchLimits = async () => {
+        try {
+            setIsLoadingLimits(true);
+            const res = await api.get('/limits-info');
+            setLimits(res.data);
+        } catch (error: any) {
+            addToast('Nie udało się pobrać limitów', 'error');
+        } finally {
+            setIsLoadingLimits(false);
         }
     }
 
@@ -241,6 +295,7 @@ const Categories: React.FC = () => {
 
     useEffect(() => {
         handleFetchCategories();
+        handleFetchLimits();
     },[])
 
     useEffect(() => {
@@ -316,6 +371,193 @@ const Categories: React.FC = () => {
         } catch (error) {
             addToast('Błąd podczas usuwania', 'error');
         }
+    }
+
+    const calculateDates = (period: 'month' | 'quarter' | 'year') => {
+        const startDate = new Date();
+        startDate.setHours(0, 0, 0, 0);
+        
+        let endDate = new Date(startDate);
+        
+        switch(period) {
+            case 'month':
+                endDate.setMonth(endDate.getMonth() + 1);
+                endDate.setDate(endDate.getDate() - 1);
+                break;
+            case 'quarter':
+                endDate.setMonth(endDate.getMonth() + 3);
+                endDate.setDate(endDate.getDate() - 1);
+                break;
+            case 'year':
+                endDate.setFullYear(endDate.getFullYear() + 1);
+                endDate.setDate(endDate.getDate() - 1);
+                break;
+        }
+
+        const formatDate = (date: Date) => {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        };
+        
+        return {
+            startDate: formatDate(startDate),
+            endDate: formatDate(endDate)
+        };
+    }
+
+    const handleLimitChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        
+        if (editingLimit) {
+            setEditingLimit(prev => prev ? ({
+                ...prev,
+                [name]: name === 'value' ? parseFloat(value) : value
+            }) : null);
+        } else {
+            setNewLimit(prev => ({
+                ...prev,
+                [name]: value
+            }));
+        }
+        
+        const { [name]: _, ...remainingErrors } = limitErrors;
+        setLimitErrors(remainingErrors);
+    }
+
+    const validateLimitForm = () => {
+        const err: { [key: string]: string } = {};
+        
+        const limitData = editingLimit || newLimit;
+
+        if (!limitData.name || (typeof limitData.name === 'string' && !limitData.name.trim())) {
+            err.name = 'Nazwa jest wymagana';
+        } else if (typeof limitData.name === 'string' && limitData.name.trim().length > 50) {
+            err.name = 'Nazwa musi być krótsza niż 50 znaków';
+        }
+
+        const valueToCheck = editingLimit ? editingLimit.value : parseFloat(newLimit.value);
+        if (!valueToCheck || valueToCheck <= 0) {
+            err.value = 'Kwota musi być większa od 0';
+        }
+
+        setLimitErrors(err);
+        return Object.keys(err).length === 0;
+    }
+
+    const getPeriodLabel = (period: 'month' | 'quarter' | 'year') => {
+        const labels = {
+            month: 'Miesiąc',
+            quarter: 'Kwartał',
+            year: 'Rok'
+        };
+        return labels[period];
+    }
+
+    const handleAddLimit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!currentCategory) return;
+
+        const existingLimit = getCurrentCategoryLimits();
+        if (existingLimit.length > 0) {
+            addToast('Ta kategoria ma już ustawiony limit. Usuń go aby dodać nowy.', 'error');
+            return;
+        }
+
+        if (!validateLimitForm()) return;
+
+        const dates = calculateDates(newLimit.period)
+
+        try {
+            setIsAddingLimit(true);
+            await api.post('/create-new-limit', {
+                categoryId: currentCategory.categoryId,
+                name: newLimit.name.trim(),
+                value: parseFloat(newLimit.value),
+                description: newLimit.description.trim(),
+                startDate: dates.startDate,
+                endDate: dates.endDate
+            });
+
+            addToast('Dodano limit', 'info');
+            setNewLimit({
+                name: "",
+                value: "",
+                description: "",
+                period: "month"
+            });
+            setLimitErrors({});
+            handleFetchLimits();
+        } catch (error: any) {
+            addToast('Nie udało się dodać limitu', 'error');
+        } finally {
+            setIsAddingLimit(false);
+        }
+    }
+
+    const handleStartEditLimit = (limit: Limits) => {
+        setEditingLimit(limit);
+        setLimitErrors({});
+    }
+
+    const handleCancelEditLimit = () => {
+        setEditingLimit(null);
+        setLimitErrors({});
+    }
+
+    const handleUpdateLimit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!editingLimit || !currentCategory) return;
+
+        if (!validateLimitForm()) return;
+
+        const dates = calculateDates(editingLimit.period);
+
+        try {
+            setIsEditingLimit(true);
+            await api.patch('/update-limit', {
+                limitId: editingLimit.limitId,
+                newCategoryId: currentCategory.categoryId,
+                newName: editingLimit.name.trim(),
+                newValue: editingLimit.value,
+                newDescription: editingLimit.description?.trim() || "",
+                newStartDate: dates.startDate,
+                newEndDate: dates.endDate
+            });
+
+            addToast('Zaktualizowano limit', 'info');
+            setEditingLimit(null);
+            setLimitErrors({});
+            handleFetchLimits();
+        } catch (error: any) {
+            addToast('Nie udało się zaktualizować limitu', 'error');
+        } finally {
+            setIsEditingLimit(false);
+        }
+    }
+
+    const handleDeleteLimit = async (limitId: number) => {
+        try {
+            await api.delete('/delete-limit', { params: { limitId } });
+            addToast('Limit usunięty', 'info');
+            handleFetchLimits();
+        } catch (error) {
+            addToast('Błąd podczas usuwania limitu', 'error');
+        }
+    }
+
+    const formatDate = (dateString: string) => {
+        return new Date(dateString).toLocaleDateString('pl-PL', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        });
+    }
+
+    const getCurrentCategoryLimits = () => {
+        if (!currentCategory) return [];
+        return limits.filter(limit => limit.categoryName === currentCategory.name);
     }
 
     return (
@@ -418,6 +660,15 @@ const Categories: React.FC = () => {
                                 type='button'
                             >
                                 Słowa kluczowe
+                            </button>
+
+                            <button 
+                                className={`btn btn-outline-primary  btn-lg rounded-5 mt-2`}
+                                data-bs-toggle="modal" 
+                                data-bs-target="#limitsModal"
+                                type='button'
+                            >
+                                Limity
                             </button>
 
                             <button 
@@ -536,6 +787,280 @@ const Categories: React.FC = () => {
                                     <div className={`text-center w-100 py-4 ${sDashboard.textDarkSecondary} opacity-50`}>
                                         <i className="bi bi-tag fs-2 d-block mb-2"></i>
                                         Brak przypisanych słów kluczowych
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="modal-footer border-0">
+                            <button type="button" className="btn btn-outline-primary rounded-5 w-100" data-bs-dismiss="modal">
+                                Zamknij
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="modal fade" id="limitsModal" tabIndex={-1} aria-labelledby="limitsModalLabel" aria-hidden="true">
+                <div className="modal-dialog modal-dialog-centered modal-lg">
+                    <div className={`modal-content rounded-5 py-2 px-3 ${sDashboard.bgDarkSecondary} ${sDashboard.shadowDark} border-0`}>
+                        <div className="modal-header border-0">
+                            <div>
+                                <h5 className={`modal-title fw-bold ${sDashboard.textDarkPrimary}`} id="limitsModalLabel">
+                                    Limit wydatków
+                                </h5>
+                                <small className={sDashboard.textDarkSecondary}>
+                                    Kategoria: <span className="fw-bold" style={{color: currentCategory?.color}}>{currentCategory?.name}</span>
+                                </small>
+                            </div>
+                            <button type="button" className="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+
+                        <div className="modal-body">
+                            {getCurrentCategoryLimits().length === 0 ? (
+                                <form onSubmit={handleAddLimit} className="mb-4">
+                                    <div className="mb-3">
+                                        <label className={`form-label small fw-bold ${sDashboard.textDarkSecondary}`}>Nazwa limitu</label>
+                                        <input 
+                                            type="text" 
+                                            name="name"
+                                            className={`form-control rounded-4 ${sDashboard.bgDarkPrimary} ${sDashboard.textDarkPrimary} ${sDashboard.borderDarkEmphasis} ${limitErrors.name ? 'is-invalid' : ''}`}
+                                            placeholder="np. Limit miesięczny"
+                                            value={newLimit.name}
+                                            onChange={handleLimitChange}
+                                            maxLength={50}
+                                        />
+                                        {limitErrors.name && <div className="invalid-feedback">{limitErrors.name}</div>}
+                                    </div>
+
+                                    <div className="mb-3">
+                                        <label className={`form-label small fw-bold ${sDashboard.textDarkSecondary}`}>Kwota ({account?.currencyCode})</label>
+                                        <input 
+                                            type="number" 
+                                            name="value"
+                                            step="0.01"
+                                            className={`form-control rounded-4 ${sDashboard.bgDarkPrimary} ${sDashboard.textDarkPrimary} ${sDashboard.borderDarkEmphasis} ${limitErrors.value ? 'is-invalid' : ''}`}
+                                            placeholder="0.00"
+                                            value={newLimit.value}
+                                            onChange={handleLimitChange}
+                                        />
+                                        {limitErrors.value && <div className="invalid-feedback">{limitErrors.value}</div>}
+                                    </div>
+
+                                   <div className="mb-3">
+                                        <label className={`form-label small fw-bold ${sDashboard.textDarkSecondary}`}>Okres</label>
+                                        <div className="d-flex gap-2">
+                                            {periodOptions.map(option => (
+                                                <button
+                                                    key={option.value}
+                                                    type="button"
+                                                    name="period"
+                                                    className={`btn flex-fill rounded-4 ${
+                                                        newLimit.period === option.value 
+                                                            ? 'btn-primary' 
+                                                            : `btn-outline-primary ${sDashboard.bgDarkPrimary}`
+                                                    }`}
+                                                    onClick={() => handleLimitChange({
+                                                        target: { name: 'period', value: option.value }
+                                                    } as any)}
+                                                >
+                                                    {option.dName}
+                                                </button>
+                                            ))}
+                                        </div>
+
+                                        {limitErrors.period && <div className="invalid-feedback d-block">{limitErrors.period}</div>}
+                                    </div>
+                                    <div className="mb-3">
+                                        <label className={`form-label small fw-bold ${sDashboard.textDarkSecondary}`}>Opis (opcjonalnie)</label>
+                                        <textarea 
+                                            name="description"
+                                            className={`form-control rounded-4 ${sDashboard.bgDarkPrimary} ${sDashboard.textDarkPrimary} ${sDashboard.borderDarkEmphasis}`}
+                                            placeholder="Dodatkowe informacje..."
+                                            value={newLimit.description}
+                                            onChange={handleLimitChange}
+                                            rows={2}
+                                            maxLength={200}
+                                        />
+                                    </div>
+
+                                    <button 
+                                        className="btn btn-primary rounded-4 w-100 fw-bold" 
+                                        type="submit"
+                                        disabled={isAddingLimit}
+                                    >
+                                        {isAddingLimit ? <span className="spinner-border spinner-border-sm"></span> : 'Dodaj limit'}
+                                    </button>
+                                </form>
+                            ) : (
+                                <div className={`alert alert-info rounded-4 ${sDashboard.bgDarkPrimary} ${sDashboard.textDarkPrimary} border-0 mb-3`}>
+                                    <i className="bi bi-info-circle me-2"></i>
+                                    Ta kategoria ma już ustawiony limit. Usuń go aby dodać nowy.
+                                </div>
+                            )}
+
+                            {getCurrentCategoryLimits().length > 0 && <hr className={`${sDashboard.borderDarkEmphasis}`} />}
+
+                            <div style={{maxHeight: '400px', overflowY: 'auto'}}>
+                                {isLoadingLimits ? (
+                                    <div className="text-center py-4">
+                                        <span className="spinner-border text-primary"></span>
+                                    </div>
+                                ) : getCurrentCategoryLimits().length > 0 ? (
+                                    getCurrentCategoryLimits().map((limit) => (
+                                        <div key={limit.limitId}>
+                                            {editingLimit?.limitId === limit.limitId ? (
+                                                <form onSubmit={handleUpdateLimit} className="mb-4 p-3 rounded-4 border border-primary">
+                                                    <div className="mb-3">
+                                                        <label className={`form-label small fw-bold ${sDashboard.textDarkSecondary}`}>Nazwa limitu</label>
+                                                        <input 
+                                                            type="text" 
+                                                            name="name"
+                                                            className={`form-control rounded-4 ${sDashboard.bgDarkPrimary} ${sDashboard.textDarkPrimary} ${sDashboard.borderDarkEmphasis} ${limitErrors.name ? 'is-invalid' : ''}`}
+                                                            placeholder="np. Limit miesięczny"
+                                                            value={editingLimit.name}
+                                                            onChange={handleLimitChange}
+                                                            maxLength={50}
+                                                        />
+                                                        {limitErrors.name && <div className="invalid-feedback">{limitErrors.name}</div>}
+                                                    </div>
+
+                                                    <div className="mb-3">
+                                                        <label className={`form-label small fw-bold ${sDashboard.textDarkSecondary}`}>Kwota ({account?.currencyCode})</label>
+                                                        <input 
+                                                            type="number" 
+                                                            name="value"
+                                                            step="0.01"
+                                                            className={`form-control rounded-4 ${sDashboard.bgDarkPrimary} ${sDashboard.textDarkPrimary} ${sDashboard.borderDarkEmphasis} ${limitErrors.value ? 'is-invalid' : ''}`}
+                                                            placeholder="0.00"
+                                                            value={editingLimit.value}
+                                                            onChange={handleLimitChange}
+                                                        />
+                                                        {limitErrors.value && <div className="invalid-feedback">{limitErrors.value}</div>}
+                                                    </div>
+
+                                                    <div className="mb-3">
+                                                        <label className={`form-label small fw-bold ${sDashboard.textDarkSecondary}`}>Okres</label>
+                                                        <div className="d-flex gap-2">
+                                                            {periodOptions.map(option => (
+                                                                <button
+                                                                    key={option.value}
+                                                                    type="button"
+                                                                    name="period"
+                                                                    className={`btn flex-fill rounded-4 ${
+                                                                        editingLimit.period === option.value 
+                                                                            ? 'btn-primary' 
+                                                                            : `btn-outline-primary ${sDashboard.bgDarkPrimary}`
+                                                                    }`}
+                                                                    onClick={() => handleLimitChange({
+                                                                        target: { name: 'period', value: option.value }
+                                                                    } as any)}
+                                                                >
+                                                                    {option.dName}
+                                                                </button>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="mb-3">
+                                                        <label className={`form-label small fw-bold ${sDashboard.textDarkSecondary}`}>Opis (opcjonalnie)</label>
+                                                        <textarea 
+                                                            name="description"
+                                                            className={`form-control rounded-4 ${sDashboard.bgDarkPrimary} ${sDashboard.textDarkPrimary} ${sDashboard.borderDarkEmphasis}`}
+                                                            placeholder="Dodatkowe informacje..."
+                                                            value={editingLimit.description || ""}
+                                                            onChange={handleLimitChange}
+                                                            rows={2}
+                                                            maxLength={200}
+                                                        />
+                                                    </div>
+
+                                                    <div className="d-flex gap-2">
+                                                        <button 
+                                                            className="btn btn-primary rounded-4 flex-fill fw-bold" 
+                                                            type="submit"
+                                                            disabled={isEditingLimit}
+                                                        >
+                                                            {isEditingLimit ? <span className="spinner-border spinner-border-sm"></span> : 'Zapisz'}
+                                                        </button>
+                                                        <button 
+                                                            type="button"
+                                                            className="btn btn-outline-secondary rounded-4 flex-fill" 
+                                                            onClick={handleCancelEditLimit}
+                                                            disabled={isEditingLimit}
+                                                        >
+                                                            Anuluj
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            ) : (
+                                                <div 
+                                                    className={`p-3 mb-3 rounded-4 border ${sDashboard.borderDarkEmphasis} ${sDashboard.bgDarkPrimary}`}
+                                                >
+                                                    <div className="d-flex justify-content-between align-items-start mb-2">
+                                                        <div>
+                                                            <h6 className={`mb-1 ${sDashboard.textDarkPrimary}`}>{limit.name}</h6>
+                                                            <div className="d-flex gap-3 small">
+                                                                <span className={sDashboard.textDarkSecondary}>
+                                                                    <i className="bi bi-calendar-range me-1"></i>
+                                                                    {formatDate(limit.startDate)} - {formatDate(limit.endDate)}
+                                                                </span>
+                                                                <span className={`badge bg-primary`}>
+                                                                    {getPeriodLabel(limit.period)}
+                                                                </span>
+                                                            </div>
+                                                            {limit.description && (
+                                                                <p className={`small mb-0 mt-2 ${sDashboard.textDarkSecondary}`}>
+                                                                    {limit.description}
+                                                                </p>
+                                                            )}
+                                                        </div>
+                                                        <div className={`d-flex gap-1`}>
+                                                            <button 
+                                                                type="button" 
+                                                                className="btn btn-sm btn-outline-primary rounded-3" 
+                                                                onClick={() => handleStartEditLimit(limit)}
+                                                            >
+                                                                <i className="bi bi-pen"></i>
+                                                            </button>
+                                                            <button 
+                                                                type="button" 
+                                                                className="btn btn-sm btn-outline-danger rounded-3" 
+                                                                onClick={() => handleDeleteLimit(limit.limitId)}
+                                                            >
+                                                                <i className="bi bi-trash3"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div className="mb-2">
+                                                        <div className="d-flex justify-content-between small mb-1">
+                                                            <span className={sDashboard.textDarkSecondary}>Wydano: {limit.currentAmount.toFixed(2)} {account?.currencyCode}</span>
+                                                            <span className={sDashboard.textDarkSecondary}>Limit: {limit.value.toFixed(2)} {account?.currencyCode}</span>
+                                                        </div>
+                                                        <div className="progress" style={{height: '8px'}}>
+                                                            <div 
+                                                                className={`progress-bar ${limit.currentAmount > limit.value ? 'bg-danger' : 'bg-primary'}`}
+                                                                style={{width: `${Math.min((limit.currentAmount / limit.value) * 100, 100)}%`}}
+                                                            ></div>
+                                                        </div>
+                                                        <div className="text-end small mt-1">
+                                                            <span className={limit.currentAmount > limit.value ? 'text-danger' : 'text-success'}>
+                                                                {limit.currentAmount > limit.value 
+                                                                    ? `Przekroczono o ${(limit.currentAmount - limit.value).toFixed(2)} ${account?.currencyCode}`
+                                                                    : `Pozostało ${(limit.value - limit.currentAmount).toFixed(2)} ${account?.currencyCode}`
+                                                                }
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className={`text-center w-100 py-4 ${sDashboard.textDarkSecondary} opacity-50`}>
+                                        <i className="bi bi-graph-down fs-2 d-block mb-2"></i>
+                                        Brak ustawionego limitu dla tej kategorii
                                     </div>
                                 )}
                             </div>

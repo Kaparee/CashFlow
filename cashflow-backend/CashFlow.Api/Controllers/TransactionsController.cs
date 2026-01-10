@@ -48,6 +48,10 @@ namespace CashFlow.Api.Controllers
                 {
                     return Conflict(new { message = ex.Message });
                 }
+                if(ex.Message.Contains("is required to"))
+                {
+                    return Conflict(new { message = ex.Message });
+                }
                 return StatusCode(500, new { message = "An internal server error occured" });
             }
         }

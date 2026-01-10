@@ -1,7 +1,7 @@
 import s from './Sidebar.module.css'
 import sDashboard from '../../../DashboardPage.module.css'
 import { useWindowWidth } from '../../../../../hooks/useWindowWidth';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 interface SidebarProps {
         isExpanded: boolean;
@@ -9,6 +9,7 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ isExpanded, onToggle}) => {
+    const location = useLocation();
 
     const menuItems = [
         { icon: 'bi-house', label: 'Strona Główna', path: 'dashboard-home-page' },
@@ -32,7 +33,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isExpanded, onToggle}) => {
         transform: isExpanded ? 'translateX(0)' : 'translateX(-100%)',
         top: 0,
         transition: 'all 0.3s ease-in-out'
-      };
+    };
+
+    const isActive = (path: string) => {
+        return location.pathname.includes(path);
+    }
 
     return (
         <>
@@ -48,7 +53,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isExpanded, onToggle}) => {
                     <div className={`${item.icon == 'bi-gear' ? 'mt-auto' : 'mb-2'}`} key={index}>
                         <Link to={item.path} className={`d-flex align-items-center justify-content-start text-decoration-none transition ${sDashboard.textDarkPrimary}`}>
                             <span className={`${s.linkTransition} ${s.w60} d-flex align-items-start`}> 
-                                <i className={`bi ${item.icon} fs-4`}></i>
+                                <i className={`bi ${item.icon} fs-4 ${isActive(item.path) ? 'text-gradient' : ''}`}></i>
                             </span>
                             <span className='text-nowrap text-start w-100 ms-md-4'>
                                 {item.label}
