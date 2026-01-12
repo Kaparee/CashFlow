@@ -16,8 +16,8 @@ import ToastContainer from './components/Layout/ToastContainer/ToastContainer.ts
 import AuthProvider from './contexts/AuthContext.tsx';
 import Categories from './pages/DashboardPage/pages/Categories/Categories.tsx';
 import CategoriesCreator from './pages/DashboardPage/pages/CategoriesCreator/CategoriesCreator.tsx';
-import '@fontsource/jost'
-import '@fontsource/jost/600'
+import '@fontsource/jost/index.css'
+import '@fontsource/jost/600.css'
 import RequestPasswordReset from './pages/RequestPasswordReset/RequestPasswordReset.tsx';
 import ConfirmPasswordReset from './pages/ConfirmPasswordReset/ConfirmPasswordReset.tsx';
 import ConfirmEmailChange from './pages/ConfirmEmailReset/ConfirmEmailChange.tsx';

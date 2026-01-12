@@ -1,0 +1,11 @@
+.notificationCard {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.notificationCard:hover {
+    transform: translateX(-4px);
+}
+
+.unread {
+    border-left: 3px solid var(--bs-primary) !important;
+}

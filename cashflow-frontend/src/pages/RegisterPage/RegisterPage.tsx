@@ -87,7 +87,7 @@ const RegisterPage: React.FC = () => {
         try {
             setIsLoading(true);
 
-            const res = await api.post('/register', {
+            await api.post('/register', {
                 firstName: formData['firstName'],
                 lastName: formData['lastName'],
                 nickname: formData['nickname'],

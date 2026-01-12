@@ -1,7 +1,7 @@
 import React, { useState, useContext, useRef, useEffect } from 'react'
 import sDashboard from '../../DashboardPage.module.css'
 import Input from '../../../../components/UI/Input/Input'
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import s from './CategoriesCreator.module.css'
 import { ToastContext } from '../../../../contexts/ToastContext';
 import api from '../../../../api/api';
@@ -24,7 +24,7 @@ const CategoriesCreator: React.FC = () => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState<FormDataProps>({ name: "", color: "", icon: "", type: "", limitAmount: ""});
     const [isSending, setIsSending] = useState<boolean>(false);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isLoading] = useState<boolean>(false);
     const { addToast } = useContext(ToastContext);
     const selectedTypeObject = typeOfCategory.find(item => item.value === formData.type);
     const displayValue = selectedTypeObject ? selectedTypeObject.dName : "";
@@ -84,7 +84,7 @@ const CategoriesCreator: React.FC = () => {
         const handleAddAccount = async () => {
             try{
                 setIsSending(true);
-                const res = await api.post('/create-new-category',{
+                await api.post('/create-new-category',{
                     "name": formData['name'],
                     "color": formData['color'],
                     "icon": formData['icon'],

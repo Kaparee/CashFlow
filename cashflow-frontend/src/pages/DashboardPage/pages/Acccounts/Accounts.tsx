@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import sDashboard from '../../DashboardPage.module.css';
 import s from './Accounts.module.css'
-import {useAccount, AccountContextProps } from '../../contexts/AccountContext';
+import {useAccount, type AccountContextProps } from '../../contexts/AccountContext';
 import api from '../../../../api/api';
 import { ToastContext } from '../../../../contexts/ToastContext';
 import Input from '../../../../components/UI/Input/Input';
@@ -128,7 +128,7 @@ const Accounts: React.FC = () => {
                 return;
             }
             setIsLoading(true);
-            const res = await api.patch('/update-account', {
+            await api.patch('/update-account', {
                 "accountId": accId,
                 "newName": formData.newName,
                 "newPhotoUrl": formData.newPhotoUrl

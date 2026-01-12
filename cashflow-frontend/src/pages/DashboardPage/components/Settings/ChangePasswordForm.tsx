@@ -1,9 +1,7 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import sDashboard from '../../DashboardPage.module.css'
 import { ToastContext } from "../../../../contexts/ToastContext";
 import Input from "../../../../components/UI/Input/Input";
-import { AuthContext } from "../../../../contexts/AuthContext";
-import type { User } from '../../../../types/user'
 
 interface FormDataProps {
     oldPassword: string;

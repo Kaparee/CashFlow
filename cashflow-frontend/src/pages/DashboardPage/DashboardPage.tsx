@@ -1,18 +1,12 @@
-import React, { useState, useContext } from 'react'
+import React, { useState } from 'react'
 import Header from './components/Layout/Header/Header.tsx'
 import Sidebar from './components/Layout/Sidebar/Sidebar.tsx'
 import { useWindowWidth } from '../../hooks/useWindowWidth.ts'
-import { Outlet, useNavigate } from 'react-router-dom'
+import { Outlet } from 'react-router-dom'
 import s from './DashboardPage.module.css'
-import AccountProvider, {AccountContext} from './contexts/AccountContext.tsx'
+import AccountProvider from './contexts/AccountContext.tsx'
 
 const DashboardPage: React.FC = () => {
-    
-    const navigate = useNavigate();
-    const routeChange = (path:string) => {
-        navigate(path);
-    }
-
     const [isSidebarExpanded, setIsSidebarExpanded] = useState<boolean>(false);
     const width = useWindowWidth();
 

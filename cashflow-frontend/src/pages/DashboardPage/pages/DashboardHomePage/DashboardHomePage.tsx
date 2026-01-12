@@ -4,10 +4,9 @@ import sDashboard from '../../DashboardPage.module.css'
 import SidebarControl from '../../components/HomePage/SidebarControl/SidebarControl';
 import MainDisplay from '../../components/HomePage/MainDisplay/MainDisplay';
 import { useSearchParams } from 'react-router-dom';
-import { format, startOfDay, endOfDay, startOfWeek, endOfWeek, startOfYear, endOfYear, startOfMonth, endOfMonth, addDays, subDays, addWeeks, subWeeks, addMonths, subMonths, addYears, subYears, differenceInDays, formatDate} from 'date-fns'
-import { pl } from 'date-fns/locale';
+import { format, startOfDay, endOfDay, startOfWeek, endOfWeek, startOfYear, endOfYear, startOfMonth, endOfMonth, addDays, addWeeks, addMonths, addYears, differenceInDays} from 'date-fns'
 import { useTransactions } from '../../hooks/useTransactions';
-import { AccountContext, useAccount } from '../../contexts/AccountContext';
+import { useAccount } from '../../contexts/AccountContext';
 import api from '../../../../api/api';
 import { ToastContext } from '../../../../contexts/ToastContext';
 import Input from '../../../../components/UI/Input/Input';
@@ -283,7 +282,7 @@ const DashboardHomePage: React.FC = () => {
     const handleAddTransaction = async () => {
         try {
             setIsLooking(true);
-            const res = await api.post('/create-new-transaction', {
+            await api.post('/create-new-transaction', {
                 "accountId": account?.accountId,
                 "categoryId": parseInt(formData.categoryId, 10),
                 "amount": parseFloat(formData.amount),
@@ -419,7 +418,7 @@ const DashboardHomePage: React.FC = () => {
     const handleEditTransaction = async () => {
         try {
             setIsLooking(true);
-            const res = await api.patch('/update-transaction', {
+            await api.patch('/update-transaction', {
                 transactionId: selectedTransactionOptions?.transactionId,
                 accountId: account?.accountId,
                 newCategoryId: parseInt(formData.categoryId,10),
@@ -497,7 +496,7 @@ const DashboardHomePage: React.FC = () => {
                             </div>
                             <div className="modal-body py-0">
                                 <Input id={'amount'} divClass={sDashboard.textDarkSecondary} inputClass={`${sDashboard.textDarkPrimary} ${sDashboard.textDarkSecondary} ${sDashboard.bgDarkPrimary} ${sDashboard.borderDarkEmphasis} ${sDashboard.borderDarkFocusAccent} `} name={'amount'} label={'Kwota'} value={formData.amount} onChange={handleChange} error={errors.amount} onBlur={() => handleBalanceFormatting(formData.amount)} />
-                                <CustomSelect table={typeOfCategory} isLoading={isLooking} label='Typ' name={'type'} selected={displayValue} onChange={handleChange} error={errors.type} />
+                                <CustomSelect table={typeOfCategory} isLoading={isLooking} label='Typ' name={'type'} selected={displayValue} onChange={handleChange} error={errors.type}/>
                                 <CustomSelect table={handleGroupCategories(formData.type)} isLoading={isLooking} label='Kategorie' name={'categoryId'} selected={categoryDisplayValue} onChange={handleChange} error={errors.categoryId} />
                                 <Input id={'description'} divClass={sDashboard.textDarkSecondary} inputClass={`${sDashboard.textDarkPrimary} ${sDashboard.textDarkSecondary} ${sDashboard.bgDarkPrimary} ${sDashboard.borderDarkEmphasis} ${sDashboard.borderDarkFocusAccent} `} name={'description'} label={'Opis'} value={formData.description} onChange={handleChange} error={errors.description} />
                             </div>
