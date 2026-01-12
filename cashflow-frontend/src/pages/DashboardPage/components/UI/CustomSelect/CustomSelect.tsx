@@ -81,6 +81,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({table, isLoading, label, nam
                 onKeyDown={isLoading ? undefined : handleKeyDown}
                 aria-expanded={isShown}
                 aria-haspopup='listbox'
+                style={{position: 'relative', zIndex: 10}}
             >
                 {isLoading ? 'Ładowanie ... ' : selected ? selected : 'Wybierz...'}
                 <div 

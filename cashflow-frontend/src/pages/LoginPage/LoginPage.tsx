@@ -79,7 +79,7 @@ const LoginPage: React.FC = () => {
 
             login(myToken,userData,from);
         } catch (error: any) {
-            if (error.response?.status === 401) {
+            if (error.response?.status === 400) {
                 setLoginError('Niepoprawny login lub hasło');
             } else if (error.response?.status === 500) {
                 setLoginError('Błąd serwera. Spróbuj później.');
@@ -125,8 +125,9 @@ const LoginPage: React.FC = () => {
                                     </div>
                                 )}
 
-                                <div className='text-center small mt-2'>
+                                <div className='text-center small mt-2 d-flex flex-column gap-1'>
                                     <a href="#" className='text-secondary text-decoration-none fst-italic' onClick={() => routeChange('/register')}><span className='text-decoration-underline fw-bold'>Zarejestruj się</span> jeśli nie posiadasz konta</a>
+                                    <a href="#" className='text-secondary text-decoration-none fst-italic' onClick={() => routeChange('/reset-password')}><span className='text-decoration-underline fw-bold'>Zresetuj hasło</span></a>
                                 </div>
                             </div>
                         </form>

@@ -56,7 +56,6 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen();
 
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<IUserService>();
@@ -70,6 +69,7 @@ builder.Services.AddScoped<ILimitRepository, LimitRepository>();
 builder.Services.AddScoped<ICurrencyRepository, CurrencyRepository>();
 builder.Services.AddScoped<IKeyWordRepository, KeyWordRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IJWTService, JWTService>();
@@ -80,6 +80,7 @@ builder.Services.AddScoped<ILimitService, LimitService>();
 builder.Services.AddScoped<ICurrencyService, CurrencyService>();
 builder.Services.AddScoped<IKeyWordService, KeyWordService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 
 builder.Services.AddHttpClient<ICurrencyFetcher, CurrencyFetcher>();
 
@@ -115,11 +116,13 @@ builder.Services.AddAuthentication(options =>
 });
 builder.Services.AddAuthorization();
 
+var frontendUrl = builder.Configuration["AppUrls:FrontendUrl"];
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("FrontendPolicy", policy =>
     {
-        policy.WithOrigins("http://localhost:5173")
+        policy.WithOrigins(frontendUrl!)
               .AllowAnyMethod()
               .AllowAnyHeader()
               .AllowCredentials();

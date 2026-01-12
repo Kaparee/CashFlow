@@ -3,6 +3,7 @@ import sDashboard from '../../DashboardPage.module.css';
 import DeleteUserForm from "../../components/Settings/DeleteUserForm";
 import EditUserForm from '../../components/Settings/EditUserForm';
 import ChangePasswordForm from '../../components/Settings/ChangePasswordForm';
+import ChangeEmailForm from '../../components/Settings/ChangeEmailForm';
 import api from "../../../../api/api";
 import { AuthContext } from "../../../../contexts/AuthContext";
 import { ToastContext } from "../../../../contexts/ToastContext";
@@ -20,7 +21,6 @@ interface ChangePasswordFormProps {
     ReNewPassword: string;
 }
 
-
 const Settings: React.FC = () => {
     const [ isLoading, setIsLoading ] = useState<boolean>(false);
     const [ tittleModal, setTittleModal ] = useState<string>('test');
@@ -29,13 +29,15 @@ const Settings: React.FC = () => {
     const { addToast } = useContext(ToastContext);
     const modalRef = useRef<HTMLDivElement>(null);
     const [ editPasswordError, setEditPasswordError ] = useState<string | null>(null);
+    const [ emailChangeError, setEmailChangeError ] = useState<string | null>(null);
 
     useEffect(() => {
         const currentModal = modalRef.current;
-    
+
         const handleHide = () => {
             setDisplay('');
             setEditPasswordError('');
+            setEmailChangeError('');
         };
 
         currentModal?.addEventListener('hidden.bs.modal', handleHide);
@@ -60,9 +62,13 @@ const Settings: React.FC = () => {
                 setTittleModal('Zmiana hasła');
                 break;
             }
+            case 'emailChange': {
+                setTittleModal('Zmiana adresu email');
+                break;
+            }
         }
     }
-    
+
     const handleDeleteAccount = async () => {
         try {
             setIsLoading(true);
@@ -105,6 +111,26 @@ const Settings: React.FC = () => {
         } catch (error: any) {
             if (error.response?.status === 400) {
                 setEditPasswordError('Stare hasło jest niepoprawne');
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    const handleRequestEmailChange = async (newEmail: string) => {
+        setEmailChangeError(null);
+        try {
+            setIsLoading(true);
+            await api.post('/request-email-change', {
+                newEmail: newEmail
+            });
+        } catch (error: any) {
+            if (error.response?.status === 400) {
+                setEmailChangeError('Ten email jest już używany przez inne konto');
+            } else if (error.response?.status === 409) {
+                setEmailChangeError('Ten email jest już używany');
+            } else {
+                throw error;
             }
         } finally {
             setIsLoading(false);
@@ -158,6 +184,18 @@ const Settings: React.FC = () => {
                             >
                                 {isLoading ? 'Ładowanie opcji' : "Edytuj hasło"}
                             </button>
+
+                            <button
+                                className={`btn btn-outline-primary mb-2 rounded-5 d-flex align-items-center justify-content-center gap-2`}
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalSettings"
+                                type='button'
+                                name="emailChange"
+                                onClick={handleChangeDisplay}
+                                disabled={isLoading}
+                            >
+                                {isLoading ? 'Ładowanie opcji' : "Zmień email"}
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -176,6 +214,7 @@ const Settings: React.FC = () => {
                         {display === 'accountDelete' ? <DeleteUserForm isLoading={isLoading} deleteFunction={handleDeleteAccount} /> : ''}
                         {user != null && display === 'accountEdit' ? <EditUserForm isLoading={isLoading} editFunction={handleEditAccount} user={user} /> : '' }
                         {display === 'accountEditPassword' ? <ChangePasswordForm isLoading={isLoading} editFunction={handleEditPassword} invalidOldPasswordMessage={editPasswordError} /> : ''}
+                        {display === 'emailChange' ? <ChangeEmailForm isLoading={isLoading} changeFunction={handleRequestEmailChange} errorMessage={emailChangeError} /> : ''}
                     </div>
                 </div>
             </div>

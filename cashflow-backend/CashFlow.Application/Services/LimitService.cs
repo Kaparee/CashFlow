@@ -3,7 +3,6 @@ using CashFlow.Application.Repositories;
 using CashFlow.Domain.Models;
 using CashFlow.Application.DTO.Requests;
 using CashFlow.Application.DTO.Responses;
-using BCrypt.Net;
 
 namespace CashFlow.Application.Services
 {
@@ -52,7 +51,7 @@ namespace CashFlow.Application.Services
 
             foreach (var limit in limits)
             {
-                var spent = await _transactionRepository.GetCategorySpendingsAsync(userId, limit.CategoryId, limit.StartDate, limit.EndDate);
+                var spent = await _transactionRepository.GetCategorySpendingsAsync(userId, limit.CategoryId, limit.AccountId, limit.StartDate, limit.EndDate);
 
                 response.Add(new LimitResponse
                 {
@@ -63,8 +62,11 @@ namespace CashFlow.Application.Services
                     StartDate = limit.StartDate,
                     EndDate = limit.EndDate,
 
+                    CategoryId = limit.CategoryId,
                     CategoryName = limit.Category.Name,
-                    CategoryIcon = limit.Category.Icon
+                    CategoryIcon = limit.Category.Icon,
+
+                    AccountId = limit.AccountId
                 });
             }
             return response;

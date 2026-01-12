@@ -3,7 +3,6 @@ using CashFlow.Application.Repositories;
 using CashFlow.Domain.Models;
 using CashFlow.Application.DTO.Requests;
 using CashFlow.Application.DTO.Responses;
-using BCrypt.Net;
 
 namespace CashFlow.Application.Services
 {
@@ -12,12 +11,16 @@ namespace CashFlow.Application.Services
         private readonly IAccountRepository _accountRepository;
         private readonly ITransactionRepository _transactionRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ILimitRepository _limitRepository;
+        private readonly ICurrencyService _currencyService;
 
-        public AccountService(IAccountRepository accountRepository, ITransactionRepository transactionRepository, IUnitOfWork unitOfWork)
+        public AccountService(IAccountRepository accountRepository, ITransactionRepository transactionRepository, IUnitOfWork unitOfWork, ILimitRepository limitRepository, ICurrencyService currencyService)
         {
             _accountRepository = accountRepository;
             _transactionRepository = transactionRepository;
             _unitOfWork = unitOfWork;
+            _limitRepository = limitRepository;
+            _currencyService = currencyService;
         }
 
         public async Task<List<AccountResponse>> GetUserAccountsAsync(int userId)
@@ -69,6 +72,7 @@ namespace CashFlow.Application.Services
             {
                 var account = await _accountRepository.GetAccountByIdAsync(userId, accountId);
                 var transactions = await _transactionRepository.GetAccountTransactionsWithDetailsAsync(userId, accountId);
+                var limits = await _limitRepository.GetLimitsByAccountIdAsync(accountId);
 
                 if (account == null)
                 {
@@ -81,6 +85,12 @@ namespace CashFlow.Application.Services
                 foreach (var transaction in transactions)
                 {
                     transaction.DeletedAt = DateTime.UtcNow;
+                }
+
+                foreach (var limit in limits)
+                {
+                    limit.DeletedAt = DateTime.UtcNow;
+                    await _limitRepository.UpdateAsync(limit);
                 }
 
                 await _accountRepository.UpdateAsync(account);
@@ -97,7 +107,7 @@ namespace CashFlow.Application.Services
         {
             var account = await _accountRepository.GetAccountByIdAsync(userId, request.AccountId);
 
-            if(account == null)
+            if (account == null)
             {
                 throw new Exception("Account not found or access denied");
             }
@@ -108,6 +118,21 @@ namespace CashFlow.Application.Services
             account.PhotoUrl = request.NewPhotoUrl;
 
             await _accountRepository.UpdateAsync(account);
+        }
+
+        public async Task<decimal> GetTotalBalanceAsync(int userId, string targetCurrency = "PLN")
+        {
+            var accounts = await _accountRepository.GetUserAccountsWithDetailsAsync(userId);
+
+            decimal totalBalance = 0;
+
+            foreach (var account in accounts)
+            {
+                decimal rate = await _currencyService.GetExchangeRateAsync(account.CurrencyCode, targetCurrency);
+                totalBalance += (account.Balance * rate);
+
+            }
+            return Math.Round(totalBalance, 2);
         }
     }
 }

@@ -27,12 +27,12 @@ namespace CashFlow.Api.Controllers
 
         [HttpGet]
         [Route("transactions-info")]
-        public async Task<ActionResult<TransactionResponse>> GetAccountTransaction(int accountId)
+        public async Task<ActionResult<TransactionResponse>> GetAccountTransactions(int accountId)
         {
             var transactionDto = await _transactionService.GetAccountTransactionsAsync(CurrentUserId, accountId);
             return Ok(transactionDto);
         }
-
+        
         [HttpPost]
         [Route("create-new-transaction")]
         public async Task<IActionResult> CreateNewTransaction([FromBody] NewTransactionRequest request)
@@ -44,7 +44,11 @@ namespace CashFlow.Api.Controllers
             }
             catch (Exception ex)
             {
-                if(ex.Message.Contains("must be greater than 0"))
+                if (ex.Message.Contains("must be greater than 0"))
+                {
+                    return Conflict(new { message = ex.Message });
+                }
+                if(ex.Message.Contains("is required to"))
                 {
                     return Conflict(new { message = ex.Message });
                 }
@@ -88,6 +92,29 @@ namespace CashFlow.Api.Controllers
                 }
                 throw;
             }
+        }
+
+        [HttpGet]
+        [Route("category-analytics")]
+        public async Task<ActionResult<List<CategoryAnalyticsResponse>>> GetCategoryAnalytics([FromQuery] DateTime startDate, [FromQuery] DateTime endDate, [FromQuery] string type)
+        { 
+                var categoryAnalyticsDto = await _transactionService.GetCategoryAnalyticsAsync(CurrentUserId, startDate, endDate, type);
+                return Ok(categoryAnalyticsDto);
+        }
+
+        [HttpGet]
+        [Route("balance-analytics")]
+        public async Task<ActionResult<List<MonthlyAnalyticsResponse>>> GetBalanceAnalytics([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+        {
+            var balanceAnalyticsDto = await _transactionService.GetMonthlyAnalyticsAsync(CurrentUserId, startDate, endDate);
+            return Ok(balanceAnalyticsDto);
+        }
+
+        [HttpGet("daily-analytics")]
+        public async Task<ActionResult<List<DailyAnalyticsResponse>>> GetDailyAnalytics([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+        {
+            var result = await _transactionService.GetDailyAnalyticsAsync(CurrentUserId, startDate, endDate);
+            return Ok(result);
         }
     }
 }

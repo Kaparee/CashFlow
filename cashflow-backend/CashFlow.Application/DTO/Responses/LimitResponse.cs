@@ -9,7 +9,10 @@ namespace CashFlow.Application.DTO.Responses
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
 
+        public int CategoryId { get; set; }
         public string CategoryName { get; set; } = string.Empty;
         public string? CategoryIcon { get; set; }
+
+        public int AccountId { get; set; }
     }
 }

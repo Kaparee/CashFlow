@@ -222,12 +222,30 @@ const DashboardHomePage: React.FC = () => {
             err.type = 'Proszę wybrać odpowiedni typ transakcji'
         }
             
-        if (!/[0-9]/.test(formData.categoryId)) {
-            err.categoryId = 'Proszę wybrać kategorię transakcji'
-        }
+        const hasCategory = formData.categoryId && formData.categoryId.trim().length > 0 && formData.categoryId !== '0';
+        const hasDescription = formData.description && formData.description.trim().length > 0;
 
+        if (hasDescription) {
+            const descriptionLower = formData.description.toLowerCase();
+
+            const foundKeyword = categories.some(cat => 
+                cat.keyWords.some(kw => 
+                    descriptionLower.includes(kw.word.toLowerCase())
+                )
+            );
+
+            if (!foundKeyword) {
+                err.description = 'Opis nie zawiera słowa kluczowego przypisanego dla kategorii!';
+            }
+        }
+        
+        if (!hasCategory && !hasDescription) {
+            err.categoryId = 'Wybierz kategorię lub uzupełnij opis';
+            err.description = 'Wybierz kategorię lub uzupełnij opis';
+        }
+        
         if (formData.description.trim().length > 30) {
-                err.description = 'Nazwa musi być krótsza niż 30 znaków'
+            err.description = 'Opis musi być krótszy niż 30 znaków'
         }
         
         setErrors(err);
