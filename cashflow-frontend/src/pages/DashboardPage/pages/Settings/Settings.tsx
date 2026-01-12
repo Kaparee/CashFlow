@@ -89,7 +89,7 @@ const Settings: React.FC = () => {
                 newFirstName: dataPack.newFirstName,
                 newLastName: dataPack.newLastName,
                 newNickname: dataPack.newNickname,
-                newPhotoUrl: dataPack.newPhotoUrl
+                newPhotoUrl: 'default_user_url'
             })
             await refreshUser();
             addToast('Pomyślnie edytowano dane', 'info')

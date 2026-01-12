@@ -38,15 +38,18 @@ const ConfirmEmailChange: React.FC = () => {
 
         try {
             setIsLoading(true);
-            await api.post('/confirm-email-change', { token });
+            await api.post('/confirm-email-change', { 
+                'token': token 
+            })
 
             setSuccessMessage('Email został pomyślnie zmieniony! Za chwilę zostaniesz przekierowany do dashboardu...');
+            console.log('cwel')
 
             await refreshUser();
 
-            //setTimeout(() => {
-            //    navigate('/dashboard');
-            //}, 3000);
+            setTimeout(() => {
+                navigate('/dashboard');
+            }, 3000);
 
         } catch (error: any) {
             console.log(error)
