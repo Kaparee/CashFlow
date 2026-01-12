@@ -30,11 +30,25 @@ const Accounts: React.FC = () => {
 
     const [isClosing, setIsClosing] = useState<boolean>(false);
 
+    const [ totalBalance, setTotalBalance ] = useState<number>(0);
+
     const {addToast} = useContext(ToastContext);
 
     const navigate = useNavigate();
     const routeChange = (path: string, options?: any) => {
         navigate(path, options);
+    }
+
+    const fetchTotalBalance = async () => {
+        try {
+            setIsLoading(true);
+            const res = await api.get('/total-balance');
+            setTotalBalance(res.data.totalBalance)
+        } catch (error: any) {
+            addToast('Wystąpił błąd przy pobieraniu stanu kont', 'error')
+        } finally {
+            setIsLoading(false);
+        }
     }
 
     const fetchAccounts = async () => {
@@ -51,6 +65,7 @@ const Accounts: React.FC = () => {
 
     useEffect(() => {
         fetchAccounts();
+        fetchTotalBalance();
     }, []);
 
     const handleAddAccount = () => {
@@ -193,7 +208,11 @@ const Accounts: React.FC = () => {
 
     return (
         <div className="container-fluid p-4">
-            <h2 className={sDashboard.textDarkPrimary}>Twoje Konta</h2>
+            <div className='d-flex'>
+                <h2 className={sDashboard.textDarkPrimary}>Twoje Konta</h2>
+                <h2 className={`ms-auto ${sDashboard.textDarkPrimary}`}>Balans: <span className={`text-gradient fw-bold`}>{handleCurrencyFormatting(totalBalance, 'PLN')}</span></h2>
+            </div>
+            
             <div className="row mt-4">
                 {isLoading && Array.from({length: 3}).map((_, index) => (
                     <div key={index} className="col-sm-6 col-md-4 col-lg-3 col-xl-3 mb-4 mb-sm-3 h-100">

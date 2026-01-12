@@ -70,9 +70,7 @@ const App: React.FC = () => {
                         <Route
                             path='/api/confirm-email-change'
                             element={
-                                <ProtectedRoute requireAuth={true}>
                                     <ConfirmEmailChange/>
-                                </ProtectedRoute>
                             }
                         />
 

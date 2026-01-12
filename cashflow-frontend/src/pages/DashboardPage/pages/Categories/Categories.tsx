@@ -24,6 +24,7 @@ interface Limits {
     categoryName: string;
     categoryIcon: string;
     period: 'month' | 'quarter' | 'year';
+    accountId: number
 }
 
 interface CategoriesTable {
@@ -103,7 +104,6 @@ const Categories: React.FC = () => {
     
     const [editingLimit, setEditingLimit] = useState<Limits | null>(null);
     const [isEditingLimit, setIsEditingLimit] = useState<boolean>(false);
-
 
     const handleFetchCategories = async () => {
         try {
@@ -558,7 +558,7 @@ const Categories: React.FC = () => {
 
     const getCurrentCategoryLimits = () => {
         if (!currentCategory) return [];
-        return limits.filter(limit => limit.categoryName === currentCategory.name);
+        return limits.filter(limit => limit.categoryName === currentCategory.name && limit.accountId === account?.accountId);
     }
 
     return (
