@@ -64,7 +64,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({table, isLoading, label, nam
     }
 
     return (
-        <div className='mb-3 text-start'>
+        <div className='mb-3 text-start' style={{ position: 'relative', zIndex: isShown ? 20 : 1 }}>
             <label 
                 htmlFor="CustomSelect" 
                 className={`fw-bold small form-label ${sDashboard.textDarkSecondary}`}
@@ -81,7 +81,6 @@ const CustomSelect: React.FC<CustomSelectProps> = ({table, isLoading, label, nam
                 onKeyDown={isLoading ? undefined : handleKeyDown}
                 aria-expanded={isShown}
                 aria-haspopup='listbox'
-                style={{position: 'relative', zIndex: 10}}
             >
                 {isLoading ? 'Ładowanie ... ' : selected ? selected : 'Wybierz...'}
                 <div 

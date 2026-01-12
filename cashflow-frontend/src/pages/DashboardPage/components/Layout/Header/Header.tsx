@@ -1,9 +1,9 @@
 import React, { useContext, useEffect } from "react";
-import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import { useWindowWidth } from "../../../../../hooks/useWindowWidth";
 import s from './Header.module.css'
 import sDashboard from '../../../DashboardPage.module.css'
-import { AccountContext, useAccount } from "../../../contexts/AccountContext";
+import { useAccount } from "../../../contexts/AccountContext";
 import { AuthContext } from "../../../../../contexts/AuthContext";
 
 interface HeaderProps {
@@ -11,16 +11,11 @@ interface HeaderProps {
     onToggle: () => void;   
 }
 
-const Header: React.FC<HeaderProps> = ({isExpanded, onToggle}) => {
+const Header: React.FC<HeaderProps> = ({onToggle}) => {
     const { logout } = useContext(AuthContext);
     const { account } = useAccount()
     const [ searchParams, setSearchParams ] = useSearchParams();
     const viewMode = searchParams.get('type') || 'expense';
-    const navigate = useNavigate();
-
-    const routeChange = (path: string) => {
-        navigate(path);
-    }
 
     useEffect(() => {
         setSearchParams({type: 'expense'});
@@ -54,7 +49,7 @@ const Header: React.FC<HeaderProps> = ({isExpanded, onToggle}) => {
                 
                 </div>
 
-                <div className={`col-auto text-end`}>
+                <div className={`col-auto text-end d-flex gap-3`}>
                     <button className={`btn btn-outline-primary px-2 py-1 rounded-4 fs-small ${sDashboard.btnDarkOutlineAccentPrimary}`} type="button" onClick={logout}>Wyloguj</button>
                 </div>    
                     

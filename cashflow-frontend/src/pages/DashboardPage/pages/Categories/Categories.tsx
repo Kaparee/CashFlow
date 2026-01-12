@@ -6,7 +6,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom'
 import s from './Categories.module.css'
 import Input from '../../../../components/UI/Input/Input';
 import CustomSelect from '../../components/UI/CustomSelect/CustomSelect';
-import {useAccount, AccountContext } from '../../contexts/AccountContext';
+import { useAccount } from '../../contexts/AccountContext';
 
 interface KeyWords {
     wordId: number;
@@ -225,7 +225,7 @@ const Categories: React.FC = () => {
                 return;
             }
             setIsLoading(true);
-            const res = await api.patch('/update-category', {
+            await api.patch('/update-category', {
                 "categoryId": catId,
                 "newName": formData.newName,
                 "newColor": formData.newColor,
@@ -273,7 +273,7 @@ const Categories: React.FC = () => {
 
         try {
             setIsDeleting(true);
-            const res = await api.delete(`/delete-category`, { 
+            await api.delete(`/delete-category`, { 
                 params: { 
                     'categoryId': currentCategory.categoryId
                 } 
@@ -477,7 +477,8 @@ const Categories: React.FC = () => {
                 value: parseFloat(newLimit.value),
                 description: newLimit.description.trim(),
                 startDate: dates.startDate,
-                endDate: dates.endDate
+                endDate: dates.endDate,
+                accountId: account?.accountId
             });
 
             addToast('Dodano limit', 'info');
@@ -512,7 +513,7 @@ const Categories: React.FC = () => {
 
         if (!validateLimitForm()) return;
 
-        const dates = calculateDates(editingLimit.period);
+        const dates = calculateDates(editingLimit.period ? editingLimit.period : 'month');
 
         try {
             setIsEditingLimit(true);
@@ -577,11 +578,19 @@ const Categories: React.FC = () => {
                     </div>
                 ))}
 
-                {!isLoading && categories?.filter(item => viewMode.includes(item.type))?.map((cat, index) => (
+                {!isLoading && categories?.filter(item => viewMode.includes(item.type))?.map((cat) => (
                     <div key={cat.categoryId} className={`col-auto my-2`}>
-                        <button className={`px-3 py-1 rounded-5 border-0 d-flex align-items-center`} style={{backgroundColor: cat.color,boxShadow: `0 0.3rem 1rem ${cat.color}`, color: getContrastColor(cat.color)}} onClick={() => openOptionsModal(cat)}>
+                        <button className={`px-3 py-2 rounded-5 border-0 d-flex align-items-center ${sDashboard.shadowDark}`} style={{
+                            backgroundColor: cat.color,
+                            color: getContrastColor(cat.color),
+                            transition: 'all 0.3s ease',
+                            transform: 'scale(1)'
+                            }}
+                            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                            onClick={() => openOptionsModal(cat)}>
                             <span>
-                                <i className={`bi ${cat.icon} fs-5`}></i>
+                                <i className={`bi ${cat.icon} fs-6`}></i>
                             </span>
                             <span className='mx-2'>{cat.name}</span>
                             {cat.limitAmount && cat.limitAmount > 0 ? <span className={`small`}>Limit: {cat.limitAmount}</span> : ''}
@@ -662,14 +671,14 @@ const Categories: React.FC = () => {
                                 Słowa kluczowe
                             </button>
 
-                            <button 
+                            {viewMode == 'expense' && <button 
                                 className={`btn btn-outline-primary  btn-lg rounded-5 mt-2`}
                                 data-bs-toggle="modal" 
                                 data-bs-target="#limitsModal"
                                 type='button'
                             >
                                 Limity
-                            </button>
+                            </button>}
 
                             <button 
                                 className="btn btn-dark btn-lg rounded-5 mt-2" 
