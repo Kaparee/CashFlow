@@ -98,8 +98,8 @@ const Charts: React.FC = () => {
     };
 
     return (
-        <div className={`w-100 h-100 d-flex flex-column`}>
-            <div className={`d-flex justify-content-between align-items-center px-3 py-3 mb-3 flex-wrap gap-3 border rounded-5 ${sDashboard.bgDarkSecondary} ${sDashboard.shadowDark} ${sDashboard.borderDarkEmphasis}`}>
+        <div className={`w-100 h-100 d-flex flex-column align-items-center`}>
+            <div className={`d-flex justify-content-between align-items-center w-75 px-4 py-4 mb-3 mt-3 flex-wrap gap-3 border rounded-4 ${sDashboard.bgDarkSecondary} ${sDashboard.borderDarkEmphasis}`}>
                 <div className={`fs-3 fw-bold ${sDashboard.textDarkPrimary}`}>
                     <i className="bi bi-graph-up me-2 text-gradient"></i>
                     Wykresy <span className="text-gradient">Finansowe</span>
@@ -144,7 +144,7 @@ const Charts: React.FC = () => {
                 {!isLoading && balanceData && (
                     <div className="row mb-4">
                         <div className="col-md-6 mb-3">
-                            <div className={`${sDashboard.bgDarkSecondary} p-4 rounded-4 border-2 border-danger ${sDashboard.shadowDark} h-100 position-relative overflow-hidden`} style={{borderStyle: 'solid'}}>
+                            <div className={`${sDashboard.bgDarkSecondary} p-4 rounded-4 border-2 border-danger h-100 position-relative overflow-hidden ${sDashboard.shadowDarkHover}`} style={{borderStyle: 'solid', transition: 'all 0.3s ease', transform: 'scale(1)'}} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.01)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
                                 <div className="position-absolute top-0 end-0 opacity-25" style={{fontSize: '5rem', marginTop: '-1rem', marginRight: '-1rem'}}>
                                     <i className="bi bi-arrow-down-circle-fill text-danger"></i>
                                 </div>
@@ -153,12 +153,12 @@ const Charts: React.FC = () => {
                                     <h5 className={`${sDashboard.textDarkPrimary} mb-0 fw-bold`}>Wydatki</h5>
                                 </div>
                                 <h2 className="text-danger fw-bold mb-0">
-                                    {handleCurrencyFormatting(balanceData.totalExpenseAmount, account?.currencyCode || 'PLN')}
+                                    {handleCurrencyFormatting(balanceData.totalExpenseAmount, 'PLN')}
                                 </h2>
                             </div>
                         </div>
                         <div className="col-md-6 mb-3">
-                            <div className={`${sDashboard.bgDarkSecondary} p-4 rounded-4 border-2 border-success ${sDashboard.shadowDarkAccentSecondaryHover} h-100 position-relative overflow-hidden`} style={{borderStyle: 'solid'}}>
+                            <div className={`${sDashboard.bgDarkSecondary} p-4 rounded-4 border-2 border-success h-100 position-relative overflow-hidden ${sDashboard.shadowDarkHover}`} style={{borderStyle: 'solid', transition: 'all 0.3s ease', transform: 'scale(1)'}} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.01)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
                                 <div className="position-absolute top-0 end-0 opacity-25" style={{fontSize: '5rem', marginTop: '-1rem', marginRight: '-1rem'}}>
                                     <i className="bi bi-arrow-up-circle-fill text-success"></i>
                                 </div>
@@ -167,7 +167,7 @@ const Charts: React.FC = () => {
                                     <h5 className={`${sDashboard.textDarkPrimary} mb-0 fw-bold`}>Przychody</h5>
                                 </div>
                                 <h2 className="text-success fw-bold mb-0">
-                                    {handleCurrencyFormatting(balanceData.totalIncomeAmount, account?.currencyCode || 'PLN')}
+                                    {handleCurrencyFormatting(balanceData.totalIncomeAmount, 'PLN')}
                                 </h2>
                             </div>
                         </div>
@@ -176,7 +176,7 @@ const Charts: React.FC = () => {
 
                 <div className="row mb-4">
                     <div className="col-lg-6 mb-4">
-                        <div className={`${sDashboard.bgDarkSecondary} p-4 rounded-4 border-2 border-danger ${sDashboard.shadowDarkAccentSecondaryHover} h-100`} 
+                        <div className={`${sDashboard.bgDarkSecondary} p-4 rounded-4 border-2 border-danger ${sDashboard.shadowDarkHover} h-100`} 
                              style={{borderStyle: 'solid', transition: 'all 0.3s ease', transform: 'scale(1)'}}
                              onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
                              onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
@@ -215,7 +215,7 @@ const Charts: React.FC = () => {
                                         margin={{ top: 10, right: 10, bottom: 80, left: 10 }}
                                         slotProps={{
                                             legend: {
-                                                direction: 'row',
+                                                direction: 'row' as any,
                                                 position: { vertical: 'bottom', horizontal: 'center' },
                                             },
                                         }}
@@ -230,6 +230,9 @@ const Charts: React.FC = () => {
                                             "& text": {
                                                 fill: "#DEDEDE !important",
                                             },
+                                            "& .MuiPieArc-root": {
+                                                stroke: "none",
+                                            },
                                         }}
                                     />
                                 </div>
@@ -243,7 +246,7 @@ const Charts: React.FC = () => {
                     </div>
 
                     <div className="col-lg-6 mb-4">
-                        <div className={`${sDashboard.bgDarkSecondary} p-4 rounded-4 border-2 border-success ${sDashboard.shadowDarkAccentPrimaryHover} h-100`} 
+                        <div className={`${sDashboard.bgDarkSecondary} p-4 rounded-4 border-2 border-success ${sDashboard.shadowDarkHover} h-100`} 
                              style={{borderStyle: 'solid', transition: 'all 0.3s ease', transform: 'scale(1)'}}
                              onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
                              onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
@@ -282,7 +285,7 @@ const Charts: React.FC = () => {
                                         margin={{ top: 10, right: 10, bottom: 80, left: 10 }}
                                         slotProps={{
                                             legend: {
-                                                direction: 'row',
+                                                direction: 'row' as any,
                                                 position: { vertical: 'bottom', horizontal: 'center' },
                                             },
                                         }}
@@ -296,6 +299,9 @@ const Charts: React.FC = () => {
                                             },
                                             "& text": {
                                                 fill: "#DEDEDE !important",
+                                            },
+                                            "& .MuiPieArc-root": {
+                                                stroke: "none",
                                             },
                                         }}
                                     />
@@ -312,7 +318,7 @@ const Charts: React.FC = () => {
 
                 <div className="row mb-4">
                     <div className="col-lg-6 mb-4">
-                        <div className={`${sDashboard.bgDarkSecondary} p-4 rounded-4 border-2 border-danger ${sDashboard.shadowDark} h-100`} 
+                        <div className={`${sDashboard.bgDarkSecondary} p-4 rounded-4 border-2 border-danger ${sDashboard.shadowDarkHover} h-100`} 
                              style={{borderStyle: 'solid', transition: 'all 0.3s ease', transform: 'scale(1)'}}
                              onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
                              onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
@@ -358,8 +364,8 @@ const Charts: React.FC = () => {
                                         margin={{ top: 60, right: 20, bottom: 80, left: 80 }}
                                         slotProps={{
                                             legend: {
-                                                direction: 'row',
-                                                position: { vertical: 'top', horizontal: 'middle' },
+                                                direction: 'row' as any,
+                                                position: { vertical: 'top', horizontal: 'center' },
                                             },
                                         }}
                                         sx={{
@@ -398,7 +404,7 @@ const Charts: React.FC = () => {
                     </div>
 
                     <div className="col-lg-6 mb-4">
-                        <div className={`${sDashboard.bgDarkSecondary} p-4 rounded-4 border-2 border-success ${sDashboard.shadowDark} h-100`} 
+                        <div className={`${sDashboard.bgDarkSecondary} p-4 rounded-4 border-2 border-success ${sDashboard.shadowDarkHover} h-100`} 
                              style={{borderStyle: 'solid', transition: 'all 0.3s ease', transform: 'scale(1)'}}
                              onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
                              onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
@@ -444,8 +450,8 @@ const Charts: React.FC = () => {
                                         margin={{ top: 60, right: 20, bottom: 80, left: 80 }}
                                         slotProps={{
                                             legend: {
-                                                direction: 'row',
-                                                position: { vertical: 'top', horizontal: 'middle' },
+                                                direction: 'row' as any,
+                                                position: { vertical: 'top', horizontal: 'center' },
                                             },
                                         }}
                                         sx={{
@@ -486,12 +492,12 @@ const Charts: React.FC = () => {
 
                 <div className="row mb-4">
                     <div className="col-12">
-                        <div className={`${sDashboard.bgDarkSecondary} p-4 rounded-4 border-2 ${sDashboard.shadowDark} position-relative overflow-hidden`} 
+                        <div className={`${sDashboard.bgDarkSecondary} p-4 rounded-4 border-2 ${sDashboard.shadowDarkHover} position-relative overflow-hidden`} 
                              style={{borderStyle: 'solid', borderColor: '#00A676', transition: 'all 0.3s ease', transform: 'scale(1)'}}
                              onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.01)'}
                              onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
-                            <div className="position-absolute end-0 top-0 p-3" style={{fontSize: '3rem', color: '#00A676'}}>
-                                <i className="bi bi-graph-up-arrow"></i>
+                            <div className="position-absolute start-0 top-0 p-4">
+                                    <i className="bi bi-graph-up-arrow text-success opacity-25" style={{fontSize: '3rem'}}></i>
                             </div>
                             <div className="d-flex align-items-center justify-content-center mb-3">
                                 <i className="bi bi-graph-up-arrow fs-4 me-2" style={{color: '#00A676'}}></i>
@@ -524,9 +530,6 @@ const Charts: React.FC = () => {
                                                 color: "#78D36B",
                                                 curve: "catmullRom",
                                                 valueFormatter: (value) => handleCurrencyFormatting(value || 0, account?.currencyCode || 'PLN'),
-                                                lineStyle: {
-                                                    strokeWidth: 4,
-                                                },
                                                 showMark: true,
                                             },
                                             {
@@ -535,9 +538,6 @@ const Charts: React.FC = () => {
                                                 color: "#FF6B6B",
                                                 curve: "catmullRom",
                                                 valueFormatter: (value) => handleCurrencyFormatting(value || 0, account?.currencyCode || 'PLN'),
-                                                lineStyle: {
-                                                    strokeWidth: 4,
-                                                },
                                                 showMark: true,
                                             },
                                         ]}
@@ -545,8 +545,8 @@ const Charts: React.FC = () => {
                                         margin={{ top: 60, right: 40, bottom: 60, left: 80 }}
                                         slotProps={{
                                             legend: {
-                                                direction: 'row',
-                                                position: { vertical: 'top', horizontal: 'middle' },
+                                                direction: 'row' as any,
+                                                position: { vertical: 'top', horizontal: 'center' },
                                             },
                                         }}
                                         sx={{
@@ -567,11 +567,11 @@ const Charts: React.FC = () => {
                                                 fill: "#DEDEDE !important",
                                             },
                                             "& .MuiChartsGrid-line": {
-                                                stroke: "#454545",
+                                                stroke: "#525252ff",
                                                 strokeDasharray: "3 3",
                                             },
                                             "& .MuiChartsAxis-line": {
-                                                stroke: "#DEDEDE",
+                                                stroke: "#a1a1a1ff",
                                             },
                                             "& .MuiChartsAxis-tick": {
                                                 stroke: "#DEDEDE",

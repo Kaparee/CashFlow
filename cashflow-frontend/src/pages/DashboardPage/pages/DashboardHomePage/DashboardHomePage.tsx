@@ -63,6 +63,22 @@ interface SelectItem {
     dName: string;
 }
 
+export type FrequencyType = 'daily' | 'weekly' | 'monthly' | 'yearly';
+
+export interface RecurringTransaction {
+    recurringTransactionId: number;
+    accountId: number;
+    categoryId: number;
+    amount: number;
+    description: string;
+    type: 'expense' | 'income';
+    frequency: FrequencyType;
+    isTrue: boolean;
+    startDate: string;
+    endDate: string;
+    nextPaymentDate: string;
+}
+
 const typeOfCategory = [{dName: 'Przychody', type: 'income', value: 'income'}, {dName: 'Wydatki', type: 'expense', value: 'expense'}]
 
 const DashboardHomePage: React.FC = () => {
@@ -90,6 +106,17 @@ const DashboardHomePage: React.FC = () => {
     const [isConfirmingDelete, setIsConfirmingDelete] = useState<boolean>(false);
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
     const [isClosing, setIsClosing] = useState<boolean>(false);
+    const [showRecurringModal, setShowRecurringModal] = useState<boolean>(false);
+    const [recurringFormData, setRecurringFormData] = useState({
+        accountId: account?.accountId,
+        categoryId: "",
+        amount: "",
+        description: "",
+        type: "expense" as 'expense' | 'income',
+        frequency: "monthly" as FrequencyType,
+        startDate: format(new Date(), 'yyyy-MM-dd'),
+        endDate: format(addYears(new Date(), 1), 'yyyy-MM-dd')
+    });
 
     useEffect(() => {
         const htmlTag = document.body;
@@ -307,6 +334,59 @@ const DashboardHomePage: React.FC = () => {
             setIsLooking(false);
         }
     }
+
+    const frequencyOptions = [
+        { dName: 'Codziennie', value: 'daily' },
+        { dName: 'Co tydzień', value: 'weekly' },
+        { dName: 'Co miesiąc', value: 'monthly' },
+        { dName: 'Co rok', value: 'yearly' }
+    ];
+
+    const handleRecurringChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setRecurringFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    const handleAddRecurringTransaction = async () => {
+        try {
+            setIsLooking(true);
+            await api.post('/create-new-rec-transaction', {
+                type: recurringFormData.type,
+                name: recurringFormData.description,
+                frequency: recurringFormData.frequency,
+                isTrue: true,
+                startDate: recurringFormData.startDate,
+                endDate: recurringFormData.endDate,
+                accountId: recurringFormData.accountId,
+                categoryId: parseInt(recurringFormData.categoryId, 10),
+                amount: parseFloat(recurringFormData.amount),
+                description: recurringFormData.description,
+                nextPaymentDate: recurringFormData.startDate
+            });
+            
+            addToast('Utworzono transakcję cykliczną', 'info');
+            setShowRecurringModal(false);
+            // Resetuj formularz
+            setRecurringFormData({
+                accountId: account?.accountId,
+                categoryId: "",
+                amount: "",
+                description: "",
+                type: "expense",
+                frequency: "monthly",
+                startDate: format(new Date(), 'yyyy-MM-dd'),
+                endDate: format(addYears(new Date(), 1), 'yyyy-MM-dd')
+            });
+        } catch (error: any) {
+            addToast('Nie udało się utworzyć transakcji cyklicznej', 'error');
+            console.error(error);
+        } finally {
+            setIsLooking(false);
+        }
+    };
 
     const handleValidateForm = (e: React.FormEvent) => {
         e.preventDefault();
@@ -592,6 +672,125 @@ const DashboardHomePage: React.FC = () => {
                                 <button type="button" className="btn btn-outline-primary rounded-5 w-100" data-bs-dismiss="modal" ref={modalCloseButtonEditFormRef}>Zamknij</button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            </div>
+            <div className="modal fade" id="addRecTransactionModal" tabIndex={-1} aria-labelledby="addRecTransactionModal" aria-hidden="true">
+                <div className="modal-dialog modal-xl modal-dialog-centered">
+                    <div className={`modal-content rounded-5 py-2 px-3 ${sDashboard.bgDarkSecondary} ${sDashboard.shadowDark}`}>
+                        <div className="modal-header border-0">
+                            <span className={`modal-title fs-5 fw-bold ${sDashboard.textDarkPrimary}`}>
+                                <i className="bi bi-arrow-repeat me-2"></i>
+                                Dodawanie transakcji cyklicznej
+                            </span>
+                            <button 
+                                type="button" 
+                                className="btn-close btn-close-white" 
+                                data-bs-dismiss="modal"
+                            />
+                        </div>
+                        
+                        <div className="modal-body py-0">
+                            {/* Kwota */}
+                            <Input 
+                                id={'rec-amount'} 
+                                divClass={sDashboard.textDarkSecondary} 
+                                inputClass={`${sDashboard.textDarkPrimary} ${sDashboard.bgDarkPrimary} ${sDashboard.borderDarkEmphasis} ${sDashboard.borderDarkFocusAccent}`} 
+                                name={'amount'} 
+                                label={'Kwota'} 
+                                value={recurringFormData.amount} 
+                                onChange={handleRecurringChange}
+                            />
+
+                            {/* Typ */}
+                            <CustomSelect 
+                                table={typeOfCategory} 
+                                isLoading={isLooking} 
+                                label='Typ' 
+                                name={'type'} 
+                                selected={typeOfCategory.find(t => t.value === recurringFormData.type)?.dName || ''} 
+                                onChange={handleRecurringChange}
+                            />
+
+                            {/* Kategoria */}
+                            <CustomSelect 
+                                table={handleGroupCategories(recurringFormData.type)} 
+                                isLoading={isLooking} 
+                                label='Kategoria' 
+                                name={'categoryId'} 
+                                selected={categories.find(c => c.categoryId === Number(recurringFormData.categoryId))?.name || 'Wybierz kategorię'} 
+                                onChange={handleRecurringChange}
+                            />
+
+                            {/* Opis */}
+                            <Input 
+                                id={'rec-description'} 
+                                divClass={sDashboard.textDarkSecondary} 
+                                inputClass={`${sDashboard.textDarkPrimary} ${sDashboard.bgDarkPrimary} ${sDashboard.borderDarkEmphasis} ${sDashboard.borderDarkFocusAccent}`} 
+                                name={'description'} 
+                                label={'Opis (nazwa transakcji cyklicznej)'} 
+                                value={recurringFormData.description} 
+                                onChange={handleRecurringChange}
+                            />
+
+                            {/* Częstotliwość */}
+                            <CustomSelect 
+                                table={frequencyOptions} 
+                                isLoading={isLooking} 
+                                label='Częstotliwość' 
+                                name={'frequency'} 
+                                selected={frequencyOptions.find(f => f.value === recurringFormData.frequency)?.dName || ''} 
+                                onChange={handleRecurringChange}
+                            />
+
+                            {/* Data rozpoczęcia */}
+                            <div className="mb-3">
+                                <label className={`form-label fw-bold small ${sDashboard.textDarkSecondary}`}>
+                                    Data rozpoczęcia
+                                </label>
+                                <input
+                                    type="date"
+                                    name="startDate"
+                                    className={`form-control rounded-4 ${sDashboard.bgDarkPrimary} ${sDashboard.textDarkPrimary} ${sDashboard.borderDarkEmphasis}`}
+                                    value={recurringFormData.startDate}
+                                    onChange={handleRecurringChange}
+                                />
+                            </div>
+
+                            {/* Data zakończenia */}
+                            <div className="mb-3">
+                                <label className={`form-label fw-bold small ${sDashboard.textDarkSecondary}`}>
+                                    Data zakończenia (opcjonalna)
+                                </label>
+                                <input
+                                    type="date"
+                                    name="endDate"
+                                    className={`form-control rounded-4 ${sDashboard.bgDarkPrimary} ${sDashboard.textDarkPrimary} ${sDashboard.borderDarkEmphasis}`}
+                                    value={recurringFormData.endDate}
+                                    onChange={handleRecurringChange}
+                                    min={recurringFormData.startDate}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="modal-footer justify-content-center border-0">
+                            <button 
+                                type="button" 
+                                className="btn btn-primary w-100 fw-bold rounded-5" 
+                                onClick={handleAddRecurringTransaction}
+                                disabled={isLooking || isLoading}
+                            >
+                                <i className="bi bi-arrow-repeat me-2"></i>
+                                Utwórz transakcję cykliczną
+                            </button>
+                            <button 
+                                type="button" 
+                                className="btn btn-outline-primary rounded-5 w-100" 
+                                data-bs-dismiss="modal"
+                            >
+                                Anuluj
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

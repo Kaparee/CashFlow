@@ -232,8 +232,8 @@ const Accounts: React.FC = () => {
 
                 {!isLoading && accounts.map((acc, index) => (
                     <div key={index} className="col-sm-6 col-md-4 col-lg-3 col-xl-3 mb-4 mb-sm-3 h-100">
-                        <div className={`d-flex flex-column justify-content-between border ${sDashboard.borderDarkEmphasis} ${sDashboard.bgDarkSecondary} ${sDashboard.textDarkSecondary} ${sDashboard.shadowDarkAccentPrimaryHover} ${sDashboard.squareBox} rounded-5 p-3 text-center h-100 ${sDashboard.shadowDark}`}>
-                            <div className={`bi ${acc.photoUrl ? acc.photoUrl : 'bi-coin' } fs-1`}></div>
+                        <div className={`d-flex flex-column justify-content-between border ${sDashboard.borderDarkEmphasis} ${sDashboard.bgDarkSecondary} ${sDashboard.textDarkSecondary} ${sDashboard.shadowDarkHover} ${sDashboard.squareBox} rounded-5 p-3 text-center h-100 $`} style={{borderStyle: 'solid', transition: 'all 0.3s ease', transform: 'scale(1)'}} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'} onClick={() => openOptionsModal(acc)} role='button'>
+                            <div className={`bi ${acc.photoUrl ? acc.photoUrl : 'bi-coin' } fs-1 mt-5`}></div>
                             <div>
                                 <h5 className={sDashboard.textDarkPrimary}>{acc.name}</h5>
                                 <p className="text-gradient fw-bold fs-4">
@@ -255,7 +255,7 @@ const Accounts: React.FC = () => {
                     </div>
                 ))}
                 <div className='col-sm-6 col-md-4 col-lg-3 col-xl-3 mb-4 mb-sm-3 h-100'>
-                    <div className={`d-flex flex-column ${sDashboard.shadowDark} border ${sDashboard.borderDarkEmphasis} ${sDashboard.shadowDarkAccentPrimaryHover} ${sDashboard.squareBox} rounded-5 p-3 text-center h-100 justify-content-center align-items-center point ${sDashboard.bgDarkSecondary} ${sDashboard.textDarkPrimary}`} onClick={() => handleAddAccount()} role="button" tabIndex={0}>
+                    <div className={`d-flex flex-column ${sDashboard.shadowDark} border ${sDashboard.borderDarkEmphasis} ${sDashboard.shadowDarkHover} ${sDashboard.squareBox} rounded-5 p-3 text-center h-100 justify-content-center align-items-center point ${sDashboard.bgDarkSecondary} ${sDashboard.textDarkPrimary}`} style={{borderStyle: 'solid', transition: 'all 0.3s ease', transform: 'scale(1)'}} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'} onClick={() => handleAddAccount()} role="button" tabIndex={0}>
                         <div className='fs-5'>
                             Dodaj Konto
                         </div>

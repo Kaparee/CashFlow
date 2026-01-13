@@ -48,10 +48,19 @@ const Notifications: React.FC = () => {
                 )
             );
         } catch (error: any) {
-            console.log(error)
             addToast('Nie udało się oznaczyć powiadomienia', 'error');
         }
     };
+
+    const markAllAsRead = async () => {
+        try { 
+            await api.patch('/set-notification-status-read-for-all-unread')
+            addToast('Powiadomienia odznaczone', 'info');
+            fetchNotifications();
+        } catch (error: any) {
+            addToast('Nie udało się oznaczyć powiadomień', 'error');
+        }
+    }
 
     const deleteNotification = async (notificationId: number) => {
         try {
@@ -61,7 +70,6 @@ const Notifications: React.FC = () => {
             setNotifications(prev =>
                 prev.filter(n => n.notificationId !== notificationId)
             );
-            addToast('Powiadomienie usunięte', 'info');
         } catch (error: any) {
             addToast('Nie udało się usunąć powiadomienia', 'error');
         }
@@ -98,6 +106,10 @@ const Notifications: React.FC = () => {
                         >
                             Nieprzeczytane ({unreadCount})
                         </button>
+                    </div>
+
+                    <div>
+                        <button className={`btn btn-sm btn-primary rounded-5`} onClick={() => markAllAsRead()}>Oznacz wszystkie jako przeczytane</button>
                     </div>
                 </div>
 

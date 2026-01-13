@@ -39,9 +39,9 @@ const EditUserForm: React.FC<EditUserFormProps> = ({isLoading, editFunction, use
             err.newNickname = 'Proszę wpisać nowy nickname'
         }
 
-        if (formData.newPhotoUrl.trim().length == 0) {
-            err.newPhotoUrl = 'Proszę wprowadzic nowe zdjecie'
-        }
+        // if (formData.newPhotoUrl.trim().length == 0) {
+        //     err.newPhotoUrl = 'Proszę wprowadzic nowe zdjecie'
+        // }
             
         setErrors(err);
         
