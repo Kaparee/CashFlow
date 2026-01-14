@@ -15,10 +15,9 @@ namespace CashFlow.Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IKeyWordRepository _keyWordRepository;
         private readonly ITransactionService _transactionService;
-        private readonly IUserRepository _userRepository;
         private readonly INotificationService _notificationService;
 
-        public RecTransactionService(IRecTransactionRepository recTransactionRepository, ITransactionRepository transactionRepository, IAccountRepository accountRepository, IEmailService emailService, IUnitOfWork unitOfWork, IKeyWordRepository keyWordRepository, ITransactionService transactionService, IUserRepository userRepository, INotificationService notificationService)
+        public RecTransactionService(IRecTransactionRepository recTransactionRepository, ITransactionRepository transactionRepository, IAccountRepository accountRepository, IEmailService emailService, IUnitOfWork unitOfWork, IKeyWordRepository keyWordRepository, ITransactionService transactionService, INotificationService notificationService)
         {
             _recTransactionRepository = recTransactionRepository;
             _transactionRepository = transactionRepository;
@@ -27,7 +26,6 @@ namespace CashFlow.Application.Services
             _unitOfWork = unitOfWork;
             _keyWordRepository = keyWordRepository;
             _transactionService = transactionService;
-            _userRepository = userRepository;
             _notificationService = notificationService;
         }
 
@@ -186,7 +184,7 @@ namespace CashFlow.Application.Services
                 await dbTransaction.RollbackAsync();
                 throw;
             }
-}
+        }
 
         public async Task ProcessPendingTransactionsAsync()
         {
@@ -234,7 +232,7 @@ namespace CashFlow.Application.Services
                     await _recTransactionRepository.UpdateAsync(recTransactionPending);
                     await dbTransaction.CommitAsync();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     await dbTransaction.RollbackAsync();
                     Console.WriteLine(ex);

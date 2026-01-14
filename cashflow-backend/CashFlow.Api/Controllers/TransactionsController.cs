@@ -32,7 +32,7 @@ namespace CashFlow.Api.Controllers
             var transactionsDto = await _transactionService.GetAccountTransactionsAsync(CurrentUserId, accountId);
             return Ok(transactionsDto);
         }
-        
+
         [HttpPost]
         [Route("create-new-transaction")]
         public async Task<IActionResult> CreateNewTransaction([FromBody] NewTransactionRequest request)
@@ -48,7 +48,7 @@ namespace CashFlow.Api.Controllers
                 {
                     return Conflict(new { message = ex.Message });
                 }
-                if(ex.Message.Contains("is required to"))
+                if (ex.Message.Contains("is required to"))
                 {
                     return Conflict(new { message = ex.Message });
                 }
@@ -67,7 +67,7 @@ namespace CashFlow.Api.Controllers
             }
             catch (Exception ex)
             {
-                if(ex.Message.Contains("Transaction not found"))
+                if (ex.Message.Contains("Transaction not found"))
                 {
                     return NotFound();
                 }
@@ -97,9 +97,9 @@ namespace CashFlow.Api.Controllers
         [HttpGet]
         [Route("category-analytics")]
         public async Task<ActionResult<List<CategoryAnalyticsResponse>>> GetCategoryAnalytics([FromQuery] DateTime startDate, [FromQuery] DateTime endDate, [FromQuery] string type)
-        { 
-                var categoryAnalyticsDto = await _transactionService.GetCategoryAnalyticsAsync(CurrentUserId, startDate, endDate, type);
-                return Ok(categoryAnalyticsDto);
+        {
+            var categoryAnalyticsDto = await _transactionService.GetCategoryAnalyticsAsync(CurrentUserId, startDate, endDate, type);
+            return Ok(categoryAnalyticsDto);
         }
 
         [HttpGet]

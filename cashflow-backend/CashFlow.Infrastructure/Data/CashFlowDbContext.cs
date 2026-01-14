@@ -121,8 +121,6 @@ namespace CashFlow.Infrastructure.Data
                 .HasForeignKey(l => l.AccountId)
                 .IsRequired();
             base.OnModelCreating(modelBuilder);
-
-
         }
     }
 }
