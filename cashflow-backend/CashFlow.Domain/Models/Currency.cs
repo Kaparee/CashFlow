@@ -13,10 +13,10 @@ namespace CashFlow.Domain.Models
         [Required]
         [Column("name")]
         public required string Name { get; set; }
-        
+
         [Column("symbol")]
         public string? Symbol { get; set; }
-        
+
         [Column("rate_to_base")]
         public decimal RateToBase { get; set; }
 

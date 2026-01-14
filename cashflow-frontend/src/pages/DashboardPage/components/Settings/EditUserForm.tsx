@@ -1,8 +1,7 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import sDashboard from '../../DashboardPage.module.css'
 import { ToastContext } from "../../../../contexts/ToastContext";
 import Input from "../../../../components/UI/Input/Input";
-import { AuthContext } from "../../../../contexts/AuthContext";
 import type { User } from '../../../../types/user'
 
 interface FormDataProps {
@@ -40,9 +39,9 @@ const EditUserForm: React.FC<EditUserFormProps> = ({isLoading, editFunction, use
             err.newNickname = 'Proszę wpisać nowy nickname'
         }
 
-        if (formData.newPhotoUrl.trim().length == 0) {
-            err.newPhotoUrl = 'Proszę wprowadzic nowe zdjecie'
-        }
+        // if (formData.newPhotoUrl.trim().length == 0) {
+        //     err.newPhotoUrl = 'Proszę wprowadzic nowe zdjecie'
+        // }
             
         setErrors(err);
         
@@ -94,7 +93,7 @@ const EditUserForm: React.FC<EditUserFormProps> = ({isLoading, editFunction, use
                     <Input divClass={sDashboard.textDarkSecondary} inputClass={`${sDashboard.textDarkPrimary} ${sDashboard.bgDarkPrimary} ${sDashboard.borderDarkEmphasis} ${sDashboard.borderDarkFocusAccent}`} id='newFirstName' name='newFirstName' label='Nowe imię' type='text' value={formData.newFirstName} onChange={handleChange} error={errors.newFirstName} />
                     <Input divClass={sDashboard.textDarkSecondary} inputClass={`${sDashboard.textDarkPrimary} ${sDashboard.bgDarkPrimary} ${sDashboard.borderDarkEmphasis} ${sDashboard.borderDarkFocusAccent}`} id='newLastName' name='newLastName' label='Nowe nazwisko' type='text' value={formData.newLastName} onChange={handleChange} error={errors.newLastName} />
                     <Input divClass={sDashboard.textDarkSecondary} inputClass={`${sDashboard.textDarkPrimary} ${sDashboard.bgDarkPrimary} ${sDashboard.borderDarkEmphasis} ${sDashboard.borderDarkFocusAccent}`} id='newNickname' name='newNickname' label='Nowy nickname' type='text' value={formData.newNickname} onChange={handleChange} error={errors.newNickname} />
-                    <Input divClass={sDashboard.textDarkSecondary} inputClass={`${sDashboard.textDarkPrimary} ${sDashboard.bgDarkPrimary} ${sDashboard.borderDarkEmphasis} ${sDashboard.borderDarkFocusAccent}`} id='newPhotoUrl' name='newPhotoUrl' label='Nowy obrazek' type='text' value={formData.newPhotoUrl} onChange={handleChange} error={errors.newPhotoUrl} />
+                    {/* <Input divClass={sDashboard.textDarkSecondary} inputClass={`${sDashboard.textDarkPrimary} ${sDashboard.bgDarkPrimary} ${sDashboard.borderDarkEmphasis} ${sDashboard.borderDarkFocusAccent}`} id='newPhotoUrl' name='newPhotoUrl' label='Nowy obrazek' type='text' value={formData.newPhotoUrl} onChange={handleChange} error={errors.newPhotoUrl} /> */}
                 </div>
             </div>
             <div className="modal-footer justify-content-center border-0">

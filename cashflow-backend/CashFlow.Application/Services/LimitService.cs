@@ -21,13 +21,13 @@ namespace CashFlow.Application.Services
 
         public async Task CreateNewLimitAsync(int userId, NewLimitRequest request)
         {
-            if(request.EndDate < request.StartDate)
+            if (request.EndDate < request.StartDate)
             {
                 throw new Exception("End date can not be earlier than the start date");
             }
 
             var userCategory = await _categoryRepository.GetUserCategoriesWithDetailsAsync(userId);
-            if(!userCategory.Any(c => c.CategoryId == request.CategoryId))
+            if (!userCategory.Any(c => c.CategoryId == request.CategoryId))
             {
                 throw new Exception("Category does not exist or is not your");
             }
@@ -39,7 +39,8 @@ namespace CashFlow.Application.Services
                 Value = (decimal)request.Value!,
                 Description = request.Description!,
                 StartDate = (DateTime)request.StartDate!,
-                EndDate = (DateTime)request.EndDate!
+                EndDate = (DateTime)request.EndDate!,
+                AccountId = (int)request.AccountId!
             };
             await _limitRepository.AddAsync(newLimit);
         }

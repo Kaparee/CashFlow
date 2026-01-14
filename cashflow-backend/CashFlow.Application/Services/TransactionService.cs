@@ -30,9 +30,9 @@ namespace CashFlow.Application.Services
             _currencyService = currencyService;
         }
 
-        public async Task CreateNewTransactionAsync(int userId, NewTransactionRequest request)
+        public async Task CreateNewTransactionAsync(int userId, NewTransactionRequest request, bool useTransaction = true)
         {
-            using var dbTransaction = await _unitOfWork.BeginTransactionAsync();
+            using var dbTransaction = useTransaction ? await _unitOfWork.BeginTransactionAsync() : null;
             try
             {
                 if (request.CategoryId == null)
@@ -94,7 +94,7 @@ namespace CashFlow.Application.Services
 
                 if (transactionType == "expense")
                 {
-                    var categoryId = request.CategoryId.Value;
+                    var categoryId = newTransaction.CategoryId;
                     var limits = await _limitRepository.GetLimitsForCategoryAsync(categoryId);
 
                     foreach (var limit in limits)
@@ -121,14 +121,20 @@ namespace CashFlow.Application.Services
                         }
                     }
                 }
-                await dbTransaction.CommitAsync();
+                if (dbTransaction != null)
+                {
+                    await dbTransaction.CommitAsync();
+                }
             }
             catch
             {
-                await dbTransaction.RollbackAsync();
+                if (dbTransaction != null)
+                {
+                    await dbTransaction.RollbackAsync()!;
+                }
                 throw;
             }
-		}
+        }
 
         public async Task<List<TransactionResponse>> GetAccountTransactionsAsync(int userId, int accountId)
         {
@@ -252,7 +258,8 @@ namespace CashFlow.Application.Services
                 rates[code] = await _currencyService.GetExchangeRateAsync(code, "PLN");
             }
 
-            var normalizedTransactions = transactions.Select(t => new {
+            var normalizedTransactions = transactions.Select(t => new
+            {
                 t.Category,
                 AmountInPLN = t.Amount * (rates.ContainsKey(t.Account.CurrencyCode) ? rates[t.Account.CurrencyCode] : 1.0m)
             }).ToList();
@@ -289,7 +296,8 @@ namespace CashFlow.Application.Services
             }
 
             var analytics = transactions
-                .Select(t => new {
+                .Select(t => new
+                {
                     t.Date,
                     t.Type,
                     AmountInPLN = t.Amount * (rates.ContainsKey(t.Account.CurrencyCode) ? rates[t.Account.CurrencyCode] : 1.0m)

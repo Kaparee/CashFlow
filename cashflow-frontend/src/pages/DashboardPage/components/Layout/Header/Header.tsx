@@ -1,9 +1,9 @@
 import React, { useContext, useEffect } from "react";
-import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import { useWindowWidth } from "../../../../../hooks/useWindowWidth";
 import s from './Header.module.css'
 import sDashboard from '../../../DashboardPage.module.css'
-import { AccountContext, useAccount } from "../../../contexts/AccountContext";
+import { useAccount } from "../../../contexts/AccountContext";
 import { AuthContext } from "../../../../../contexts/AuthContext";
 
 interface HeaderProps {
@@ -11,16 +11,11 @@ interface HeaderProps {
     onToggle: () => void;   
 }
 
-const Header: React.FC<HeaderProps> = ({isExpanded, onToggle}) => {
+const Header: React.FC<HeaderProps> = ({onToggle}) => {
     const { logout } = useContext(AuthContext);
     const { account } = useAccount()
     const [ searchParams, setSearchParams ] = useSearchParams();
     const viewMode = searchParams.get('type') || 'expense';
-    const navigate = useNavigate();
-
-    const routeChange = (path: string) => {
-        navigate(path);
-    }
 
     useEffect(() => {
         setSearchParams({type: 'expense'});
@@ -32,7 +27,7 @@ const Header: React.FC<HeaderProps> = ({isExpanded, onToggle}) => {
     const width = useWindowWidth();
 
     return (
-        <>
+        <div className={`w-100 py-2 px-4`}>
             <div className={`d-flex align-items-center justify-content-center py-1 px-2 px-md-1 position-relative z-1 ${sDashboard.shadowDark} ${sDashboard.bgDarkSecondary}`}>
                 <div className={`col-auto ${width >= 768 ? 'd-none' : ''}`}>
                     <button className={`btn px-0 py-0 border-0 ${sDashboard.bgDarkSecondary}`} type="button" onClick={onToggle}>
@@ -54,12 +49,12 @@ const Header: React.FC<HeaderProps> = ({isExpanded, onToggle}) => {
                 
                 </div>
 
-                <div className={`col-auto text-end`}>
+                <div className={`col-auto text-end d-flex gap-3`}>
                     <button className={`btn btn-outline-primary px-2 py-1 rounded-4 fs-small ${sDashboard.btnDarkOutlineAccentPrimary}`} type="button" onClick={logout}>Wyloguj</button>
                 </div>    
                     
             </div>
-        </>
+        </div>
     );
 }
 

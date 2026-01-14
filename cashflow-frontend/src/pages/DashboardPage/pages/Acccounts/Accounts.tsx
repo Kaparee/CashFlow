@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import sDashboard from '../../DashboardPage.module.css';
 import s from './Accounts.module.css'
-import {useAccount, AccountContextProps } from '../../contexts/AccountContext';
+import {useAccount, type AccountContextProps } from '../../contexts/AccountContext';
 import api from '../../../../api/api';
 import { ToastContext } from '../../../../contexts/ToastContext';
 import Input from '../../../../components/UI/Input/Input';
@@ -30,11 +30,25 @@ const Accounts: React.FC = () => {
 
     const [isClosing, setIsClosing] = useState<boolean>(false);
 
+    const [ totalBalance, setTotalBalance ] = useState<number>(0);
+
     const {addToast} = useContext(ToastContext);
 
     const navigate = useNavigate();
     const routeChange = (path: string, options?: any) => {
         navigate(path, options);
+    }
+
+    const fetchTotalBalance = async () => {
+        try {
+            setIsLoading(true);
+            const res = await api.get('/total-balance');
+            setTotalBalance(res.data.totalBalance)
+        } catch (error: any) {
+            addToast('Wystąpił błąd przy pobieraniu stanu kont', 'error')
+        } finally {
+            setIsLoading(false);
+        }
     }
 
     const fetchAccounts = async () => {
@@ -51,6 +65,7 @@ const Accounts: React.FC = () => {
 
     useEffect(() => {
         fetchAccounts();
+        fetchTotalBalance();
     }, []);
 
     const handleAddAccount = () => {
@@ -128,7 +143,7 @@ const Accounts: React.FC = () => {
                 return;
             }
             setIsLoading(true);
-            const res = await api.patch('/update-account', {
+            await api.patch('/update-account', {
                 "accountId": accId,
                 "newName": formData.newName,
                 "newPhotoUrl": formData.newPhotoUrl
@@ -193,7 +208,11 @@ const Accounts: React.FC = () => {
 
     return (
         <div className="container-fluid p-4">
-            <h2 className={sDashboard.textDarkPrimary}>Twoje Konta</h2>
+            <div className='d-flex'>
+                <h2 className={sDashboard.textDarkPrimary}>Twoje Konta</h2>
+                <h2 className={`ms-auto ${sDashboard.textDarkPrimary}`}>Balans: <span className={`text-gradient fw-bold`}>{handleCurrencyFormatting(totalBalance, 'PLN')}</span></h2>
+            </div>
+            
             <div className="row mt-4">
                 {isLoading && Array.from({length: 3}).map((_, index) => (
                     <div key={index} className="col-sm-6 col-md-4 col-lg-3 col-xl-3 mb-4 mb-sm-3 h-100">
@@ -213,8 +232,8 @@ const Accounts: React.FC = () => {
 
                 {!isLoading && accounts.map((acc, index) => (
                     <div key={index} className="col-sm-6 col-md-4 col-lg-3 col-xl-3 mb-4 mb-sm-3 h-100">
-                        <div className={`d-flex flex-column justify-content-between border ${sDashboard.borderDarkEmphasis} ${sDashboard.bgDarkSecondary} ${sDashboard.textDarkSecondary} ${sDashboard.shadowDarkAccentPrimaryHover} ${sDashboard.squareBox} rounded-5 p-3 text-center h-100 ${sDashboard.shadowDark}`}>
-                            <div className={`bi ${acc.photoUrl ? acc.photoUrl : 'bi-coin' } fs-1`}></div>
+                        <div className={`d-flex flex-column justify-content-between border ${sDashboard.borderDarkEmphasis} ${sDashboard.bgDarkSecondary} ${sDashboard.textDarkSecondary} ${sDashboard.shadowDarkHover} ${sDashboard.squareBox} rounded-5 p-3 text-center h-100 $`} style={{borderStyle: 'solid', transition: 'all 0.3s ease', transform: 'scale(1)'}} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'} onClick={() => openOptionsModal(acc)} role='button'>
+                            <div className={`bi ${acc.photoUrl ? acc.photoUrl : 'bi-coin' } fs-1 mt-5`}></div>
                             <div>
                                 <h5 className={sDashboard.textDarkPrimary}>{acc.name}</h5>
                                 <p className="text-gradient fw-bold fs-4">
@@ -236,7 +255,7 @@ const Accounts: React.FC = () => {
                     </div>
                 ))}
                 <div className='col-sm-6 col-md-4 col-lg-3 col-xl-3 mb-4 mb-sm-3 h-100'>
-                    <div className={`d-flex flex-column ${sDashboard.shadowDark} border ${sDashboard.borderDarkEmphasis} ${sDashboard.shadowDarkAccentPrimaryHover} ${sDashboard.squareBox} rounded-5 p-3 text-center h-100 justify-content-center align-items-center point ${sDashboard.bgDarkSecondary} ${sDashboard.textDarkPrimary}`} onClick={() => handleAddAccount()} role="button" tabIndex={0}>
+                    <div className={`d-flex flex-column ${sDashboard.shadowDark} border ${sDashboard.borderDarkEmphasis} ${sDashboard.shadowDarkHover} ${sDashboard.squareBox} rounded-5 p-3 text-center h-100 justify-content-center align-items-center point ${sDashboard.bgDarkSecondary} ${sDashboard.textDarkPrimary}`} style={{borderStyle: 'solid', transition: 'all 0.3s ease', transform: 'scale(1)'}} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'} onClick={() => handleAddAccount()} role="button" tabIndex={0}>
                         <div className='fs-5'>
                             Dodaj Konto
                         </div>

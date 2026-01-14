@@ -18,7 +18,7 @@ interface AuthPriovider {
     children: React.ReactNode;
 }
 
-export const AuthContext = React.createContext<AuthContextType>({user: null, isAuthenticated: false, isLoading: false, login: (token: string, userData: User, path?: string) => {}, logout: () => {}, refreshUser: async () => {}});
+export const AuthContext = React.createContext<AuthContextType>({user: null, isAuthenticated: false, isLoading: false, login: (_token: string, _userData: User, _path?: string) => {}, logout: () => {}, refreshUser: async () => {}});
 
 const AuthProvider: React.FC<AuthPriovider> = ({children}) => {
     const { addToast } = useContext(ToastContext);

@@ -78,7 +78,7 @@ namespace CashFlow.Api.Controllers
                 }
                 throw;
             }
-            
+
         }
 
         [HttpGet]
@@ -91,9 +91,9 @@ namespace CashFlow.Api.Controllers
                 await _userService.VerifyEmailAsync(verificationToken);
                 return Ok("Poprawnie zweryfikowano!");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                if(ex.Message.Contains("Invalid token"))
+                if (ex.Message.Contains("Invalid token"))
                 {
                     return NotFound();
                 }

@@ -86,7 +86,7 @@ const AccountCreator: React.FC = () => {
         const handleAddAccount = async () => {
             try{
                 setIsSending(true);
-                const res = await api.post('/create-new-account',{
+                await api.post('/create-new-account',{
                     "name": formData['name'],
                     "balance": parseFloat(parseFloat(formData['balance']).toFixed(2)),
                     "currencyCode": formData['currency'],

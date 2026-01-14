@@ -4,10 +4,9 @@ import sDashboard from '../../DashboardPage.module.css'
 import SidebarControl from '../../components/HomePage/SidebarControl/SidebarControl';
 import MainDisplay from '../../components/HomePage/MainDisplay/MainDisplay';
 import { useSearchParams } from 'react-router-dom';
-import { format, startOfDay, endOfDay, startOfWeek, endOfWeek, startOfYear, endOfYear, startOfMonth, endOfMonth, addDays, subDays, addWeeks, subWeeks, addMonths, subMonths, addYears, subYears, differenceInDays, formatDate} from 'date-fns'
-import { pl } from 'date-fns/locale';
+import { format, startOfDay, endOfDay, startOfWeek, endOfWeek, startOfYear, endOfYear, startOfMonth, endOfMonth, addDays, addWeeks, addMonths, addYears, differenceInDays} from 'date-fns'
 import { useTransactions } from '../../hooks/useTransactions';
-import { AccountContext, useAccount } from '../../contexts/AccountContext';
+import { useAccount } from '../../contexts/AccountContext';
 import api from '../../../../api/api';
 import { ToastContext } from '../../../../contexts/ToastContext';
 import Input from '../../../../components/UI/Input/Input';
@@ -64,6 +63,22 @@ interface SelectItem {
     dName: string;
 }
 
+export type FrequencyType = 'daily' | 'weekly' | 'monthly' | 'yearly';
+
+export interface RecurringTransaction {
+    recurringTransactionId: number;
+    accountId: number;
+    categoryId: number;
+    amount: number;
+    description: string;
+    type: 'expense' | 'income';
+    frequency: FrequencyType;
+    isTrue: boolean;
+    startDate: string;
+    endDate: string;
+    nextPaymentDate: string;
+}
+
 const typeOfCategory = [{dName: 'Przychody', type: 'income', value: 'income'}, {dName: 'Wydatki', type: 'expense', value: 'expense'}]
 
 const DashboardHomePage: React.FC = () => {
@@ -78,6 +93,7 @@ const DashboardHomePage: React.FC = () => {
     const [ isLooking, setIsLooking] = useState<boolean>(true);
     const [ user, setUser] = useState<User>({userId: 0, firstName: "", lastName: "", nickname: "", email: "", photoUrl: "", isActive: true, isAdmin: true, isVerified: true, createdAt: "", updatedAt: ""});
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
+    const [recurringErrors, setRecurringErrors] = useState<{ [key: string]: string }>({});
     const [formData, setFormData] = useState<FormDataProps>({ accountId: account?.accountId, categoryId: "", amount: "", description: "", type: "expense"});
     const {addToast} = useContext(ToastContext);
     const selectedTypeObject = typeOfCategory.find(item => item.value === formData.type);
@@ -87,10 +103,22 @@ const DashboardHomePage: React.FC = () => {
     const categoryDisplayValue = selectedCategory ? selectedCategory.name : 'Wybierz kategorię';
     const modalCloseButtonRef = useRef<HTMLButtonElement | null>(null);
     const modalCloseButtonEditFormRef = useRef<HTMLButtonElement | null>(null);
+    const recurringModalCloseButtonRef = useRef<HTMLButtonElement | null>(null);
     const [selectedTransactionOptions, setSelectedTransactionOptions] = useState<Transaction | null>(null);
     const [isConfirmingDelete, setIsConfirmingDelete] = useState<boolean>(false);
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
     const [isClosing, setIsClosing] = useState<boolean>(false);
+    const [showRecurringModal, setShowRecurringModal] = useState<boolean>(false);
+    const [recurringFormData, setRecurringFormData] = useState({
+        accountId: account?.accountId,
+        categoryId: "",
+        amount: "",
+        description: "",
+        type: "expense" as 'expense' | 'income',
+        frequency: "monthly" as FrequencyType,
+        startDate: format(new Date(), 'yyyy-MM-dd'),
+        endDate: format(addYears(new Date(), 1), 'yyyy-MM-dd')
+    });
 
     useEffect(() => {
         const htmlTag = document.body;
@@ -257,6 +285,48 @@ const DashboardHomePage: React.FC = () => {
         }
     }
 
+    const validateRecurringForm = () => {
+        const err: { [key: string]: string } = {};
+
+        if (recurringFormData.amount.trim().length === 0) {
+            err.amount = 'Proszę wprowadzić kwotę';
+        } else if (!/^[0-9]{1,8}(\.[0-9]{1,2})?$/.test(recurringFormData.amount)) {
+            err.amount = 'Kwota musi być wpisana w formacie 00000.00';
+        }
+
+        if (recurringFormData.type.trim().length === 0) {
+            err.type = 'Proszę wybrać odpowiedni typ transakcji';
+        }
+
+        if (!recurringFormData.categoryId || recurringFormData.categoryId === '0') {
+            err.categoryId = 'Proszę wybrać kategorię';
+        }
+
+        if (!recurringFormData.description.trim()) {
+            err.description = 'Proszę podać opis/nazwę transakcji cyklicznej';
+        }
+
+        if (recurringFormData.description.trim().length > 50) {
+            err.description = 'Opis musi być krótszy niż 50 znaków';
+        }
+
+        if (!recurringFormData.startDate) {
+            err.startDate = 'Proszę wybrać datę rozpoczęcia';
+        }
+
+        if (recurringFormData.endDate && recurringFormData.startDate) {
+            const start = new Date(recurringFormData.startDate);
+            const end = new Date(recurringFormData.endDate);
+            if (end <= start) {
+                err.endDate = 'Data zakończenia musi być późniejsza niż data rozpoczęcia';
+            }
+        }
+
+        setRecurringErrors(err);
+
+        return Object.keys(err).length === 0;
+    };
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLButtonElement>) => {
         const name = e.currentTarget.name as keyof  FormDataProps;
         const {value} = e.currentTarget;
@@ -276,14 +346,47 @@ const DashboardHomePage: React.FC = () => {
         setErrors(remainingErrors);
     }
 
+    const handleRecurringChange = (e: React.ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLButtonElement>) => {
+        const name = e.currentTarget.name;
+        const { value } = e.currentTarget;
+
+        const nextData = { ...recurringFormData, [name]: value };
+
+        if (name === 'type') {
+            nextData.categoryId = '';
+        }
+
+        setRecurringFormData(nextData);
+
+        const { [name]: _ , ...remainingErrors } = recurringErrors;
+        if (name === 'type') {
+            delete remainingErrors.categoryId;
+        }
+        setRecurringErrors(remainingErrors);
+    };
+
     const handleClearFormData = () => {
         setFormData({accountId: account?.accountId, categoryId: "", amount: "", description: "", type: "expense"});
     }
 
+    const handleClearRecurringFormData = () => {
+        setRecurringFormData({
+            accountId: account?.accountId,
+            categoryId: "",
+            amount: "",
+            description: "",
+            type: "expense",
+            frequency: "monthly",
+            startDate: format(new Date(), 'yyyy-MM-dd'),
+            endDate: format(addYears(new Date(), 1), 'yyyy-MM-dd')
+        });
+        setRecurringErrors({});
+    };
+
     const handleAddTransaction = async () => {
         try {
             setIsLooking(true);
-            const res = await api.post('/create-new-transaction', {
+            await api.post('/create-new-transaction', {
                 "accountId": account?.accountId,
                 "categoryId": parseInt(formData.categoryId, 10),
                 "amount": parseFloat(formData.amount),
@@ -309,6 +412,42 @@ const DashboardHomePage: React.FC = () => {
         }
     }
 
+    const frequencyOptions = [
+        { dName: 'Codziennie', value: 'daily' },
+        { dName: 'Co tydzień', value: 'weekly' },
+        { dName: 'Co miesiąc', value: 'monthly' },
+        { dName: 'Co rok', value: 'yearly' }
+    ];
+
+    const handleAddRecurringTransaction = async () => {
+        try {
+            setIsLooking(true);
+            await api.post('/create-new-rec-transaction', {
+                type: recurringFormData.type,
+                name: recurringFormData.description,
+                frequency: recurringFormData.frequency,
+                isTrue: true,
+                startDate: recurringFormData.startDate,
+                endDate: recurringFormData.endDate,
+                accountId: recurringFormData.accountId,
+                categoryId: parseInt(recurringFormData.categoryId, 10),
+                amount: parseFloat(recurringFormData.amount),
+                description: recurringFormData.description,
+                nextPaymentDate: recurringFormData.startDate
+            });
+            
+            addToast('Utworzono transakcję cykliczną', 'info');
+            handleClearRecurringFormData();
+            recurringModalCloseButtonRef.current?.click();
+            handleRefreshData();
+        } catch (error: any) {
+            addToast('Nie udało się utworzyć transakcji cyklicznej', 'error');
+            console.error(error);
+        } finally {
+            setIsLooking(false);
+        }
+    };
+
     const handleValidateForm = (e: React.FormEvent) => {
         e.preventDefault();
     
@@ -320,6 +459,14 @@ const DashboardHomePage: React.FC = () => {
             }
         }
     }
+
+    const handleValidateRecurringForm = (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (validateRecurringForm()) {
+            handleAddRecurringTransaction();
+        }
+    };
 
     const handleFetchCategories = async () => {
         try {
@@ -357,6 +504,17 @@ const DashboardHomePage: React.FC = () => {
             amount: parsedValue.toFixed(2)
         });
     }
+
+    const handleRecurringBalanceFormatting = (str: string) => {
+        const parsedValue = parseFloat(str);
+        if (isNaN(parsedValue)) {
+            return;
+        }
+        setRecurringFormData({
+            ...recurringFormData,
+            amount: parsedValue.toFixed(2)
+        });
+    };
 
     
     const openOptionsModal = (t: Transaction) => {
@@ -419,7 +577,7 @@ const DashboardHomePage: React.FC = () => {
     const handleEditTransaction = async () => {
         try {
             setIsLooking(true);
-            const res = await api.patch('/update-transaction', {
+            await api.patch('/update-transaction', {
                 transactionId: selectedTransactionOptions?.transactionId,
                 accountId: account?.accountId,
                 newCategoryId: parseInt(formData.categoryId,10),
@@ -497,7 +655,7 @@ const DashboardHomePage: React.FC = () => {
                             </div>
                             <div className="modal-body py-0">
                                 <Input id={'amount'} divClass={sDashboard.textDarkSecondary} inputClass={`${sDashboard.textDarkPrimary} ${sDashboard.textDarkSecondary} ${sDashboard.bgDarkPrimary} ${sDashboard.borderDarkEmphasis} ${sDashboard.borderDarkFocusAccent} `} name={'amount'} label={'Kwota'} value={formData.amount} onChange={handleChange} error={errors.amount} onBlur={() => handleBalanceFormatting(formData.amount)} />
-                                <CustomSelect table={typeOfCategory} isLoading={isLooking} label='Typ' name={'type'} selected={displayValue} onChange={handleChange} error={errors.type} />
+                                <CustomSelect table={typeOfCategory} isLoading={isLooking} label='Typ' name={'type'} selected={displayValue} onChange={handleChange} error={errors.type}/>
                                 <CustomSelect table={handleGroupCategories(formData.type)} isLoading={isLooking} label='Kategorie' name={'categoryId'} selected={categoryDisplayValue} onChange={handleChange} error={errors.categoryId} />
                                 <Input id={'description'} divClass={sDashboard.textDarkSecondary} inputClass={`${sDashboard.textDarkPrimary} ${sDashboard.textDarkSecondary} ${sDashboard.bgDarkPrimary} ${sDashboard.borderDarkEmphasis} ${sDashboard.borderDarkFocusAccent} `} name={'description'} label={'Opis'} value={formData.description} onChange={handleChange} error={errors.description} />
                             </div>
@@ -591,6 +749,130 @@ const DashboardHomePage: React.FC = () => {
                             <div className="modal-footer justify-content-center border-0">
                                 <button type="submit" className="btn btn-primary w-100 fw-bold rounded-5" disabled={isLooking || isLoading}>Edytuj</button>
                                 <button type="button" className="btn btn-outline-primary rounded-5 w-100" data-bs-dismiss="modal" ref={modalCloseButtonEditFormRef}>Zamknij</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div className="modal fade" id="addRecTransactionModal" tabIndex={-1} aria-labelledby="addRecTransactionModal" aria-hidden="true">
+                <div className="modal-dialog modal-xl modal-dialog-centered">
+                    <div className={`modal-content rounded-5 py-2 px-3 ${sDashboard.bgDarkSecondary} ${sDashboard.shadowDark}`}>
+                        <form onSubmit={handleValidateRecurringForm}>
+                            <div className="modal-header border-0">
+                                <span className={`modal-title fs-5 fw-bold ${sDashboard.textDarkPrimary}`}>
+                                    <i className="bi bi-arrow-repeat me-2"></i>
+                                    Dodawanie transakcji cyklicznej
+                                </span>
+                            </div>
+                            
+                            <div className="modal-body py-0">
+                                <Input 
+                                    id={'rec-amount'} 
+                                    divClass={sDashboard.textDarkSecondary} 
+                                    inputClass={`${sDashboard.textDarkPrimary} ${sDashboard.bgDarkPrimary} ${sDashboard.borderDarkEmphasis} ${sDashboard.borderDarkFocusAccent}`} 
+                                    name={'amount'} 
+                                    label={'Kwota'} 
+                                    value={recurringFormData.amount} 
+                                    onChange={handleRecurringChange}
+                                    error={recurringErrors.amount}
+                                    onBlur={() => handleRecurringBalanceFormatting(recurringFormData.amount)}
+                                />
+
+                                <CustomSelect 
+                                    table={typeOfCategory} 
+                                    isLoading={isLooking} 
+                                    label='Typ' 
+                                    name={'type'} 
+                                    selected={typeOfCategory.find(t => t.value === recurringFormData.type)?.dName || ''} 
+                                    onChange={handleRecurringChange}
+                                    error={recurringErrors.type}
+                                />
+
+                                <CustomSelect 
+                                    table={handleGroupCategories(recurringFormData.type)} 
+                                    isLoading={isLooking} 
+                                    label='Kategoria' 
+                                    name={'categoryId'} 
+                                    selected={categories.find(c => c.categoryId === Number(recurringFormData.categoryId))?.name || 'Wybierz kategorię'} 
+                                    onChange={handleRecurringChange}
+                                    error={recurringErrors.categoryId}
+                                />
+
+                                <Input 
+                                    id={'rec-description'} 
+                                    divClass={sDashboard.textDarkSecondary} 
+                                    inputClass={`${sDashboard.textDarkPrimary} ${sDashboard.bgDarkPrimary} ${sDashboard.borderDarkEmphasis} ${sDashboard.borderDarkFocusAccent}`} 
+                                    name={'description'} 
+                                    label={'Opis (nazwa transakcji cyklicznej)'} 
+                                    value={recurringFormData.description} 
+                                    onChange={handleRecurringChange}
+                                    error={recurringErrors.description}
+                                />
+
+                                <CustomSelect 
+                                    table={frequencyOptions} 
+                                    isLoading={isLooking} 
+                                    label='Częstotliwość' 
+                                    name={'frequency'} 
+                                    selected={frequencyOptions.find(f => f.value === recurringFormData.frequency)?.dName || ''} 
+                                    onChange={handleRecurringChange}
+                                />
+
+                                <div className="mb-3">
+                                    <label className={`form-label fw-bold small ${sDashboard.textDarkSecondary}`}>
+                                        Data rozpoczęcia
+                                    </label>
+                                    <input
+                                        type="date"
+                                        name="startDate"
+                                        className={`form-control rounded-4 ${sDashboard.bgDarkPrimary} ${sDashboard.textDarkPrimary} ${sDashboard.borderDarkEmphasis} ${recurringErrors.startDate ? 'is-invalid' : ''}`}
+                                        value={recurringFormData.startDate}
+                                        onChange={handleRecurringChange}
+                                    />
+                                    {recurringErrors.startDate && (
+                                        <div className="invalid-feedback d-block">
+                                            {recurringErrors.startDate}
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="mb-3">
+                                    <label className={`form-label fw-bold small ${sDashboard.textDarkSecondary}`}>
+                                        Data zakończenia (opcjonalna)
+                                    </label>
+                                    <input
+                                        type="date"
+                                        name="endDate"
+                                        className={`form-control rounded-4 ${sDashboard.bgDarkPrimary} ${sDashboard.textDarkPrimary} ${sDashboard.borderDarkEmphasis} ${recurringErrors.endDate ? 'is-invalid' : ''}`}
+                                        value={recurringFormData.endDate}
+                                        onChange={handleRecurringChange}
+                                        min={recurringFormData.startDate}
+                                    />
+                                    {recurringErrors.endDate && (
+                                        <div className="invalid-feedback d-block">
+                                            {recurringErrors.endDate}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="modal-footer justify-content-center border-0">
+                                <button 
+                                    type="submit" 
+                                    className="btn btn-primary w-100 fw-bold rounded-5" 
+                                    disabled={isLooking || isLoading}
+                                >
+                                    <i className="bi bi-arrow-repeat me-2"></i>
+                                    Utwórz transakcję cykliczną
+                                </button>
+                                <button 
+                                    type="button" 
+                                    className="btn btn-outline-primary rounded-5 w-100" 
+                                    data-bs-dismiss="modal"
+                                    ref={recurringModalCloseButtonRef}
+                                >
+                                    Anuluj
+                                </button>
                             </div>
                         </form>
                     </div>

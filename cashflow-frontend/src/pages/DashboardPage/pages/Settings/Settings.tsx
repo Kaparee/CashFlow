@@ -72,7 +72,7 @@ const Settings: React.FC = () => {
     const handleDeleteAccount = async () => {
         try {
             setIsLoading(true);
-            const res = await api.delete('/delete-user');
+            await api.delete('/delete-user');
             addToast('Pomyślnie usunięto konto użytkownika', 'info')
             logout();
         } catch (error: any) {
@@ -85,11 +85,11 @@ const Settings: React.FC = () => {
     const handleEditAccount = async (dataPack : EditDataFromProps) => {
         try {
             setIsLoading(true);
-            const res = await api.patch('/update-user', {
+            await api.patch('/update-user', {
                 newFirstName: dataPack.newFirstName,
                 newLastName: dataPack.newLastName,
                 newNickname: dataPack.newNickname,
-                newPhotoUrl: dataPack.newPhotoUrl
+                newPhotoUrl: 'default_user_url'
             })
             await refreshUser();
             addToast('Pomyślnie edytowano dane', 'info')

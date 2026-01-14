@@ -22,7 +22,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isExpanded, onToggle}) => {
 
     const width = useWindowWidth(); 
 
-    const sidebarStyle = width >= 768 
+    const sidebarStyle: React.CSSProperties = width >= 768 
     ? { 
         width: isExpanded ? '200px' : '60px', 
         transition: 'width 0.3s' 

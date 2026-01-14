@@ -1,10 +1,6 @@
-import React, { useEffect } from 'react'
-import s from './MainDisplay.module.css'
+import React from 'react'
 import sDashboard from '../../../DashboardPage.module.css'
 import { PieChart } from '@mui/x-charts/PieChart';
-import {valueFormatter } from './webUsageStats';
-import { useWindowWidth } from '../../../../../hooks/useWindowWidth';
-import Button from '@mui/material/Button';
 
 interface KeyWords {
     wordId: number;
@@ -48,9 +44,7 @@ interface MainDisplayProps {
 
 const emptyPiePlaceholder = [{ id: 0, value: 1, color: '#121212', label: '' }];
 
-const MainDisplay: React.FC<MainDisplayProps> = ({transactions, isLoading, date, currency, pieData, showModal}) => {
-
-    const width = useWindowWidth();
+const MainDisplay: React.FC<MainDisplayProps> = ({transactions, isLoading, currency, pieData, showModal}) => {
 
     const getContrastColor = (hexColor: string): 'white' | 'black' => {
         const cleanHex = hexColor.replace('#','');
@@ -87,9 +81,8 @@ const MainDisplay: React.FC<MainDisplayProps> = ({transactions, isLoading, date,
                     margin={{bottom: 25}}
                     slotProps={{ 
                         legend: {
-                            hidden: pieData.length === 0,
-                            position: { vertical: 'bottom', horizontal: 'middle' },
-                            direction: 'row',
+                            position: { vertical: 'bottom', horizontal: 'center' },
+                            direction: 'row' as any,
                         },
                         tooltip: { trigger: pieData.length > 0 ? 'item' : 'none' }
                     }}
@@ -99,7 +92,10 @@ const MainDisplay: React.FC<MainDisplayProps> = ({transactions, isLoading, date,
                         },
                         "& text": {
                             color: "#DEDEDE !important",
-                        } 
+                        },
+                        "& .MuiPieArc-root": {
+                            stroke: "none",
+                        },
                     }}
                     />
             </div>
@@ -124,7 +120,7 @@ const MainDisplay: React.FC<MainDisplayProps> = ({transactions, isLoading, date,
 
                 {!isLoading && transactions.length > 0 &&
                     <>
-                        {transactions.map((item, index) => (
+                        {transactions.map((item) => (
                             <div key={item.transactionId} className={`my-1`}>
                                 <button className={`btn w-100 py-2 px-3 rounded-5 d-flex align-items-center`} style={{backgroundColor: item.category.color, color: getContrastColor(item.category.color)}} onClick={() => showModal(item)}>
                                     <span className={`me-2`}>

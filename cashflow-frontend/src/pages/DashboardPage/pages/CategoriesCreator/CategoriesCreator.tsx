@@ -1,7 +1,7 @@
 import React, { useState, useContext, useRef, useEffect } from 'react'
 import sDashboard from '../../DashboardPage.module.css'
 import Input from '../../../../components/UI/Input/Input'
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import s from './CategoriesCreator.module.css'
 import { ToastContext } from '../../../../contexts/ToastContext';
 import api from '../../../../api/api';
@@ -12,7 +12,6 @@ interface FormDataProps {
     color: string;
     icon: string;
     type: string;
-    limitAmount?: string;
 }
 
 const expenseCategoryIcons: string[] = ["bi-egg-fried", "bi-cup-hot", "bi-cup-straw", "bi-apple", "bi-cake", "bi-cookie", "bi-basket", "bi-cart", "bi-bag", "bi-shop", "bi-handbag", "bi-car-front", "bi-fuel-pump", "bi-bus-front", "bi-bicycle", "bi-airplane", "bi-train-front", "bi-house", "bi-lightbulb", "bi-droplet", "bi-lightning-charge", "bi-wifi", "bi-thermometer-half", "bi-heart-pulse", "bi-capsule", "bi-bandaid", "bi-hospital", "bi-scissors", "bi-controller", "bi-film", "bi-music-note", "bi-ticket-perforated", "bi-camera", "bi-cash-stack", "bi-credit-card", "bi-bank", "bi-piggy-bank", "bi-wallet2", "bi-gift", "bi-mortarboard"];
@@ -22,9 +21,9 @@ const typeOfCategory = [{dName: 'Przychody', type: 'income', value: 'income'}, {
 const CategoriesCreator: React.FC = () => {
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const navigate = useNavigate();
-    const [formData, setFormData] = useState<FormDataProps>({ name: "", color: "", icon: "", type: "", limitAmount: ""});
+    const [formData, setFormData] = useState<FormDataProps>({ name: "", color: "", icon: "", type: ""});
     const [isSending, setIsSending] = useState<boolean>(false);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isLoading] = useState<boolean>(false);
     const { addToast } = useContext(ToastContext);
     const selectedTypeObject = typeOfCategory.find(item => item.value === formData.type);
     const displayValue = selectedTypeObject ? selectedTypeObject.dName : "";
@@ -42,10 +41,6 @@ const CategoriesCreator: React.FC = () => {
             } else if (formData.name.trim().length > 30) {
                 err.name = 'Nazwa musi być krótsza niż 30 znaków'
             }
-
-            if (/[^0-9]/.test(String(formData.limitAmount))) {
-                err.balance = 'Proszę zostawić opcje pustą albo wpisać limit'
-            }
             
             if (formData.icon.trim().length == 0) {
                 err.icon = 'Proszę wybrać ikonkę'
@@ -56,6 +51,7 @@ const CategoriesCreator: React.FC = () => {
             }
 
             setErrors(err);
+            console.log(err)
     
             if (Object.keys(err).length === 0) {
                 return true;
@@ -81,15 +77,15 @@ const CategoriesCreator: React.FC = () => {
             colorInputRef.current?.click();
         }
 
-        const handleAddAccount = async () => {
+        const handleAddCategory = async () => {
+            console.log("dupa")
             try{
                 setIsSending(true);
-                const res = await api.post('/create-new-category',{
+                await api.post('/create-new-category',{
                     "name": formData['name'],
                     "color": formData['color'],
                     "icon": formData['icon'],
                     "type": formData['type'],
-                    "limitAmount": parseFloat(formData['limitAmount'] || '0')
                 });
                 addToast('Utworzono kategorie', 'info');
                 routeChange('/dashboard/categories');
@@ -104,10 +100,11 @@ const CategoriesCreator: React.FC = () => {
             }
         }
         const handleValidateForm = (e: React.FormEvent) => {
+            console.log(validateForm())
             e.preventDefault();
     
             if (validateForm()) {
-                handleAddAccount();
+                handleAddCategory();
             }
         }
 
@@ -125,11 +122,11 @@ const CategoriesCreator: React.FC = () => {
                         <div className={`fs-3 fw-bold ${sDashboard.textDarkPrimary}`}>Dodaj Kategorie</div>
                         <Input divClass={sDashboard.textDarkSecondary} inputClass={`${sDashboard.textDarkPrimary} ${sDashboard.bgDarkPrimary} ${sDashboard.borderDarkEmphasis} ${sDashboard.borderDarkFocusAccent}`} id='name' name='name' label='Nazwa' type='text' value={formData.name} onChange={handleChange} error={errors.name} />
                         <CustomSelect table={typeOfCategory} isLoading={isLoading} label='Typ' name='type' selected={displayValue} onChange={handleChange} />
-                        <Input divClass={sDashboard.textDarkSecondary} inputClass={`${sDashboard.textDarkPrimary} ${sDashboard.textDarkSecondary} ${sDashboard.bgDarkPrimary} ${sDashboard.borderDarkEmphasis} ${sDashboard.borderDarkFocusAccent} `} id='limitAmount' name='limitAmount' label='Limit' type='text' value={String(formData.limitAmount)} onChange={handleChange} error={errors.balance} />
                         <div className={`fw-bold small form-label ${sDashboard.textDarkSecondary} text-start`}>Kolor</div>
                         <div className='text-start'>
-                            <button type='button' className={`rounded-5 border`} style={{backgroundColor: formData.color || '#3b82f6', height: '40px', width: '80px'}} onClick={handleColorClick}></button>
+                            <button type='button' className={`rounded-5 ${errors.color?'border-danger':'border'}`} style={{backgroundColor: formData.color || '#3b82f6', height: '40px', width: '80px'}} onClick={handleColorClick}></button>
                             <input className='invisible' type="color" ref={colorInputRef} name='color' value={formData.color} onChange={handleChange}/>
+                            <div className="invalid-feedback ps-2 opacity-100">{errors.color ? errors.color : ''}</div>
                         </div>
                         <div className={`fw-bold small form-label ${sDashboard.textDarkSecondary} text-start`}>Ikona</div>
                         <div className='mb-3'>
