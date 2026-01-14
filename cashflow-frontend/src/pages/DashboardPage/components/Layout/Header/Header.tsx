@@ -27,7 +27,7 @@ const Header: React.FC<HeaderProps> = ({onToggle}) => {
     const width = useWindowWidth();
 
     return (
-        <>
+        <div className={`w-100 py-2 px-4`}>
             <div className={`d-flex align-items-center justify-content-center py-1 px-2 px-md-1 position-relative z-1 ${sDashboard.shadowDark} ${sDashboard.bgDarkSecondary}`}>
                 <div className={`col-auto ${width >= 768 ? 'd-none' : ''}`}>
                     <button className={`btn px-0 py-0 border-0 ${sDashboard.bgDarkSecondary}`} type="button" onClick={onToggle}>
@@ -54,7 +54,7 @@ const Header: React.FC<HeaderProps> = ({onToggle}) => {
                 </div>    
                     
             </div>
-        </>
+        </div>
     );
 }
 

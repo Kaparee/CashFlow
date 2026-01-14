@@ -6,7 +6,7 @@
     --accent-primary: #00A676;
     --accent-secondary: #78D36B;
     --border-emphasis: #454545;
-    --shadow-dark: rgba(255, 255, 255, 0.1);
+    --shadow-dark: rgba(255, 255, 255, 0.011);
     --shadow-accent-primary: rgba(0, 166, 118, 0.4);
     --shadow-accent-secondary: rgba(120, 211, 107, 0.4);
     --bs-form-invalid-color: #dc3545;
@@ -83,6 +83,10 @@ a.textDarkPrimary:hover {
     box-shadow: 0 0.5rem 1rem var(--shadow-dark);
 }
 
+.shadowDarkHover:hover {
+    box-shadow: 0 0.5rem 1rem var(--shadow-dark);
+}
+
 .shadowDarkAccentPrimary {
     box-shadow: 0 0.5rem 1rem var(--shadow-accent-primary);
 }
@@ -112,7 +116,7 @@ a.textDarkPrimary:hover {
     .btnDarkOutlinePrimary:hover {
         background: var(--text-primary) !important;
         color: var(--bg-dark-primary) !important;
-        box-shadow: 0 0.5rem 1rem var(--shadow-dark);
+        box-shadow: 0 0 1rem var(--shadow-dark);
     }
 
 .btnDarkOutlineAccentPrimary {
@@ -124,7 +128,7 @@ a.textDarkPrimary:hover {
     .btnDarkOutlineAccentPrimary:hover {
         background: var(--accent-primary) !important;
         color: #fff !important;
-        box-shadow: 0 0.5rem 1rem var(--shadow-accent-primary);
+        box-shadow: 0 0 1rem var(--shadow-accent-primary);
     }
 
 .scrollStyle {

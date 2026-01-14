@@ -92,7 +92,10 @@ const MainDisplay: React.FC<MainDisplayProps> = ({transactions, isLoading, curre
                         },
                         "& text": {
                             color: "#DEDEDE !important",
-                        } 
+                        },
+                        "& .MuiPieArc-root": {
+                            stroke: "none",
+                        },
                     }}
                     />
             </div>

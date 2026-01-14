@@ -51,8 +51,13 @@ const SidebarControl: React.FC<SidebarControlProps> = ({userName, balance, total
                         <input className={`form-control px-3 py-2 rounded-5 ${s.date} ${sDashboard.bgDarkPrimary} ${sDashboard.textDarkSecondary} ${sDashboard.borderDarkEmphasis}`} type="date" value={endDate} onChange={(e) => setEndDate(new Date(e.target.value))} min={startDate}/>
                     </div>
             </div>
-            <div className={`mb-3 px-3 py-2 rounded-5`}>
-                <button className={`btn btn-primary rounded-5 px-5 fs-5 py-2`} data-bs-toggle="modal" data-bs-target="#addTransactionModal">Nowa transakcja</button>
+            <div className={`d-flex align-items-center`}>
+                <div className={`mb-3 px-3 py-2 rounded-5 flex-fill`}>
+                    <button className={`btn btn-primary rounded-5 fs-5 py-2 w-100`} data-bs-toggle="modal" data-bs-target="#addTransactionModal">Nowa transakcja</button>
+                </div>
+                <div className={`mb-3 px-3 py-2 rounded-5 flex-fill`}>
+                    <button className={`btn btn-primary rounded-5 px-5 fs-5 py-2 w-100`} data-bs-toggle="modal" data-bs-target="#addRecTransactionModal">Nowa transakcja cyklliczna</button>
+                </div>
             </div>
         </div>
     );

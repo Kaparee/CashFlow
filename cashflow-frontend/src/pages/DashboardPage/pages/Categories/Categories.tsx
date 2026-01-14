@@ -32,7 +32,6 @@ interface CategoriesTable {
     name: string;
     color: string;
     type: string;
-    limitAmount?: number;
     icon: string;
     keyWords: KeyWords[];
 }
@@ -593,7 +592,6 @@ const Categories: React.FC = () => {
                                 <i className={`bi ${cat.icon} fs-6`}></i>
                             </span>
                             <span className='mx-2'>{cat.name}</span>
-                            {cat.limitAmount && cat.limitAmount > 0 ? <span className={`small`}>Limit: {cat.limitAmount}</span> : ''}
                         </button>
                     </div>
                 ))}
