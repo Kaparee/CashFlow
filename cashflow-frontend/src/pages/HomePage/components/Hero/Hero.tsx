@@ -7,7 +7,7 @@ import AnimatedContent from '../../../../components/UI/ReactBits/AnimatedContent
 const Hero: React.FC = () => {
     return (
         <div id='home-page-home' className={`container-fluid ${s.bgHero} d-flex scroll-mt`}>
-            <div className='d-flex flex-column mt-md-5 px-md-4 col-12 col-xl-6'>
+            <div className='d-flex flex-column px-md-4 col-12 col-xl-6 justify-content-center'>
                 <div>
                     <AnimatedContent
                         distance={100}

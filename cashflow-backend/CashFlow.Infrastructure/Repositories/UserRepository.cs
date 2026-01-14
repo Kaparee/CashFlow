@@ -46,7 +46,7 @@ namespace CashFlow.Infrastructure.Repositories
             .AnyAsync(u => u.Nickname == nickname);
         }
 
-        public async Task<User?> Exists(string emailOrNickname)
+        public async Task<User?> GetUserByEmailOrNicknameAsync(string emailOrNickname)
         {
             var identifier = emailOrNickname.ToLower();
             var user = await _context.Users

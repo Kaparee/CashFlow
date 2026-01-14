@@ -27,6 +27,15 @@ namespace CashFlow.Application.Services
                 Description = transaction.Description,
                 Date = transaction.Date,
                 Type = transaction.Type,
+
+                Category = transaction.Category == null ? null : new CategoryResponse
+                {
+                    CategoryId = transaction.Category.CategoryId,
+                    Name = transaction.Category.Name,
+                    Color = transaction.Category.Color,
+                    Type = transaction.Category.Type,
+                    LimitAmount = transaction.Category.LimitAmount,
+                }
             }).ToList();
         }
     }
