@@ -58,7 +58,7 @@ namespace CashFlow.Application.Services
                 VerifiedAt = null,
             };
 
-            
+
 
             await _userRepository.AddAsync(newUser);
             var backendUrl = _configuration["AppUrls:BackendUrl"];
@@ -74,7 +74,7 @@ namespace CashFlow.Application.Services
 
             if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash)) { throw new Exception("Password is invalid!"); }
 
-            if(!user.IsActive || !user.IsVerified)
+            if (!user.IsActive || !user.IsVerified)
             {
                 throw new Exception("Account is not active or not verified.");
             }
@@ -91,7 +91,7 @@ namespace CashFlow.Application.Services
         {
             var user = await _userRepository.GetUserByIdWithDetailsAsync(userId);
 
-            if(user == null)
+            if (user == null)
             {
                 throw new Exception("User was not found");
             }
@@ -158,7 +158,7 @@ namespace CashFlow.Application.Services
                 await _accountRepository.AddAsync(newAccount);
             }
 
-            foreach(var item in defaultCategories)
+            foreach (var item in defaultCategories)
             {
                 var category = new Category
                 {
@@ -170,7 +170,7 @@ namespace CashFlow.Application.Services
                 };
                 await _categoryRepository.AddAsync(category);
 
-                foreach(var word in item.Keywords)
+                foreach (var word in item.Keywords)
                 {
                     await _keyWordRepository.AddAsync(new KeyWord
                     {
@@ -302,7 +302,7 @@ namespace CashFlow.Application.Services
             await _emailService.SendEmailAsync(user.Email, "Reset Password - CashFlow", "<h1>Your password has been changed, thank you for supporting our project</h1>");
         }
 
-        public async Task RequestEmailChangeAsync(int userId, string newEmail )
+        public async Task RequestEmailChangeAsync(int userId, string newEmail)
         {
             var user = await _userRepository.GetUserByIdWithDetailsAsync(userId);
 
@@ -311,7 +311,7 @@ namespace CashFlow.Application.Services
                 throw new Exception("User not found or access denied.");
             }
 
-            if(await _userRepository.IsEmailTakenAsync(newEmail))
+            if (await _userRepository.IsEmailTakenAsync(newEmail))
             {
                 throw new Exception("This email is already taken.");
             }

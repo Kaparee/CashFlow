@@ -69,7 +69,7 @@ namespace CashFlow.Application.Services
         {
             var notification = await _notificationRepository.GetNotificationByIdWithDetailsAsync(userId, notificationId);
 
-            if(notification == null)
+            if (notification == null)
             {
                 throw new Exception("Notification does not exist or is not your");
             }

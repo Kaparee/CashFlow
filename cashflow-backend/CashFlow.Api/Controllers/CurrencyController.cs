@@ -22,11 +22,4 @@ public class CurrencyController : ControllerBase
         var currencyDto = await _currencyService.GetAllCurrenciesAsync();
         return Ok(currencyDto);
     }
-
-    [HttpPost("sync")]
-    public async Task<IActionResult> SyncCurrencies()
-    {
-        await _currencyService.SyncRatesAsync();
-        return Ok(new { message = "Kursy walut zostały zaktualizowane :)" });
-    }
 }

@@ -134,7 +134,7 @@ namespace CashFlow.Application.Services
                 }
                 throw;
             }
-		}
+        }
 
         public async Task<List<TransactionResponse>> GetAccountTransactionsAsync(int userId, int accountId)
         {
@@ -258,7 +258,8 @@ namespace CashFlow.Application.Services
                 rates[code] = await _currencyService.GetExchangeRateAsync(code, "PLN");
             }
 
-            var normalizedTransactions = transactions.Select(t => new {
+            var normalizedTransactions = transactions.Select(t => new
+            {
                 t.Category,
                 AmountInPLN = t.Amount * (rates.ContainsKey(t.Account.CurrencyCode) ? rates[t.Account.CurrencyCode] : 1.0m)
             }).ToList();
@@ -295,7 +296,8 @@ namespace CashFlow.Application.Services
             }
 
             var analytics = transactions
-                .Select(t => new {
+                .Select(t => new
+                {
                     t.Date,
                     t.Type,
                     AmountInPLN = t.Amount * (rates.ContainsKey(t.Account.CurrencyCode) ? rates[t.Account.CurrencyCode] : 1.0m)
