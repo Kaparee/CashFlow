@@ -77,7 +77,7 @@ const Header: React.FC = () => {
 
                     </div>
                     <div className='col-6 col-md-3 order-2 order-md-3 d-flex align-items-center justify-content-end justify-content-md-center'>
-                        <button onClick={() => routeChange('/login....')} type='button' className='btn btn-primary rounded-5 px-4 py-2'>
+                        <button onClick={() => routeChange('/login')} type='button' className='btn btn-primary rounded-5 px-4 py-2'>
                             Sign in
                         </button>
                     </div>

@@ -3,40 +3,136 @@ using CashFlow.Application.Repositories;
 using CashFlow.Domain.Models;
 using CashFlow.Application.DTO.Requests;
 using CashFlow.Application.DTO.Responses;
-using BCrypt.Net;
 
 namespace CashFlow.Application.Services
 {
     public class AccountService : IAccountService
     {
         private readonly IAccountRepository _accountRepository;
+        private readonly ITransactionRepository _transactionRepository;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly ILimitRepository _limitRepository;
+        private readonly ICurrencyService _currencyService;
 
-        public AccountService(IAccountRepository accountRepository)
+        public AccountService(IAccountRepository accountRepository, ITransactionRepository transactionRepository, IUnitOfWork unitOfWork, ILimitRepository limitRepository, ICurrencyService currencyService)
         {
             _accountRepository = accountRepository;
+            _transactionRepository = transactionRepository;
+            _unitOfWork = unitOfWork;
+            _limitRepository = limitRepository;
+            _currencyService = currencyService;
         }
 
-        public async Task<List<TransactionResponse>> GetAccountTransactions(int userId, int accountId)
+        public async Task<List<AccountResponse>> GetUserAccountsAsync(int userId)
         {
-            var transactions = await _accountRepository.GetAccountTransactionsWithDetailsAsync(userId, accountId);
+            var accounts = await _accountRepository.GetUserAccountsWithDetailsAsync(userId);
 
-            return transactions.Select(transaction => new TransactionResponse
+            if (accounts == null || !accounts.Any())
             {
-                TransactionId = transaction.TransactionId,
-                Amount = transaction.Amount,
-                Description = transaction.Description,
-                Date = transaction.Date,
-                Type = transaction.Type,
+                throw new Exception("User does not have any accounts");
+            }
 
-                Category = transaction.Category == null ? null : new CategoryResponse
-                {
-                    CategoryId = transaction.Category.CategoryId,
-                    Name = transaction.Category.Name,
-                    Color = transaction.Category.Color,
-                    Type = transaction.Category.Type,
-                    LimitAmount = transaction.Category.LimitAmount,
-                }
+            return accounts.Select(account => new AccountResponse
+            {
+                AccountId = account.AccountId!,
+                Name = account.Name!,
+                Balance = account.Balance!,
+                CurrencyCode = account.CurrencyCode!,
+                PhotoUrl = account.PhotoUrl!,
             }).ToList();
+        }
+
+        public async Task CreateNewAccountAsync(int userId, NewAccountRequest request)
+        {
+            var isAccountCreated = await _accountRepository.isAccountCreated(userId!, request.Name!);
+
+            if (isAccountCreated == true)
+            {
+                throw new Exception("Given account name is already created in your profile");
+            }
+
+            var newAccount = new Account
+            {
+                UserId = userId!,
+                Name = request.Name!,
+                Balance = (decimal)request.Balance!,
+                CurrencyCode = request.CurrencyCode!,
+                PhotoUrl = request.PhotoUrl!,
+                IsActive = true,
+            };
+
+            await _accountRepository.AddAsync(newAccount);
+        }
+
+        public async Task DeleteAccountAsync(int userId, int accountId)
+        {
+            using var dbTransaction = await _unitOfWork.BeginTransactionAsync();
+
+            try
+            {
+                var account = await _accountRepository.GetAccountByIdAsync(userId, accountId);
+                var transactions = await _transactionRepository.GetAccountTransactionsWithDetailsAsync(userId, accountId);
+                var limits = await _limitRepository.GetLimitsByAccountIdAsync(accountId);
+
+                if (account == null)
+                {
+                    throw new Exception("Account not found or access denied.");
+                }
+
+                account.IsActive = false;
+                account.DeletedAt = DateTime.UtcNow;
+
+                foreach (var transaction in transactions)
+                {
+                    transaction.DeletedAt = DateTime.UtcNow;
+                }
+
+                foreach (var limit in limits)
+                {
+                    limit.DeletedAt = DateTime.UtcNow;
+                    await _limitRepository.UpdateAsync(limit);
+                }
+
+                await _accountRepository.UpdateAsync(account);
+                await dbTransaction.CommitAsync();
+            }
+            catch
+            {
+                await dbTransaction.RollbackAsync();
+                throw;
+            }
+        }
+
+        public async Task UpdateAccountAsync(int userId, UpdateAccountRequest request)
+        {
+            var account = await _accountRepository.GetAccountByIdAsync(userId, request.AccountId);
+
+            if (account == null)
+            {
+                throw new Exception("Account not found or access denied");
+            }
+
+            account.UpdatedAt = DateTime.UtcNow;
+
+            account.Name = request.NewName;
+            account.PhotoUrl = request.NewPhotoUrl;
+
+            await _accountRepository.UpdateAsync(account);
+        }
+
+        public async Task<decimal> GetTotalBalanceAsync(int userId, string targetCurrency = "PLN")
+        {
+            var accounts = await _accountRepository.GetUserAccountsWithDetailsAsync(userId);
+
+            decimal totalBalance = 0;
+
+            foreach (var account in accounts)
+            {
+                decimal rate = await _currencyService.GetExchangeRateAsync(account.CurrencyCode, targetCurrency);
+                totalBalance += (account.Balance * rate);
+
+            }
+            return Math.Round(totalBalance, 2);
         }
     }
 }

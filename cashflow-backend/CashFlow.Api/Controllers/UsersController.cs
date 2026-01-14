@@ -82,21 +82,131 @@ namespace CashFlow.Api.Controllers
         }
 
         [HttpGet]
-        [Route("accounts-info")]
-        public async Task<ActionResult<AccountResponse>> GetUserAccounts()
+        [Route("verify")]
+        [AllowAnonymous]
+        public async Task<ActionResult> VerifyEmail([FromQuery] string verificationToken)
         {
             try
             {
-                var accountDto = await _userService.GetUserAccounts(CurrentUserId);
-                return Ok(accountDto);
+                await _userService.VerifyEmailAsync(verificationToken);
+                return Ok("Poprawnie zweryfikowano!");
             }
             catch(Exception ex)
             {
-                if(ex.Message.Contains("does not have"))
+                if(ex.Message.Contains("Invalid token"))
                 {
                     return NotFound();
                 }
                 throw;
+            }
+        }
+
+        [HttpDelete]
+        [Route("delete-user")]
+        public async Task<IActionResult> DeleteUser()
+        {
+            try
+            {
+                await _userService.DeleteUserAsync(CurrentUserId);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("User not found"))
+                {
+                    return NotFound();
+                }
+                throw;
+            }
+        }
+
+        [HttpPatch]
+        [Route("update-user")]
+        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserRequest request)
+        {
+            try
+            {
+                await _userService.UpdateUserAsync(CurrentUserId, request);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("User not found"))
+                {
+                    return NotFound();
+                }
+                throw;
+            }
+        }
+
+        [HttpPatch]
+        [Route("modify-password")]
+        public async Task<IActionResult> ModifyPassword([FromBody] ModifyPasswordRequest request)
+        {
+            try
+            {
+                await _userService.ModifyPasswordAsync(CurrentUserId, request);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("request-password-reset")]
+        public async Task<IActionResult> RequestPasswordReset([FromBody] ForgotPasswordRequest request)
+        {
+            await _userService.RequestPasswordResetAsync(request.Email);
+            return Ok(new { message = "If the email is in our system, a reset link has been sent." });
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("confirm-password-reset")]
+        public async Task<IActionResult> ConfirmPasswordReset([FromBody] ResetPasswordRequest request)
+        {
+            try
+            {
+                await _userService.ResetPasswordConfirmAsync(request);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("request-email-change")]
+        public async Task<IActionResult> RequestEmailChange([FromBody] RequestEmailChangeRequest request)
+        {
+            try
+            {
+                await _userService.RequestEmailChangeAsync(CurrentUserId, request.NewEmail);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("confirm-email-change")]
+        public async Task<IActionResult> ConfirmEmailChange([FromBody] ConfirmEmailChangeRequest request)
+        {
+            try
+            {
+                await _userService.EmailChangeConfirmAsync(request.Token);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
             }
         }
     }

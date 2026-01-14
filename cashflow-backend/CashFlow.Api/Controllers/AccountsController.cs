@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace CashFlow.Api.Controllers
 {
     [Authorize]
-    [Route("api/accounts/")]
+    [Route("api/")]
     [ApiController]
     public class AccountsController : ControllerBase
     {
@@ -27,11 +27,94 @@ namespace CashFlow.Api.Controllers
         }
 
         [HttpGet]
-        [Route("{accountId}")]
-        public async Task<ActionResult<TransactionResponse>> GetAccountTransaction(int accountId)
+        [Route("accounts-info")]
+        public async Task<ActionResult<AccountResponse>> GetUserAccounts()
         {
-            var transactionDto = await _accountService.GetAccountTransactions(CurrentUserId, accountId);
-            return Ok(transactionDto);
+            try
+            {
+                var accountDto = await _accountService.GetUserAccountsAsync(CurrentUserId);
+                return Ok(accountDto);
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("does not have"))
+                {
+                    return NotFound();
+                }
+                throw;
+            }
+        }
+
+        [HttpPost]
+        [Route("create-new-account")]
+        public async Task<IActionResult> CreateNewAccount([FromBody] NewAccountRequest request)
+        {
+            try
+            {
+                await _accountService.CreateNewAccountAsync(CurrentUserId, request);
+                return Created();
+            }
+            catch (Exception ex)
+            {
+                if(ex.Message.Contains("Given account name is already created"))
+                {
+                    return Conflict(new { message = ex.Message });
+                }
+                return StatusCode(500, new { message = "An internal server error occured" });
+            }
+        }
+
+        [HttpDelete]
+        [Route("delete-account")]
+        public async Task<IActionResult> DeleteAccount(int accountId)
+        {
+            try
+            {
+                await _accountService.DeleteAccountAsync(CurrentUserId, accountId);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                if(ex.Message.Contains("Account not found"))
+                {
+                    return NotFound();
+                }
+                throw;
+            }
+        }
+
+        [HttpPatch]
+        [Route("update-account")]
+        public async Task<IActionResult> UpdateAccount([FromBody] UpdateAccountRequest request)
+        {
+            try
+            {
+                await _accountService.UpdateAccountAsync(CurrentUserId, request);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("Account not found"))
+                {
+                    return NotFound();
+                }
+                throw;
+            }
+        }
+
+        [HttpGet]
+        [Route("total-balance")]
+        public async Task<ActionResult<decimal>> GetUserTotalBalance([FromQuery] string currency = "PLN")
+        {
+            try
+            {
+                var total = await _accountService.GetTotalBalanceAsync(CurrentUserId, currency);
+                return Ok(new { currency = currency, totalBalance = total });
+            }
+            catch(Exception ex)
+            {
+                return Conflict(new { message = ex.Message });
+            }
         }
     }
 }

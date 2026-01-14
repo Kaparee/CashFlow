@@ -7,22 +7,26 @@ using Microsoft.AspNetCore.Mvc;
 public class CurrencyController : ControllerBase
 {
     private readonly ICurrencyFetcher _currencyFetcher;
+    private readonly ICurrencyService _currencyService;
 
-    public CurrencyController(ICurrencyFetcher currencyFetcher)
+    public CurrencyController(ICurrencyFetcher currencyFetcher, ICurrencyService currencyService)
     {
         _currencyFetcher = currencyFetcher;
+        _currencyService = currencyService;
     }
 
     [HttpGet]
+    [Route("currencies-info")]
     public async Task<ActionResult<IEnumerable<CurrencyResponse>>> GetCurrencies()
     {
-        return null!;
+        var currencyDto = await _currencyService.GetAllCurrenciesAsync();
+        return Ok(currencyDto);
     }
 
-    [HttpPost("NBP")]
-    public async Task<IActionResult> TestNbp()
+    [HttpPost("sync")]
+    public async Task<IActionResult> SyncCurrencies()
     {
-        var rates = await _currencyFetcher.FetchRatesAsync();
-        return Ok(rates);
+        await _currencyService.SyncRatesAsync();
+        return Ok(new { message = "Kursy walut zostały zaktualizowane :)" });
     }
 }

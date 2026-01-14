@@ -1,0 +1,28 @@
+.btnIcons {
+    background-color: transparent;
+    border: 1px  solid var(--border-emphasis) ;
+    color: var(--text-secondary);
+    box-shadow: 0 0.1rem 1rem var(--shadow-dark);
+    transition: all 0.3s ease-in-out;
+}
+
+.btnIcons:hover, .btnIcons:focus, .btnIcons:focus-visible, .btnIcons:focus-within, .selectedIcon {
+    border-color: var(--shadow-accent-primary) ;
+    box-shadow: 0 0.1rem 1rem var(--shadow-accent-primary);
+}
+
+.btnIcons:hover i, .btnIcons:focus i, .btnIcons:focus-visible i, .btnIcons:focus-within i, .selectedIcon i{
+    color: var(--accent-primary);
+}
+
+.dot {
+    color: var(--text-secondary);
+}
+
+.activeDot {
+    color: var(--accent-primary);
+} 
+
+.dotBox {
+    margin-top: -0.8rem;
+}

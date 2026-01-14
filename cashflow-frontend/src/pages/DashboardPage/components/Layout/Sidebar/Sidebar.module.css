@@ -1,0 +1,7 @@
+.w60 {
+    width: 60px !important;
+}
+
+.linkTransition {
+    transition: all 40s ease-in-out;
+}

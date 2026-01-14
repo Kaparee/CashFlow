@@ -1,0 +1,173 @@
+:root {
+    --bg-dark-primary: #121212;
+    --bg-dark-secondary: #171717;
+    --text-primary: #DEDEDE;
+    --text-secondary: #ECECEC;
+    --accent-primary: #00A676;
+    --accent-secondary: #78D36B;
+    --border-emphasis: #454545;
+    --shadow-dark: rgba(255, 255, 255, 0.1);
+    --shadow-accent-primary: rgba(0, 166, 118, 0.4);
+    --shadow-accent-secondary: rgba(120, 211, 107, 0.4);
+    --bs-form-invalid-color: #dc3545;
+    --bs-danger: #dc3545;
+}
+
+.bgDarkPrimary {
+    background-color: var(--bg-dark-primary);
+}
+
+.bgDarkPrimary:focus {
+    background-color: var(--bg-dark-secondary);
+}
+
+.bgDarkSecondary {
+    background-color: var(--bg-dark-secondary);
+}
+
+.bgDarkAccent {
+    background-color: var(--accent-primary);
+}
+
+.alertDarkAccent {
+    background-color: var(--accent-secondary);
+    border: 1px solid var(--accent-primary);
+}
+
+.alertDarkRed {
+    background-color: var(--bs-form-invalid-color);
+    border: 1px solid var(--bs-danger);
+}
+
+.textDarkPrimary, .textDarkPrimary:focus {
+    color: var(--text-primary);
+    transition: all 0.2s ease-in-out;
+}
+a.textDarkPrimary:hover {
+    color: rgba(222, 222, 222, 0.8);
+}
+
+.textDarkSecondary {
+    color: var(--text-secondary);
+}
+
+.textDarkAccentPrimary {
+    color: var(--accent-primary);
+}
+
+.textDarkAccentSecondary {
+    color: var(--text-secondary);
+}
+
+.borderDarkEmphasis {
+    border-color: var(--border-emphasis) !important;
+}
+
+.borderDarkEmphasis:focus {
+    border-color: var(--accent-primary) !important;
+}
+
+.borderDarkAccent {
+    border-color: var(--accent-primary);
+}
+
+.borderDarkAccent:focus {
+    border-color: var(--accent-secondary);
+}
+
+.borderDarkFocusAccent:focus {
+    border-color: var(--accent-primary) !important;
+}
+
+.shadowDark {
+    box-shadow: 0 0.5rem 1rem var(--shadow-dark);
+}
+
+.shadowDarkAccentPrimary {
+    box-shadow: 0 0.5rem 1rem var(--shadow-accent-primary);
+}
+
+.shadowDarkAccentSecondary {
+    box-shadow: 0 0.5rem 1rem var(--shadow-accent-secondary);
+}
+
+.shadowDarkAccentPrimaryHover:hover {
+    box-shadow: 0 0.5rem 1rem var(--shadow-accent-primary);
+}
+
+.shadowDarkAccentSecondaryHover:hover {
+    box-shadow: 0 0.5rem 1rem var(--shadow-accent-secondary);
+}
+
+.shadowDarkAccentPrimaryHover, .shadowDarkAccentSecondaryHover {
+    transition: box-shadow 0.4s ease-in-out;
+}
+
+.btnDarkOutlinePrimary {
+    background-color: transparent !important;
+    color: var(--text-primary) !important;
+    border: 2px solid var(--text-primary) !important;
+    transition: all 0.2s ease-in-out;
+}
+    .btnDarkOutlinePrimary:hover {
+        background: var(--text-primary) !important;
+        color: var(--bg-dark-primary) !important;
+        box-shadow: 0 0.5rem 1rem var(--shadow-dark);
+    }
+
+.btnDarkOutlineAccentPrimary {
+    background-color: transparent !important;
+    color: var(--accent-primary) !important;
+    border: 2px solid var(--accent-primary) !important;
+    transition: all 0.2s ease-in-out;
+}
+    .btnDarkOutlineAccentPrimary:hover {
+        background: var(--accent-primary) !important;
+        color: #fff !important;
+        box-shadow: 0 0.5rem 1rem var(--shadow-accent-primary);
+    }
+
+.scrollStyle {
+    scrollbar-color: #454545 transparent;
+    scrollbar-width: thin;
+    scroll-margin-top: 100rem;
+}
+.scrollStyle:global(::-webkit-scrollbar) {
+    width: 5px;
+}
+
+.scrollStyle:global(::-webkit-scrollbar-thumb) {
+    background-color: #454545;
+}
+
+.scrollStyle:global(::-webkit-scrollbar-thumb:hover) {
+    background-color: #52525b;
+}
+
+.minHeight0 {
+    min-height: 0px;
+}
+
+.textDarkUnderline {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-decoration-color: var(--accent-primary);
+    text-underline-offset: 0.3rem;
+}
+
+.btnDarkOutlinePrimaryActive {
+    background-color: var(--text-primary);
+    color: var(--bg-dark-primary);
+    border: 2px solid var(--text-primary) !important;
+    transition: all 0.2s ease-in-out;
+}
+
+.btnDarkOutlinePrimaryActive:hover {
+    background-color: transparent;
+    color: var(--text-primary);
+    box-shadow: 0 0.5rem 1rem var(--shadow-dark);
+}
+
+.squareBox {
+    aspect-ratio: 1/1;
+}

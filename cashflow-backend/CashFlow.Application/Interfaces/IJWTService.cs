@@ -4,6 +4,6 @@ namespace CashFlow.Application.Interfaces
 {
     public interface IJWTService
     {
-        string GenerateToken(User user);
+        string GenerateTokenAsync(User user);
     }
 }

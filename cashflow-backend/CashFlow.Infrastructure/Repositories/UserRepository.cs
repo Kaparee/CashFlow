@@ -18,14 +18,8 @@ namespace CashFlow.Infrastructure.Repositories
         public async Task<User?> GetUserByIdWithDetailsAsync(int userId)
         {
             return await _context.Users
-            .FirstOrDefaultAsync(u => u.UserId == userId);
-        }
-
-        public async Task<List<Account>> GetUserAccountsWithDetailsAsync(int userId)
-        {
-            return await _context.Accounts
-                .Where(u => u.UserId == userId && u.IsActive == true)
-                .ToListAsync();
+                .Where(x => x.DeletedAt == null)
+                .FirstOrDefaultAsync(u => u.UserId == userId);
         }
 
         public async Task AddAsync(User user)
@@ -50,11 +44,40 @@ namespace CashFlow.Infrastructure.Repositories
         {
             var identifier = emailOrNickname.ToLower();
             var user = await _context.Users
+            .Where(x => x.DeletedAt == null)
             .FirstOrDefaultAsync(u =>
                 (u.Email != null && u.Email.ToLower() == identifier) ||
                 (u.Nickname != null && u.Nickname.ToLower() == identifier)
             );
             return user;
+        }
+
+        public async Task<User?> GetUserByVerificationTokenAsync(string verificationToken)
+        {
+            var user = await _context.Users
+                .Where(x => x.DeletedAt == null)
+                .FirstOrDefaultAsync(u => u.VerificationToken == verificationToken);
+            return user;
+        }
+
+        public async Task UpdateAsync(User user)
+        {
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<User?> GetUserByPasswordResetTokenAsync(string passwordResetToken)
+        {
+            var user = await _context.Users
+                .Where(x => x.DeletedAt == null)
+                .FirstOrDefaultAsync(u => u.PasswordResetToken == passwordResetToken);
+            return user;
+        }
+
+        public async Task<User?> GetUserByEmailChangeTokenAsync(string token)
+        {
+            return await _context.Users
+                .FirstOrDefaultAsync(u => u.EmailChangeToken == token && u.IsActive == true);
         }
     }
 }
