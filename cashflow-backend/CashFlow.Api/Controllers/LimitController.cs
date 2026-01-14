@@ -87,7 +87,7 @@ namespace CashFlow.Api.Controllers
                 {
                     return NotFound();
                 }
-                if(ex.Message.Contains("End date can not be"))
+                if (ex.Message.Contains("End date can not be"))
                 {
                     return Conflict();
                 }

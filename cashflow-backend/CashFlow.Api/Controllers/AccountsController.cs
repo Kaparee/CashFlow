@@ -56,7 +56,7 @@ namespace CashFlow.Api.Controllers
             }
             catch (Exception ex)
             {
-                if(ex.Message.Contains("Given account name is already created"))
+                if (ex.Message.Contains("Given account name is already created"))
                 {
                     return Conflict(new { message = ex.Message });
                 }
@@ -75,7 +75,7 @@ namespace CashFlow.Api.Controllers
             }
             catch (Exception ex)
             {
-                if(ex.Message.Contains("Account not found"))
+                if (ex.Message.Contains("Account not found"))
                 {
                     return NotFound();
                 }
@@ -111,7 +111,7 @@ namespace CashFlow.Api.Controllers
                 var total = await _accountService.GetTotalBalanceAsync(CurrentUserId, currency);
                 return Ok(new { currency = currency, totalBalance = total });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Conflict(new { message = ex.Message });
             }

@@ -42,7 +42,7 @@ namespace CashFlow.Application.Services
         {
             var keyword = await _keyWordRepository.GetUserKeyWordByIdWithDetailsAsync(userId, keyWordId);
 
-            if(keyword == null)
+            if (keyword == null)
             {
                 throw new Exception("Key Word not found or access denied.");
             }

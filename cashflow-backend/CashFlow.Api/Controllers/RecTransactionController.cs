@@ -86,13 +86,5 @@ namespace CashFlow.Api.Controllers
                 throw;
             }
         }
-
-        [HttpPost("trigger-job")]
-        [AllowAnonymous] // Opcjonalnie, ¿ebyœ nie musia³ siê logowaæ do testów joba
-        public async Task<IActionResult> TriggerJob()
-        {
-            await _recTransactionService.ProcessPendingTransactionsAsync();
-            return Ok("Job executed manually.");
-        }
     }
 }

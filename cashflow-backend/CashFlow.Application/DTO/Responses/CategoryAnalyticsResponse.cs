@@ -9,4 +9,3 @@ namespace CashFlow.Application.DTO.Responses
         public required decimal Percentage { get; set; }
     }
 }
-      
