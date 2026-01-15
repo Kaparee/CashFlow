@@ -86,7 +86,8 @@ namespace CashFlow.Application.Services
                     CategoryId = request.CategoryId.Value,
                     Amount = (decimal)request.Amount!,
                     Description = request.Description!,
-                    Type = request.Type!
+                    Type = request.Type!,
+                    Date = request.Date!
                 };
 
                 await _transactionRepository.AddAsync(newTransaction);

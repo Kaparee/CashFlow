@@ -31,7 +31,7 @@ namespace CashFlow.Domain.Models
         public string? Description { get; set; }
 
         [Column("date")]
-        public DateTime Date { get; set; } = DateTime.UtcNow;
+        public DateTime Date { get; set; }
 
         [Required]
         [Column("type")]
