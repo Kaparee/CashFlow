@@ -1,0 +1,11 @@
+.transactionCard {
+    transition: all 0.3s ease;
+}
+
+.transactionCard:hover {
+    transform: translateY(-2px);
+}
+
+.editMode {
+    background-color: rgba(0, 166, 118, 0.05);
+}

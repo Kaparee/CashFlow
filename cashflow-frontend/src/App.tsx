@@ -21,6 +21,7 @@ import '@fontsource/jost/600.css'
 import RequestPasswordReset from './pages/RequestPasswordReset/RequestPasswordReset.tsx';
 import ConfirmPasswordReset from './pages/ConfirmPasswordReset/ConfirmPasswordReset.tsx';
 import ConfirmEmailChange from './pages/ConfirmEmailReset/ConfirmEmailChange.tsx';
+import RecurringTransactions from './pages/DashboardPage/pages/RecurringTransactions/RecurringTransactions.tsx';
 
 const App: React.FC = () => {
     return (
@@ -91,6 +92,7 @@ const App: React.FC = () => {
                             <Route path='/dashboard/account-creator' element={<AccountCreator />} />
                             <Route path='/dashboard/categories' element={<Categories />} />
                             <Route path='/dashboard/categories/create-category' element={<CategoriesCreator />} />
+                            <Route path='/dashboard/recurring-transactions' element={<RecurringTransactions />} />
                         </Route>
                     </Routes>
                 </AuthProvider>

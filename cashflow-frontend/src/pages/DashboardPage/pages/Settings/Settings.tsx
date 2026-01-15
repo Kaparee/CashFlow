@@ -7,6 +7,7 @@ import ChangeEmailForm from '../../components/Settings/ChangeEmailForm';
 import api from "../../../../api/api";
 import { AuthContext } from "../../../../contexts/AuthContext";
 import { ToastContext } from "../../../../contexts/ToastContext";
+import welcomeSound from "../../../../assets/Sounds/welcome.mp3"
 
 interface EditDataFromProps {
     newFirstName: string;
@@ -137,6 +138,14 @@ const Settings: React.FC = () => {
         }
     }
 
+    const audioRef = useRef<HTMLAudioElement>(null);
+
+    const playSound = () => {
+        if(audioRef.current){
+            audioRef.current.play()
+        }
+    }
+
     return (
         <>
             <div className="w-100 h-100 d-flex flex-column">
@@ -200,6 +209,10 @@ const Settings: React.FC = () => {
                     </div>
                 </div>
             </div>
+
+            <audio ref={audioRef} src={welcomeSound}></audio>
+            <i onClick={playSound} role="button" className="bi bi-question-circle position-absolute bottom-0 end-0 py-1 px-2 text-gradient pe"></i>
+
             <div className="modal fade" id="modalSettings" ref={modalRef} tabIndex={-1} aria-labelledby="modalSettingsLabel" aria-hidden="true">
                 <div className="modal-dialog modal-xl modal-dialog-centered">
                     <div className={`modal-content rounded-5 py-2 px-3 ${sDashboard.bgDarkSecondary} ${sDashboard.shadowDark}`}>

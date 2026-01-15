@@ -13,9 +13,9 @@ interface Testimonial {
 
 const testimonialsList: Testimonial[] = [
     {
-        firstname: 'Anna',
-        lastname: 'Kowalska',
-        description: 'Wreszcie ogarniam miesięczne wydatki. CashFlow robi robotę.',
+        firstname: 'Filemon',
+        lastname: 'Bzik',
+        description: 'Kiedyś miałem uszy, ale teraz nie mam.',
         rating: 5,
         fileName: 'w1.avif'
     },
@@ -34,10 +34,10 @@ const testimonialsList: Testimonial[] = [
         fileName: 'w2.avif'
     },
     {
-        firstname: 'Paweł',
-        lastname: 'Jabłoński',
-        description: 'Błyskawiczne dodawanie transakcji. Idealna na co dzień.',
-        rating: 5,
+        firstname: 'Guliwer',
+        lastname: 'Pierdas',
+        description: 'Ogólnie fajne, ale nie lubie.',
+        rating: 3,
         fileName: 'm2.avif'
     },
     {
@@ -48,10 +48,10 @@ const testimonialsList: Testimonial[] = [
         fileName: 'w3.avif'
     },
     {
-        firstname: 'Tomasz',
-        lastname: 'Wójcik',
-        description: 'Pomaga trzymać budżet w ryzach. Raporty na duży plus.',
-        rating: 4,
+        firstname: 'Klakier',
+        lastname: 'Bączyrura',
+        description: 'Nie mam czasu na te gierki.',
+        rating: 1,
         fileName: 'm3.avif'
     },
     {
@@ -76,9 +76,9 @@ const testimonialsList: Testimonial[] = [
         fileName: 'w5.avif'
     },
     {
-        firstname: 'Jakub',
-        lastname: 'Mazur',
-        description: 'Trochę zawiłe ustawienia na start. Przydałby się prostszy onboarding.',
+        firstname: 'Bonifacy',
+        lastname: 'Męcipała',
+        description: 'Mój stary jest partyzantem z Wietnamu, przeprowadził się do Polski szukając lepszego życia.',
         rating: 2,
         fileName: 'm5.avif'
     },
