@@ -398,12 +398,15 @@ const DashboardHomePage: React.FC = () => {
 
     const handleAddTransaction = async () => {
         try {
+            const dataFinal = new Date(formData.date).toISOString();
+
             setIsLooking(true);
             await api.post('/create-new-transaction', {
                 "accountId": account?.accountId,
                 "categoryId": parseInt(formData.categoryId, 10),
                 "amount": parseFloat(formData.amount),
                 "description": formData.description,
+                "date": dataFinal,
                 "type": formData.type as 'expense' | 'income'
             });
             addToast('Utworzono transakcje', 'info');
@@ -587,6 +590,7 @@ const DashboardHomePage: React.FC = () => {
             ['categoryId']: String(selectedTransactionOptions?.category.categoryId),
             ['amount']: String(selectedTransactionOptions?.amount),
             ['description']: selectedTransactionOptions?.description || '',
+            ['date']: format(new Date(selectedTransactionOptions?.date || ''), 'yyyy-MM-dd'),
             ['type']: (selectedTransactionOptions?.category.type || 'expense') as 'expense' | 'income'
             
         }
@@ -595,6 +599,7 @@ const DashboardHomePage: React.FC = () => {
 
     const handleEditTransaction = async () => {
         try {
+            const dataFinall = new Date(formData.date).toISOString();
             setIsLooking(true);
             await api.patch('/update-transaction', {
                 transactionId: selectedTransactionOptions?.transactionId,
@@ -603,7 +608,7 @@ const DashboardHomePage: React.FC = () => {
                 newAmount: parseFloat(formData.amount),
                 newDescription: formData.description,
                 newType: formData.type,
-                newDate: new Date().toISOString(),
+                newDate: dataFinall,
             });
             addToast('Edytowano transakcje', 'info');
             handleClearFormData();
@@ -769,6 +774,13 @@ const DashboardHomePage: React.FC = () => {
                                 <Input id={'amount'} divClass={sDashboard.textDarkSecondary} inputClass={`${sDashboard.textDarkPrimary} ${sDashboard.textDarkSecondary} ${sDashboard.bgDarkPrimary} ${sDashboard.borderDarkEmphasis} ${sDashboard.borderDarkFocusAccent} `} name={'amount'} label={'Kwota'} value={formData.amount} onChange={handleChange} error={errors.amount} onBlur={() => handleBalanceFormatting(formData.amount)} />
                                 <CustomSelect table={typeOfCategory} isLoading={isLooking} label='Typ' name={'type'} selected={displayValue} onChange={handleChange} error={errors.type} />
                                 <CustomSelect table={handleGroupCategories(formData.type)} isLoading={isLooking} label='Kategorie' name={'categoryId'} selected={categoryDisplayValue} onChange={handleChange} error={errors.categoryId} />
+                                <div  className='mb-3'>
+                                    <label htmlFor="disabledTextInput" className={`form-label ${sDashboard.textDarkSecondary} fw-bold small`}>Data</label>
+                                    <input className={`form-control px-3 py-2 rounded-5 ${s.date} ${sDashboard.bgDarkPrimary} ${sDashboard.textDarkSecondary} ${sDashboard.borderDarkEmphasis}`} value={selectedTransactionOptions?.date 
+                                    ? format(new Date(selectedTransactionOptions.date), 'yyyy-MM-dd') 
+                                    : ''} name='date' type="date" onChange={handleChange}/>
+                                    <div className="invalid-feedback ps-2 opacity-100">{errors.date ? errors.date : ''}</div>
+                                </div>
                                 <Input id={'description'} divClass={sDashboard.textDarkSecondary} inputClass={`${sDashboard.textDarkPrimary} ${sDashboard.textDarkSecondary} ${sDashboard.bgDarkPrimary} ${sDashboard.borderDarkEmphasis} ${sDashboard.borderDarkFocusAccent} `} name={'description'} label={'Opis'} value={formData.description} onChange={handleChange} error={errors.description} />
                             </div>
                             <div className="modal-footer justify-content-center border-0">
