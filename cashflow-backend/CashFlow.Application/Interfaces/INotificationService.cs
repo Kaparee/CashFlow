@@ -10,5 +10,6 @@ namespace CashFlow.Application.Interfaces
         Task UpdateNotificationAsync(int userId, int notificationId);
         Task DeleteNotificationAsync(int userId, int notificationId);
         Task UpdateAllNotificationsAsync(int userId);
+        Task DeleteAllNotificationsAsync(int userId);
     }
 }

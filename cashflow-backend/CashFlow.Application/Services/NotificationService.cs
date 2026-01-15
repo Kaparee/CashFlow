@@ -126,5 +126,37 @@ namespace CashFlow.Application.Services
             }
         }
 
+        public async Task DeleteAllNotificationsAsync(int userId)
+        {
+            var notifications = await _notificationRepository.GetUserNotificationsWithDetailsAsync(userId);
+
+            if (notifications == null)
+            {
+                throw new Exception("Notification does not exist or is not your");
+            }
+
+            foreach (var notification in notifications)
+            {
+                using var dbTransaction = await _unitOfWork.BeginTransactionAsync();
+                try
+                {
+                    if (notification == null)
+                    {
+                        continue;
+                    }
+
+                    notification.DeletedAt = DateTime.UtcNow;
+
+                    await _notificationRepository.UpdateAsync(notification);
+                    await dbTransaction.CommitAsync();
+                }
+                catch
+                {
+                    await dbTransaction.RollbackAsync();
+                    throw;
+                }
+            }
+        }
+
     }
 }

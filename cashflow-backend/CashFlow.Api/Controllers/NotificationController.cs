@@ -102,5 +102,24 @@ namespace CashFlow.Api.Controllers
                 return StatusCode(500, new { message = "An internal server error occured" });
             }
         }
+
+        [HttpDelete]
+        [Route("delete-all-notifications")]
+        public async Task<IActionResult> DeleteAllNotifications()
+        {
+            try
+            {
+                await _notificationService.DeleteAllNotificationsAsync(CurrentUserId)
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("does not exist or"))
+                {
+                    return NotFound(new { message = ex.Message });
+                }
+                return StatusCode(500, new { message = "An internal server error occured" });
+            }
+        }
     }
 }
