@@ -108,6 +108,17 @@ const DashboardHomePage: React.FC = () => {
     const [isConfirmingDelete, setIsConfirmingDelete] = useState<boolean>(false);
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
     const [isClosing, setIsClosing] = useState<boolean>(false);
+    const [showRecurringModal, setShowRecurringModal] = useState<boolean>(false);
+    const [recurringFormData, setRecurringFormData] = useState({
+        accountId: account?.accountId,
+        categoryId: "",
+        amount: "",
+        description: "",
+        type: "expense" as 'expense' | 'income',
+        frequency: "monthly" as FrequencyType,
+        startDate: format(new Date(), 'yyyy-MM-dd'),
+        endDate: format(addYears(new Date(), 1), 'yyyy-MM-dd')
+    });
 
     const [recurringFormData, setRecurringFormData] = useState({
         accountId: account?.accountId,
@@ -375,7 +386,7 @@ const DashboardHomePage: React.FC = () => {
         setFormData({accountId: account?.accountId, categoryId: "", amount: "", description: "", type: "expense"});
     }
 
-   const handleClearRecurringFormData = () => {
+    const handleClearRecurringFormData = () => {
         setRecurringFormData({
             accountId: account?.accountId,
             categoryId: "",
