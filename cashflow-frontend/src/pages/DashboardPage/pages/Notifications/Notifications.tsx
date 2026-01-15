@@ -62,6 +62,16 @@ const Notifications: React.FC = () => {
         }
     }
 
+    const deleteAllNotifications = async () => {
+        try { 
+            await api.delete('/delete-all-notifications')
+            addToast('Powiadomienia usunięte', 'info');
+            fetchNotifications();
+        } catch (error: any) {
+            addToast('Nie udało się usunąć powiadomień', 'error');
+        }
+    }
+
     const deleteNotification = async (notificationId: number) => {
         try {
             await api.delete(`/delete-notification`, { 
@@ -108,8 +118,14 @@ const Notifications: React.FC = () => {
                         </button>
                     </div>
 
-                    <div>
-                        <button className={`btn btn-sm btn-primary rounded-5`} onClick={() => markAllAsRead()}>Oznacz wszystkie jako przeczytane</button>
+                    <div className="d-flex gap-3">
+                        <div>
+                            <button className={`btn btn-sm btn-primary rounded-5 p-2`} onClick={() => markAllAsRead()}>Oznacz wszystkie jako przeczytane</button>
+                        </div>
+
+                        <div>
+                            <button className={`btn btn-sm btn-danger rounded-5 p-2`} onClick={() => deleteAllNotifications()}>Usuń wszystkie</button>
+                        </div>
                     </div>
                 </div>
 
