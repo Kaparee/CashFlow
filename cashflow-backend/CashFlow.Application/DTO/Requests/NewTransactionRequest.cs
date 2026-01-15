@@ -7,5 +7,6 @@ namespace CashFlow.Application.DTO.Requests
         public decimal? Amount { get; set; }
         public string? Description { get; set; }
         public string? Type { get; set; }
+        public DateTime Date { get; set; }
     }
 }
