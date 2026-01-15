@@ -55,6 +55,7 @@ interface FormDataProps {
     categoryId: string;
     amount: string;
     description: string;
+    date:   string;
     type: 'expense' | 'income';
 }
 
@@ -94,7 +95,7 @@ const DashboardHomePage: React.FC = () => {
     const [ user, setUser] = useState<User>({userId: 0, firstName: "", lastName: "", nickname: "", email: "", photoUrl: "", isActive: true, isAdmin: true, isVerified: true, createdAt: "", updatedAt: ""});
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [recurringErrors, setRecurringErrors] = useState<{ [key: string]: string }>({});
-    const [formData, setFormData] = useState<FormDataProps>({ accountId: account?.accountId, categoryId: "", amount: "", description: "", type: "expense"});
+    const [formData, setFormData] = useState<FormDataProps>({ accountId: account?.accountId, categoryId: "", amount: "", description: "", date: "", type: "expense"});
     const {addToast} = useContext(ToastContext);
     const selectedTypeObject = typeOfCategory.find(item => item.value === formData.type);
     const displayValue = selectedTypeObject ? selectedTypeObject.dName : "";
@@ -108,17 +109,6 @@ const DashboardHomePage: React.FC = () => {
     const [isConfirmingDelete, setIsConfirmingDelete] = useState<boolean>(false);
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
     const [isClosing, setIsClosing] = useState<boolean>(false);
-    const [showRecurringModal, setShowRecurringModal] = useState<boolean>(false);
-    const [recurringFormData, setRecurringFormData] = useState({
-        accountId: account?.accountId,
-        categoryId: "",
-        amount: "",
-        description: "",
-        type: "expense" as 'expense' | 'income',
-        frequency: "monthly" as FrequencyType,
-        startDate: format(new Date(), 'yyyy-MM-dd'),
-        endDate: format(addYears(new Date(), 1), 'yyyy-MM-dd')
-    });
 
     const [recurringFormData, setRecurringFormData] = useState({
         accountId: account?.accountId,
@@ -288,7 +278,11 @@ const DashboardHomePage: React.FC = () => {
         if (formData.description.trim().length > 30) {
             err.description = 'Opis musi być krótszy niż 30 znaków'
         }
-        
+
+        if (formData.date.trim().length == 0) {
+            err.date = 'Data musi być wybrana'
+        }
+    
         setErrors(err);
     
         if (Object.keys(err).length === 0) {
@@ -383,7 +377,7 @@ const DashboardHomePage: React.FC = () => {
     };
 
     const handleClearFormData = () => {
-        setFormData({accountId: account?.accountId, categoryId: "", amount: "", description: "", type: "expense"});
+        setFormData({accountId: account?.accountId, categoryId: "", amount: "", description: "", date: "", type: "expense"});
     }
 
     const handleClearRecurringFormData = () => {
@@ -682,6 +676,12 @@ const DashboardHomePage: React.FC = () => {
                                 <Input id={'amount'} divClass={sDashboard.textDarkSecondary} inputClass={`${sDashboard.textDarkPrimary} ${sDashboard.textDarkSecondary} ${sDashboard.bgDarkPrimary} ${sDashboard.borderDarkEmphasis} ${sDashboard.borderDarkFocusAccent} `} name={'amount'} label={'Kwota'} value={formData.amount} onChange={handleChange} error={errors.amount} onBlur={() => handleBalanceFormatting(formData.amount)} />
                                 <CustomSelect table={typeOfCategory} isLoading={isLooking} label='Typ' name={'type'} selected={displayValue} onChange={handleChange} error={errors.type}/>
                                 <CustomSelect table={handleGroupCategories(formData.type)} isLoading={isLooking} label='Kategorie' name={'categoryId'} selected={categoryDisplayValue} onChange={handleChange} error={errors.categoryId} />
+                                
+                                <div  className='mb-3'>
+                                    <label htmlFor="disabledTextInput" className={`form-label ${sDashboard.textDarkSecondary} fw-bold small`}>Data</label>
+                                    <input className={`form-control px-3 py-2 rounded-5 ${s.date} ${sDashboard.bgDarkPrimary} ${sDashboard.textDarkSecondary} ${sDashboard.borderDarkEmphasis}`} value={formData.date} name='date' type="date" onChange={handleChange}/>
+                                    <div className="invalid-feedback ps-2 opacity-100">{errors.date ? errors.date : ''}</div>
+                                </div>
                                 <Input id={'description'} divClass={sDashboard.textDarkSecondary} inputClass={`${sDashboard.textDarkPrimary} ${sDashboard.textDarkSecondary} ${sDashboard.bgDarkPrimary} ${sDashboard.borderDarkEmphasis} ${sDashboard.borderDarkFocusAccent} `} name={'description'} label={'Opis'} value={formData.description} onChange={handleChange} error={errors.description} />
                             </div>
                             <div className="modal-footer justify-content-center border-0">

@@ -109,7 +109,7 @@ namespace CashFlow.Api.Controllers
         {
             try
             {
-                await _notificationService.DeleteAllNotificationsAsync(CurrentUserId)
+                await _notificationService.DeleteAllNotificationsAsync(CurrentUserId);
                 return NoContent();
             }
             catch (Exception ex)
