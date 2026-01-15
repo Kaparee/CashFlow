@@ -43,6 +43,7 @@ namespace CashFlow.Infrastructure.Repositories
 
         public async Task<bool> IsKeyWordCreated(int userId, string word)
         {
+            word = word.ToLower();
             return await _context.KeyWords
                 .AnyAsync(k => k.UserId == userId && k.Word == word && k.DeletedAt == null);
         }
