@@ -120,6 +120,19 @@ const DashboardHomePage: React.FC = () => {
         endDate: format(addYears(new Date(), 1), 'yyyy-MM-dd')
     });
 
+    const [recurringFormData, setRecurringFormData] = useState({
+        accountId: account?.accountId,
+        categoryId: "",
+        amount: "",
+        name: "",
+        description: "",
+        type: "expense" as 'expense' | 'income',
+        frequency: "monthly" as FrequencyType,
+        isTrue: true,
+        startDate: format(new Date(), 'yyyy-MM-dd'),
+        endDate: ""
+    });
+
     useEffect(() => {
         const htmlTag = document.body;
         const shouldBlockScroll = isLooking || isLoading;
@@ -253,7 +266,7 @@ const DashboardHomePage: React.FC = () => {
         const hasCategory = formData.categoryId && formData.categoryId.trim().length > 0 && formData.categoryId !== '0';
         const hasDescription = formData.description && formData.description.trim().length > 0;
 
-        if (hasDescription) {
+        if (!hasCategory && hasDescription) {
             const descriptionLower = formData.description.toLowerCase();
 
             const foundKeyword = categories.some(cat => 
@@ -302,12 +315,16 @@ const DashboardHomePage: React.FC = () => {
             err.categoryId = 'Proszę wybrać kategorię';
         }
 
-        if (!recurringFormData.description.trim()) {
-            err.description = 'Proszę podać opis/nazwę transakcji cyklicznej';
+        if (!recurringFormData.name.trim()) {
+            err.name = 'Proszę podać nazwę transakcji cyklicznej';
         }
 
-        if (recurringFormData.description.trim().length > 50) {
-            err.description = 'Opis musi być krótszy niż 50 znaków';
+        if (recurringFormData.name.trim().length > 50) {
+            err.name = 'Nazwa musi być krótsza niż 50 znaków';
+        }
+
+        if (recurringFormData.description.trim().length > 100) {
+            err.description = 'Opis musi być krótszy niż 100 znaków';
         }
 
         if (!recurringFormData.startDate) {
@@ -374,11 +391,13 @@ const DashboardHomePage: React.FC = () => {
             accountId: account?.accountId,
             categoryId: "",
             amount: "",
+            name: "",
             description: "",
             type: "expense",
             frequency: "monthly",
+            isTrue: true,
             startDate: format(new Date(), 'yyyy-MM-dd'),
-            endDate: format(addYears(new Date(), 1), 'yyyy-MM-dd')
+            endDate: ""
         });
         setRecurringErrors({});
     };
@@ -422,18 +441,24 @@ const DashboardHomePage: React.FC = () => {
     const handleAddRecurringTransaction = async () => {
         try {
             setIsLooking(true);
+
+            const startDateTime = `${recurringFormData.startDate}T00:00:00.000Z`;
+            const endDateTime = recurringFormData.endDate 
+                ? `${recurringFormData.endDate}T23:59:59.999Z`
+                : null;
+
             await api.post('/create-new-rec-transaction', {
-                type: recurringFormData.type,
-                name: recurringFormData.description,
-                frequency: recurringFormData.frequency,
-                isTrue: true,
-                startDate: recurringFormData.startDate,
-                endDate: recurringFormData.endDate,
                 accountId: recurringFormData.accountId,
                 categoryId: parseInt(recurringFormData.categoryId, 10),
                 amount: parseFloat(recurringFormData.amount),
+                name: recurringFormData.name,
                 description: recurringFormData.description,
-                nextPaymentDate: recurringFormData.startDate
+                type: recurringFormData.type,
+                frequency: recurringFormData.frequency,
+                isTrue: true,
+                startDate: startDateTime,
+                endDate: endDateTime,
+                nextPaymentDate: startDateTime
             });
             
             addToast('Utworzono transakcję cykliczną', 'info');
@@ -442,7 +467,7 @@ const DashboardHomePage: React.FC = () => {
             handleRefreshData();
         } catch (error: any) {
             addToast('Nie udało się utworzyć transakcji cyklicznej', 'error');
-            console.error(error);
+            console.error('Error creating recurring transaction:', error.response?.data || error.message);
         } finally {
             setIsLooking(false);
         }
@@ -799,11 +824,22 @@ const DashboardHomePage: React.FC = () => {
                                 />
 
                                 <Input 
+                                    id={'rec-name'} 
+                                    divClass={sDashboard.textDarkSecondary} 
+                                    inputClass={`${sDashboard.textDarkPrimary} ${sDashboard.bgDarkPrimary} ${sDashboard.borderDarkEmphasis} ${sDashboard.borderDarkFocusAccent}`} 
+                                    name={'name'} 
+                                    label={'Nazwa transakcji cyklicznej'} 
+                                    value={recurringFormData.name} 
+                                    onChange={handleRecurringChange}
+                                    error={recurringErrors.name}
+                                />
+
+                                <Input 
                                     id={'rec-description'} 
                                     divClass={sDashboard.textDarkSecondary} 
                                     inputClass={`${sDashboard.textDarkPrimary} ${sDashboard.bgDarkPrimary} ${sDashboard.borderDarkEmphasis} ${sDashboard.borderDarkFocusAccent}`} 
                                     name={'description'} 
-                                    label={'Opis (nazwa transakcji cyklicznej)'} 
+                                    label={'Opis (opcjonalny)'} 
                                     value={recurringFormData.description} 
                                     onChange={handleRecurringChange}
                                     error={recurringErrors.description}

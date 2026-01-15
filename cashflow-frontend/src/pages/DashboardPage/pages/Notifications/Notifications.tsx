@@ -150,7 +150,7 @@ const Notifications: React.FC = () => {
                                             </p>
                                             <small className={`${sDashboard.textDarkSecondary} opacity-75`}>
                                                 <i className="bi bi-clock me-1"></i>
-                                                {format(notification.sentAt, 'yyyy-mm-dd HH:mm:ss')}
+                                                {format(notification.sentAt, 'yyyy-MM-dd HH:mm:ss')}
                                             </small>
                                         </div>
 

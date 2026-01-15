@@ -17,6 +17,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isExpanded, onToggle}) => {
         { icon: 'bi-graph-up', label: 'Wykresy', path: 'charts' },
         { icon: 'bi-bell', label: 'Powiadomienia', path: 'notifications' },
         { icon: 'bi-bookmarks', label: 'Kategorie', path: 'categories' },
+        { icon: 'bi-arrow-repeat', label: 'Transakcje cykliczne', path: 'recurring-transactions' },
         { icon: 'bi-gear', label: 'Ustawienia', path: 'settings' }
     ]
 
@@ -24,7 +25,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isExpanded, onToggle}) => {
 
     const sidebarStyle: React.CSSProperties = width >= 768 
     ? { 
-        width: isExpanded ? '200px' : '60px', 
+        width: isExpanded ? '270px' : '60px', 
         transition: 'width 0.3s' 
       }
     : { 
@@ -41,7 +42,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isExpanded, onToggle}) => {
 
     return (
         <>
-            <div className={`position-absolute row px-2 pt-1 pb-2 flex-column text-white h-100 justify-content-start align-items-start z-2 ${sDashboard.bgDarkSecondary} ${sDashboard.shadowDark} overflow-hidden ${width < 768 ? 'mx-0' : '' }`} style={sidebarStyle}>
+            <div className={`position-absolute row px-2 pt-1 pb-2 flex-column text-white h-100 justify-content-start align-items-start z-2 ${sDashboard.bgDarkSecondary} overflow-hidden ${width < 768 ? 'mx-0' : '' }`} style={sidebarStyle}>
                 <div className=''>
                     <button className={`btn px-0 py-0 border-0 ${sDashboard.bgDarkSecondary}`} type="button" onClick={onToggle}>
                         <span className={`${s.w60} text-center`}>
