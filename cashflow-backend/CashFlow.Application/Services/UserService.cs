@@ -132,16 +132,17 @@ namespace CashFlow.Application.Services
         {
             var defaultCategories = new List<(string Name, string Icon, string Color, string Type, string[] Keywords)>
             {
-                ("Jedzenie", "fastfood", "#FF5733", "expense", new[] { "Biedronka", "Lidl", "KFC", "McDonalds", "¯abka" }),
-                ("Transport", "directions_car", "#33B5FF", "expense", new[] { "Shell", "Orlen", "Uber", "Bolt", "ZTM", "PKP" }),
-                ("Wynagrodzenie", "payments", "#28B463", "income", new[] { "Przelew", "Salary", "Premia", "Wynagrodzenie" }),
-                ("Rozrywka", "theater_comedy", "#AF7AC5", "expense", new[] { "Netflix", "Spotify", "Cinema", "Kino", "Pub" }),
-                ("Zdrowie", "medical_services", "#E74C3C", "expense", new[] { "Apteka", "Dentysta", "Lekarz", "Luxmed" })
+                ("Jedzenie", "bi-egg-fried", "#FF5733", "expense", new[] { "Biedronka", "Lidl", "KFC", "McDonalds", "¯abka" }),
+                ("Transport", "bi-car-front", "#33B5FF", "expense", new[] { "Shell", "Orlen", "Uber", "Bolt", "ZTM", "PKP" }),
+                ("Wynagrodzenie", "bi-cash-stack", "#28B463", "income", new[] { "Przelew", "Salary", "Premia", "Wynagrodzenie" }),
+                ("Rozrywka", "bi-film", "#AF7AC5", "expense", new[] { "Netflix", "Spotify", "Cinema", "Kino", "Pub" }),
+                ("Zdrowie", "bi-hospital", "#E74C3C", "expense", new[] { "Apteka", "Dentysta", "Lekarz", "Luxmed" })
             };
 
             var defaultAccounts = new List<(string Name, decimal Balance, string CurrencyCode, bool IsActive, string PhotoUrl)>
             {
-                ("G³ówne Konto", 0.00m, "PLN", true, "default_account_url")
+                ("G³ówne Konto", 0.00m, "PLN", true, "bi-cash"),
+                ("De Lopital", 0.00m, "ZAR", true, "bi-cash")
             };
 
             foreach (var accountData in defaultAccounts)
